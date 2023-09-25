@@ -47,6 +47,7 @@
 		B849A15F299EB6F9004B580F /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = B849A15E299EB6F9004B580F /* Group.swift */; };
 		B849A162299EC01A004B580F /* GroupTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B849A160299EC01A004B580F /* GroupTableViewCell.swift */; };
 		B849A163299EC01A004B580F /* GroupTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B849A161299EC01A004B580F /* GroupTableViewCell.xib */; };
+		B866D7202AC0B6230007E1B3 /* meeting-notification.caf in Resources */ = {isa = PBXBuildFile; fileRef = B866D71F2AC0B6220007E1B3 /* meeting-notification.caf */; };
 		B86800842A3B6A61005D4738 /* VideoCallViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B86800832A3B6A61005D4738 /* VideoCallViewController.swift */; };
 		B86956922969DB2A001A8E15 /* MyJurni.swift in Sources */ = {isa = PBXBuildFile; fileRef = B86956912969DB2A001A8E15 /* MyJurni.swift */; };
 		B8769E792A0D035C0009D082 /* ChatTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8769E772A0D035C0009D082 /* ChatTableViewCell.swift */; };
@@ -178,6 +179,7 @@
 		B849A15E299EB6F9004B580F /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
 		B849A160299EC01A004B580F /* GroupTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupTableViewCell.swift; sourceTree = "<group>"; };
 		B849A161299EC01A004B580F /* GroupTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GroupTableViewCell.xib; sourceTree = "<group>"; };
+		B866D71F2AC0B6220007E1B3 /* meeting-notification.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "meeting-notification.caf"; sourceTree = "<group>"; };
 		B86800832A3B6A61005D4738 /* VideoCallViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCallViewController.swift; sourceTree = "<group>"; };
 		B86956912969DB2A001A8E15 /* MyJurni.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyJurni.swift; sourceTree = "<group>"; };
 		B8769E772A0D035C0009D082 /* ChatTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTableViewCell.swift; sourceTree = "<group>"; };
@@ -265,6 +267,7 @@
 		A3E832502924B0E200A3806E = {
 			isa = PBXGroup;
 			children = (
+				B866D71F2AC0B6220007E1B3 /* meeting-notification.caf */,
 				A3E8325B2924B0E300A3806E /* Jurni */,
 				B80E09862A77AADA00F7FF31 /* OneSignalNotificationServiceExtension */,
 				A3E8325A2924B0E300A3806E /* Products */,
@@ -682,6 +685,7 @@
 			files = (
 				B8D2D748298D54AB00D577DB /* JurniChapterTableViewCell.xib in Resources */,
 				B894C7A2295385AC007728FE /* UpcomingPaymentTableViewCell.xib in Resources */,
+				B866D7202AC0B6230007E1B3 /* meeting-notification.caf in Resources */,
 				B87BFD642979437900248688 /* StepTableViewCell.xib in Resources */,
 				B87BFD602979436A00248688 /* PhaseTableViewCell.xib in Resources */,
 				B87BFD6929796B7F00248688 /* CongratsTableViewCell.xib in Resources */,

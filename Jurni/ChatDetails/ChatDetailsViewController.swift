@@ -33,6 +33,8 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet weak var sendMessageButton: UIButton!
     @IBOutlet weak var textMessageImageView: UIImageView!
     @IBOutlet weak var cancelImageView: UIButton!
+    @IBOutlet weak var showMemberListButton: UIButton!
+    @IBOutlet weak var tableViewHeightConstraint: NSLayoutConstraint!
     
     var chatDetail : Chat? = nil
     var chats = [ChatMessage]()
@@ -63,6 +65,9 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
     var previousAudioIndex = -1
     var currentAudioPlayState = ""
     var timeCount:Int = 0
+    var initialChatViewY : Int = 0
+    var keyboardVisible = false
+    var tableViewHeight = 0
     
     var chatDetailsProtocol : ChatDetailsProtocol?
 
@@ -82,28 +87,10 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
         
         if((chatDetail?.memberList.count)! > 2){
             chatDetailsImageView.image = UIImage(named: "groupblue")
-         //   chatDetailsImageView?.layer.backgroundColor = UIColor.lightGray.cgColor
         }else
         {
             chatDetailsImageView.image = UIImage(named: "userblue")
-         //   chatDetailsImageView?.layer.backgroundColor = UIColor.lightGray.cgColor
-//            if(chatDetail?.chatImage == ""){
-//                chatDetailsIconNameLabel.text = String(chatDetail!.chatTitle.prefix(1))
-//                chatDetailsImageView?.layer.backgroundColor = UIColor.lightGray.cgColor
-//            }else{
-//                chatDetailsIconNameLabel.isHidden = true
-//                let chatUrl = URL(string:  chatDetail!.chatImage)
-//                if(chatUrl != nil){
-//                    DispatchQueue.global().async {
-//                        let data = try? Data(contentsOf: chatUrl!)
-//                        if(data != nil){
-//                            DispatchQueue.main.async {
-//                                self.chatDetailsImageView.image = UIImage(data: data!)
-//                            }
-//                        }
-//                    }
-//                }
-//            }
+            showMemberListButton.isHidden = true
         }
         
         
@@ -133,6 +120,14 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
         // chatDetailsTableView.estimatedRowHeight = 150
         
         checkForUnreadMessage()
+        
+        var height = self.view.frame.height - (chatDetailsTableView.frame.origin.y + chatView.frame.height + 50)
+        tableViewHeight = Int(height)
+        tableViewHeightConstraint.constant = CGFloat(tableViewHeight)
+       
+        print("X: \(chatDetailsTableView.frame.origin.y)")
+        print("View bottom x : \(self.view.frame.height)")
+        print("Height: \(height)")
     }
     
     func checkForUnreadMessage(){
@@ -154,7 +149,6 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
                         
                         let threadToRemove = self.chatDetail?.threadId
                         let index = newChatArray.firstIndex(of: threadToRemove!)
-                        print("INdex: \(index)")
                         if(index != nil){
                             newChatArray.remove(at: index!)
                             
@@ -228,16 +222,19 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let chat = searchChats[indexPath.row]
-        
-        switch chat.userType{
+        if (searchChats.count > indexPath.row ){
+            let chat = searchChats[indexPath.row]
+            
+            switch chat.userType{
             case TYPE_OWNER:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ChatOwnerTableViewCell", for: indexPath)
                 as! ChatOwnerTableViewCell
                 
                 cell.chatOwnerView.layer.cornerRadius = 10
                 cell.chatOwnerView.layer.masksToBounds = true
-                cell.chatOwnerNameLabel.text = chat.user
+                if ((chatDetail?.memberList.count)! > 2){
+                    cell.chatOwnerNameLabel.text = chat.user
+                }
                 cell.chatOwnerMessageDateLabel.text = getMessagePostedDay(date: chat.messageDate as Date)
                 
                 cell.chatOwnerReplyLabel.isHidden = true
@@ -246,42 +243,42 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
                     cell.chatOwnerReplyLabel.isHidden = false
                     cell.chatOwnerReplyLabel.text = " " + (replyChat?.message ?? "")
                 }
-            
+                
                 if(chat.showSmileys == true){
                     cell.smileysView.isHidden = false
                 }else{
                     cell.smileysView.isHidden = true
                 }
-            
+                
                 let showSmileysTapped = UITapGestureRecognizer(target: self, action: #selector(showSmileysTapped))
                 cell.chatOwnerShowSmileysButton.isUserInteractionEnabled = true
                 cell.chatOwnerShowSmileysButton.tag = indexPath.row
                 cell.chatOwnerShowSmileysButton.addGestureRecognizer(showSmileysTapped)
-            
+                
                 let showLaughTapped = UITapGestureRecognizer(target: self, action: #selector(showLaughTapped))
                 cell.happyButton.tag = indexPath.row
                 cell.happyButton.addGestureRecognizer(showLaughTapped)
-            
+                
                 let showSurpriseTapped = UITapGestureRecognizer(target: self, action: #selector(showSurpriseTapped))
                 cell.surpriseButton.tag = indexPath.row
                 cell.surpriseButton.addGestureRecognizer(showSurpriseTapped)
-            
+                
                 let showSadTapped = UITapGestureRecognizer(target: self, action: #selector(showSadTapped))
                 cell.sadButton.tag = indexPath.row
                 cell.sadButton.addGestureRecognizer(showSadTapped)
-            
+                
                 let showAngryTapped = UITapGestureRecognizer(target: self, action: #selector(showAngryTapped))
                 cell.angryButton.tag = indexPath.row
                 cell.angryButton.addGestureRecognizer(showAngryTapped)
-        
+                
                 let showThumbsTapped = UITapGestureRecognizer(target: self, action: #selector(showThumbsTapped))
                 cell.thumbsUpButton.tag = indexPath.row
                 cell.thumbsUpButton.addGestureRecognizer(showThumbsTapped)
-        
+                
                 let loveTapped = UITapGestureRecognizer(target: self, action: #selector(showLoveTapped))
                 cell.loveButton.tag = indexPath.row
                 cell.loveButton.addGestureRecognizer(loveTapped)
-            
+                
                 let margins = view.layoutMarginsGuide
                 cell.chatOwnerParentView.trailingAnchor.constraint(equalTo: margins.trailingAnchor, constant: 20).isActive = true
                 
@@ -291,7 +288,7 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
                 cell.chatOwnerAudioView.isHidden = true
                 cell.chatOwnerImageView.removeConstraints(cell.chatOwnerImageView.constraints)
                 cell.chatOwnerAudioView.removeConstraints(cell.chatOwnerAudioView.constraints)
-            
+                
                 cell.chatOwnerSmileyCollectionView.dataSource = self
                 cell.chatOwnerSmileyCollectionView.delegate = self
                 let collectionNib = UINib(nibName: "ChatOwnerCollectionViewCell", bundle: nil)
@@ -299,16 +296,16 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
                 self.smileys.removeAll()
                 self.smileys = chat.smileys
                 cell.chatOwnerSmileyCollectionView.reloadData()
-            
+                
                 switch chat.messageType{
-                    case MESSAGE_TYPE_TEXT:
-                        cell.chatOwnerMessageLabel.text = chat.message
-                    case MESSAGE_TYPE_IMAGE:
-                        cell.chatOwnerMessageLabel.isHidden = true
-                        cell.chatOwnerImageView.isHidden = false
-                        cell.chatOwnerImageView.image = nil
-                        cell.chatOwnerView.addSubview(cell.chatOwnerImageView)
-                        cell.chatOwnerImageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+                case MESSAGE_TYPE_TEXT:
+                    cell.chatOwnerMessageLabel.text = chat.message
+                case MESSAGE_TYPE_IMAGE:
+                    cell.chatOwnerMessageLabel.isHidden = true
+                    cell.chatOwnerImageView.isHidden = false
+                    cell.chatOwnerImageView.image = nil
+                    cell.chatOwnerView.addSubview(cell.chatOwnerImageView)
+                    cell.chatOwnerImageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
                     
                     if(chat.message != ""){
                         imageLoaderCache.obtainImageWithPath(imagePath: chat.message) { (image) in
@@ -317,127 +314,129 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
                             }
                         }
                     }
-                
-                
-                    case MESSAGE_TYPE_AUDIO:
-                        cell.chatOwnerTimerLabel.text = getAudioDuration(messageDuration: chat.messageDuration)
-                        cell.chatOwnerMessageLabel.isHidden = true
-                        cell.chatOwnerImageView.isHidden = true
-                        cell.chatOwnerAudioView.isHidden = false
-                        cell.chatOwnerAudioView.heightAnchor.constraint(equalToConstant: 60).isActive = true
-                
-                        let playTapped = UITapGestureRecognizer(target: self, action: #selector(playTapped))
-                        cell.chatOwnerPlayPauseButton.isUserInteractionEnabled = true
-                        cell.chatOwnerPlayPauseButton.tag = indexPath.row
-                        cell.chatOwnerPlayPauseButton.addGestureRecognizer(playTapped)
                     
-                        if(chat.audioPlaying == true){
-                            if (currentAudioPlayState == AUDIO_STATE_PAUSE) {
-                                cell.chatOwnerPlayPauseButton.setImage(UIImage(named: "playblue.png"), for: .normal)
-                                chat.audioPlaying = false
+                    
+                case MESSAGE_TYPE_AUDIO:
+                    cell.chatOwnerTimerLabel.text = getAudioDuration(messageDuration: chat.messageDuration)
+                    cell.chatOwnerMessageLabel.isHidden = true
+                    cell.chatOwnerImageView.isHidden = true
+                    cell.chatOwnerAudioView.isHidden = false
+                    cell.chatOwnerAudioView.heightAnchor.constraint(equalToConstant: 60).isActive = true
+                    
+                    let playTapped = UITapGestureRecognizer(target: self, action: #selector(playTapped))
+                    cell.chatOwnerPlayPauseButton.isUserInteractionEnabled = true
+                    cell.chatOwnerPlayPauseButton.tag = indexPath.row
+                    cell.chatOwnerPlayPauseButton.addGestureRecognizer(playTapped)
+                    
+                    if(chat.audioPlaying == true){
+                        if (currentAudioPlayState == AUDIO_STATE_PAUSE) {
+                            cell.chatOwnerPlayPauseButton.setImage(UIImage(named: "playblue.png"), for: .normal)
+                            chat.audioPlaying = false
+                            let currentTime : Float64 = CMTimeGetSeconds(self.player.currentTime())
+                            cell.chatOwnerHorizontalSlider.value = Float(currentTime)
+                            if(currentTime > 0){
+                                let intTime = Int(currentTime)
+                                cell.chatOwnerTimerLabel.text = "00:\(intTime)"
+                            }
+                            timer?.invalidate()
+                        }else{
+                            cell.chatOwnerPlayPauseButton.setImage(UIImage(named: "pause.png"), for: .normal)
+                            
+                            let duration = CMTime(seconds: Double(chat.messageDuration/1000), preferredTimescale: 1000000)
+                            let durationSec : Float64 = CMTimeGetSeconds(duration)
+                            cell.chatOwnerHorizontalSlider.maximumValue = Float(CMTimeGetSeconds(duration))
+                            timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true){ timer in
                                 let currentTime : Float64 = CMTimeGetSeconds(self.player.currentTime())
                                 cell.chatOwnerHorizontalSlider.value = Float(currentTime)
                                 if(currentTime > 0){
                                     let intTime = Int(currentTime)
                                     cell.chatOwnerTimerLabel.text = "00:\(intTime)"
                                 }
-                                timer?.invalidate()
-                            }else{
-                                cell.chatOwnerPlayPauseButton.setImage(UIImage(named: "pause.png"), for: .normal)
-                                
-                                let duration = CMTime(seconds: Double(chat.messageDuration/1000), preferredTimescale: 1000000)
-                                let durationSec : Float64 = CMTimeGetSeconds(duration)
-                                cell.chatOwnerHorizontalSlider.maximumValue = Float(CMTimeGetSeconds(duration))
-                                timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true){ timer in
-                                    let currentTime : Float64 = CMTimeGetSeconds(self.player.currentTime())
-                                    cell.chatOwnerHorizontalSlider.value = Float(currentTime)
-                                    if(currentTime > 0){
-                                        let intTime = Int(currentTime)
-                                        cell.chatOwnerTimerLabel.text = "00:\(intTime)"
-                                    }
-                                    guard !(currentTime.isNaN || currentTime.isInfinite) else {
-                                        return
-                                    }
-                                    if(Int(durationSec) == Int(currentTime)){
-                                        timer.invalidate()
-                                    }
+                                guard !(currentTime.isNaN || currentTime.isInfinite) else {
+                                    return
+                                }
+                                if(Int(durationSec) == Int(currentTime)){
+                                    timer.invalidate()
                                 }
                             }
-                        }else{
-                            cell.chatOwnerPlayPauseButton.setImage(UIImage(named: "playblue.png"), for: .normal)
-                            cell.chatOwnerHorizontalSlider.value = 0
-                            timer?.invalidate()
                         }
-                
-                    case MESSAGE_TYPE_VIDEO: print("Video")
+                    }else{
+                        cell.chatOwnerPlayPauseButton.setImage(UIImage(named: "playblue.png"), for: .normal)
+                        cell.chatOwnerHorizontalSlider.value = 0
+                        timer?.invalidate()
+                    }
                     
-                    default: print("Default")
-            }
-            
-            return cell
-            
+                case MESSAGE_TYPE_VIDEO: print("Video")
+                    
+                default: print("Default")
+                }
+                
+                return cell
+                
             case TYPE_USER:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ChatUserTableViewCell", for: indexPath)
                 as! ChatUserTableViewCell
-            
+                
                 cell.chatUserView.layer.cornerRadius = 10
                 cell.chatUserView.layer.masksToBounds = true
-                cell.chatUserNameLabel.text = chat.user
+                if ((chatDetail?.memberList.count)! > 2){
+                    cell.chatUserNameLabel.text = chat.user
+                }
                 cell.chatUserMessageDateLabel.text = getMessagePostedDay(date: chat.messageDate as Date)
-
+                
                 cell.chatUserReplyLabel.isHidden = true
                 if(chat.replyToId != ""){
                     let replyChat = searchChats.first(where: {$0.chatId == chat.replyToId})
                     cell.chatUserReplyLabel.isHidden = false
                     cell.chatUserReplyLabel.text = " " + (replyChat?.message ?? "")
                 }
-            
+                
                 if(chat.showSmileys == true){
                     cell.chatUserSmileysView.isHidden = false
                 }else{
                     cell.chatUserSmileysView.isHidden = true
                 }
-        
+                
                 let showSmileysTapped = UITapGestureRecognizer(target: self, action: #selector(showSmileysTapped))
                 cell.showUserSmileysButton.isUserInteractionEnabled = true
                 cell.showUserSmileysButton.tag = indexPath.row
                 cell.showUserSmileysButton.addGestureRecognizer(showSmileysTapped)
-        
+                
                 let showLaughTapped = UITapGestureRecognizer(target: self, action: #selector(showLaughTapped))
                 cell.userHappyButton.tag = indexPath.row
                 cell.userHappyButton.addGestureRecognizer(showLaughTapped)
-        
+                
                 let showSurpriseTapped = UITapGestureRecognizer(target: self, action: #selector(showSurpriseTapped))
                 cell.userSurpriseButton.tag = indexPath.row
                 cell.userSurpriseButton.addGestureRecognizer(showSurpriseTapped)
-        
+                
                 let showSadTapped = UITapGestureRecognizer(target: self, action: #selector(showSadTapped))
                 cell.userSadButton.tag = indexPath.row
                 cell.userSadButton.addGestureRecognizer(showSadTapped)
-        
+                
                 let showAngryTapped = UITapGestureRecognizer(target: self, action: #selector(showAngryTapped))
                 cell.userAngryButton.tag = indexPath.row
                 cell.userAngryButton.addGestureRecognizer(showAngryTapped)
-    
+                
                 let showThumbsTapped = UITapGestureRecognizer(target: self, action: #selector(showThumbsTapped))
                 cell.userThumbsUpButton.tag = indexPath.row
                 cell.userThumbsUpButton.addGestureRecognizer(showThumbsTapped)
-    
+                
                 let loveTapped = UITapGestureRecognizer(target: self, action: #selector(showLoveTapped))
                 cell.userLoveButton.tag = indexPath.row
                 cell.userLoveButton.addGestureRecognizer(loveTapped)
-            
+                
                 let replyToTapped = UITapGestureRecognizer(target: self, action: #selector(replyToTapped))
                 cell.userReplyButton.tag = indexPath.row
                 cell.userReplyButton.addGestureRecognizer(replyToTapped)
-            
+                
                 cell.chatUserMessageLabel.isHidden = false
                 cell.chatUserMessageLabel.translatesAutoresizingMaskIntoConstraints = false
                 cell.chatUserImageView.isHidden = true
                 cell.chatUserAudioView.isHidden = true
                 cell.chatUserImageView.removeConstraints(cell.chatUserImageView.constraints)
                 cell.chatUserAudioView.removeConstraints(cell.chatUserAudioView.constraints)
-            
+                
                 cell.chatUserSmileysCollectionView.dataSource = self
                 cell.chatUserSmileysCollectionView.delegate = self
                 let collectionNib = UINib(nibName: "ChatUserCollectionViewCell", bundle: nil)
@@ -445,8 +444,8 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
                 self.smileys.removeAll()
                 self.smileys = chat.smileys
                 cell.chatUserSmileysCollectionView.reloadData()
-        
-            switch chat.messageType{
+                
+                switch chat.messageType{
                 case MESSAGE_TYPE_TEXT:
                     cell.chatUserMessageLabel.text = chat.message
                 case MESSAGE_TYPE_IMAGE:
@@ -454,27 +453,27 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
                     cell.chatUserImageView.isHidden = false
                     cell.chatUserImageView.image = nil
                     cell.chatUserImageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-                
-                if(chat.message != ""){
-                    imageLoaderCache.obtainImageWithPath(imagePath: chat.message) { (image) in
-                        if let updateCell = tableView.cellForRow(at: indexPath) {
-                            cell.chatUserImageView.image = image
+                    
+                    if(chat.message != ""){
+                        imageLoaderCache.obtainImageWithPath(imagePath: chat.message) { (image) in
+                            if let updateCell = tableView.cellForRow(at: indexPath) {
+                                cell.chatUserImageView.image = image
+                            }
                         }
                     }
-                }
-            
+                    
                 case MESSAGE_TYPE_AUDIO:
                     cell.chatUserTimerLabel.text = getAudioDuration(messageDuration: chat.messageDuration)
                     cell.chatUserMessageLabel.isHidden = true
                     cell.chatUserImageView.isHidden = true
                     cell.chatUserAudioView.isHidden = false
                     cell.chatUserAudioView.heightAnchor.constraint(equalToConstant: 60).isActive = true
-            
+                    
                     let playTapped = UITapGestureRecognizer(target: self, action: #selector(playTapped))
                     cell.chatUserPlayPauseButton.isUserInteractionEnabled = true
                     cell.chatUserPlayPauseButton.tag = indexPath.row
                     cell.chatUserPlayPauseButton.addGestureRecognizer(playTapped)
-                
+                    
                     if(chat.audioPlaying == true){
                         if (currentAudioPlayState == AUDIO_STATE_PAUSE) {
                             cell.chatUserPlayPauseButton.setImage(UIImage(named: "playblue.png"), for: .normal)
@@ -513,20 +512,24 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
                         cell.chatUserHorizontalSlider.value = 0
                         timer?.invalidate()
                     }
-                
+                    
                 case MESSAGE_TYPE_VIDEO: print("Video")
-            
+                    
                 default: print("Default")
-            }
-            
-            return cell
-            
+                }
+                
+                return cell
+                
             default:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ChatUserTableViewCell", for: indexPath)
                 as! ChatUserTableViewCell
-            
-            return cell
+                
+                return cell
+            }
         }
+        
+        return tableView.dequeueReusableCell(withIdentifier: "ChatOwnerTableViewCell", for: indexPath)
+        as! ChatOwnerTableViewCell
     }
     
     @objc func playTapped(tapGestureRecognizer: UITapGestureRecognizer){
@@ -793,7 +796,10 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return self.searchChats[indexPath.row].messageHeight
+        if (searchChats.count > indexPath.row){
+            return self.searchChats[indexPath.row].messageHeight
+        }
+        return 0
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -814,6 +820,7 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! VideoCallViewController
         destinationVC.channelName = chatDetail?.threadId ?? ""
+        destinationVC.fromNotification = false
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -1229,17 +1236,18 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
         let childUpdates = ["/chats/\(self.chatDetail!.threadId)/messages/\(key)": post]
         Database.database().reference().updateChildValues(childUpdates)
         self.hideActivityIndicator()
-        self.viewDidLoad()
-        self.viewWillAppear(true)
-        
+       // self.viewDidLoad()
+       // self.viewWillAppear(true)
+        fetchChats()
         if(dataType == self.MESSAGE_TYPE_TEXT){
             messageTextField.text = ""
+            galleryButton.isHidden = false
         }
         shouldScrollToBottom = true
     }
     
     func showActivityIndicator() {
-        self.view.isUserInteractionEnabled = false
+      //  self.view.isUserInteractionEnabled = false
         activityView = UIActivityIndicatorView(style: .large)
         activityView?.center = self.view.center
         activityView?.color = .black
@@ -1248,7 +1256,7 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
     }
     
     func hideActivityIndicator(){
-        self.view.isUserInteractionEnabled = true
+      //  self.view.isUserInteractionEnabled = true
         if (activityView != nil){
             activityView?.stopAnimating()
         }
@@ -1313,18 +1321,25 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        tableViewHeightConstraint.constant = CGFloat(tableViewHeight)
         textField.resignFirstResponder()
         return true
     }
     
     @objc func keyboardWillHide() {
-        self.view.frame.origin.y = 0
+      //  self.view.frame.origin.y = 0
+        tableViewHeightConstraint.constant = CGFloat(tableViewHeight)
     }
 
     @objc func keyboardWillChange(notification: NSNotification) {
-            if messageTextField.isFirstResponder {
-                self.view.frame.origin.y = -350
-            }
+//            if messageTextField.isFirstResponder {
+//                self.view.frame.origin.y = -350
+//            }
+        
+        guard let value = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+              let keyboardHeight = value.cgRectValue.height
+            tableViewHeightConstraint.constant = CGFloat(tableViewHeight) - keyboardHeight
+       
     }
     
     override func viewWillAppear(_ animated: Bool) {

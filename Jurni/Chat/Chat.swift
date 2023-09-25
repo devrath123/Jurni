@@ -23,11 +23,13 @@ class Chat: NSObject {
     var isNewChat: Bool
     var memberList: [DocumentReference]
     var chatOwnerId: String
+    var lastActivitySenderId: String
     
     init(chatId: String, chatType: String, chatMessage: String, chatTitle: String,
          membersIds: [String], members: [String], membersImages: [String],
          chatImage: String, chatTimeStamp: Date,owner: String, threadId: String,
-         isNewChat: Bool, memberList: [DocumentReference], chatOwnerId: String) {
+         isNewChat: Bool, memberList: [DocumentReference], chatOwnerId: String,
+         lastActivitySenderId: String) {
         self.chatId = chatId
         self.chatType = chatType
         self.chatMessage = chatMessage
@@ -42,6 +44,7 @@ class Chat: NSObject {
         self.isNewChat = isNewChat
         self.memberList = memberList
         self.chatOwnerId = chatOwnerId
+        self.lastActivitySenderId = lastActivitySenderId
         
         super.init()
     }

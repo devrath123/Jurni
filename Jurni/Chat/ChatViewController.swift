@@ -25,6 +25,7 @@ class ChatViewController: UIViewController,UITableViewDelegate, UITableViewDataS
     let imageLoaderCache = ImageCacheLoader()
     var reloadFromNewConversation = false
     var newConversationThreadId = ""
+    var userName = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,6 +39,8 @@ class ChatViewController: UIViewController,UITableViewDelegate, UITableViewDataS
         chatTableView.backgroundColor = UIColor.white
         let groupNib = UINib(nibName: "ChatTableViewCell", bundle: nil)
         chatTableView.register(groupNib, forCellReuseIdentifier: "ChatTableViewCell")
+        
+        userName = UserDefaults.standard.string(forKey: Constants.FIRST_NAME)! + " " + UserDefaults.standard.string(forKey: Constants.LAST_NAME)!
         
         fetchChats()
     }
@@ -126,18 +129,19 @@ class ChatViewController: UIViewController,UITableViewDelegate, UITableViewDataS
                         if(validThreadType == true && validCommunity == true && validUsers == true &&
                            isHidden == false){
                             
-                            
-                            
-                          //  print("\(document.documentID) ==> \(document.data())")
                             var message = "", messageTitle = "", chatImage = ""
                             var i = 0
                             
                             var messageTimeStamp = Date()
+                            var senderId = ""
                             if(document.get("lastActivity") != nil){
                                 let lastActivity = document.get("lastActivity") as! [String : Any]
                                 message = lastActivity["message"] as! String
                                 let timeStamp = lastActivity["timestamp"] as! Timestamp
                                 messageTimeStamp = timeStamp.dateValue()
+                                if (lastActivity["senderId"] != nil){
+                                    senderId = lastActivity["senderId"] as! String
+                                }
                             }
                             
                             
@@ -150,28 +154,7 @@ class ChatViewController: UIViewController,UITableViewDelegate, UITableViewDataS
                             let ownerArray = ownerDocument.path.components(separatedBy: "/")
                             let ownerId = ownerArray.last ?? ""
                             let threadId = document.get("thread_id") as? String
-                            
-//                            defaultStore?.collection("threads").document(threadId!)
-//                                .addSnapshotListener(includeMetadataChanges: true) { querySnapshot, error in
-//                                    guard let document = querySnapshot else {
-//                                        print("Error fetching snapshots: \(error!)")
-//                                        return
-//                                    }
-//                                  
-//                                    guard let data = document.data() else {
-//                                            print("Document data was empty.")
-//                                            return
-//                                          }
-//                                          print("Current Calling data: \(data)")
-//                                    let startMeeting = data["startMeeting"]
-//                                    
-//                                    if let startMeeting = data["startMeeting"] as? DocumentReference{
-//                                        print("Start Meeting: \(startMeeting.path)")
-//                                    }
-//                                }
-                            
-                            
-                           
+                        
                             var membersNameArray = [String]()
                             var membersImagesArray = [String]()
                             var membersIdsArray = [String]()
@@ -209,7 +192,8 @@ class ChatViewController: UIViewController,UITableViewDelegate, UITableViewDataS
                                         }
                                         
                                         if(i == memberArray.count){
-                                            self.chatArray.append(Chat(chatId: document.documentID, chatType: type, chatMessage: message, chatTitle: messageTitle, membersIds: membersIdsArray, members: membersNameArray, membersImages: membersImagesArray,chatImage: chatImage, chatTimeStamp: messageTimeStamp, owner: ownerName, threadId: threadId!, isNewChat: false, memberList: membersArray,chatOwnerId : ownerId))
+                                            self.chatArray.append(Chat(chatId: document.documentID, chatType: type, chatMessage: message, chatTitle: messageTitle, membersIds: membersIdsArray, members: membersNameArray, membersImages: membersImagesArray,chatImage: chatImage, chatTimeStamp: messageTimeStamp, owner: ownerName, threadId: threadId!, isNewChat: false, memberList: membersArray,chatOwnerId : ownerId,
+                                                lastActivitySenderId: senderId))
                                             jurniGroup.leave()
                                         }
                                     }
@@ -225,7 +209,9 @@ class ChatViewController: UIViewController,UITableViewDelegate, UITableViewDataS
                     for thread in threadArray{
                         if let chat = self.chatArray.first(where: {$0.threadId == thread}) {
                             if let newChat = newChatArray.first(where: {$0 == chat.threadId}){
-                                chat.isNewChat = true
+                                if(loggedUserId != chat.lastActivitySenderId){
+                                    chat.isNewChat = true
+                                }
                             }
                             finalArray.append(chat)
                         }
@@ -240,6 +226,13 @@ class ChatViewController: UIViewController,UITableViewDelegate, UITableViewDataS
                         self.chatTableView.reloadData()
                         self.chatTableView.beginUpdates()
                         self.chatTableView.endUpdates()
+                        
+                        
+                        if (self.reloadFromNewConversation){
+                            self.loadEarlierConversation(threadId: self.newConversationThreadId)
+                            print("Thread Id New Conv fetch: \(self.newConversationThreadId)")
+                            self.reloadFromNewConversation = false
+                        }
                     }
                 }
             }
@@ -262,22 +255,33 @@ class ChatViewController: UIViewController,UITableViewDelegate, UITableViewDataS
         
         if(searchChat.chatTitle == ""){
             var tempMembers = searchChat.members
-            let owner = searchChat.owner
-            if(owner != ""){
-                let ownerIndex = tempMembers.firstIndex(of: owner)
-                tempMembers.remove(at: ownerIndex ?? 0)
-                tempMembers.insert(owner, at: 0)
-            }
-            
-            if(tempMembers.count > 5){
-                tempMembers = Array(tempMembers.prefix(5))
-            }
             var chatTitle = ""
-            for member in tempMembers{
-                if(chatTitle == ""){
-                    chatTitle = member
-                }else{
-                    chatTitle += ", " + member
+            if(searchChat.memberList.count == 2){
+                for member in tempMembers {
+                    if (member != userName){
+                        chatTitle = member
+                    }
+                }
+            }else{
+                let owner = searchChat.owner
+                if(owner != "" && owner != userName){
+                    let ownerIndex = tempMembers.firstIndex(of: owner)
+                    tempMembers.remove(at: ownerIndex ?? 0)
+                    tempMembers.insert(owner, at: 0)
+                }
+                
+                if(tempMembers.count > 5){
+                    tempMembers = Array(tempMembers.prefix(5))
+                }
+                
+                for member in tempMembers{
+                    if(chatTitle == ""){
+                        chatTitle = member
+                    }else{
+                        if(!(chatTitle.contains(member))){
+                            chatTitle += ", " + member
+                        }
+                    }
                 }
             }
             cell.chatTitle.text = chatTitle
@@ -301,21 +305,8 @@ class ChatViewController: UIViewController,UITableViewDelegate, UITableViewDataS
         
         if(searchChat.memberList.count > 2){
             cell.chatImageView.image = UIImage(named: "groupblue")
-           // cell.chatImageView?.layer.backgroundColor = UIColor.lightGray.cgColor
         }else{
             cell.chatImageView.image = UIImage(named: "userblue")
-           // cell.chatImageView?.layer.backgroundColor = UIColor.lightGray.cgColor
-//            if(searchChat.chatImage == ""){
-//                cell.chatImageView?.image = nil
-//                cell.chatUser.isHidden = false
-//                cell.chatUser.text = String(searchChat.chatTitle.prefix(1))
-//                cell.chatImageView?.layer.backgroundColor = UIColor.lightGray.cgColor
-//            }else{
-//                cell.chatUser.isHidden = true
-//                cell.chatUser.text = ""
-//                let groupUrl = URL(string:  searchChat.chatImage)
-//                cell.chatImageView.kf.setImage(with: groupUrl)
-//            }
         }
         
         if (reloadFromNewConversation){
@@ -393,6 +384,21 @@ class ChatViewController: UIViewController,UITableViewDelegate, UITableViewDataS
         let alert = UIAlertController(title: "Alert", message: message, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: nil))
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    func loadEarlierConversation(threadId: String){
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            for searchChat in self.searchChatArray{
+                if (searchChat.threadId == threadId){
+                    print("Thread Id New Conv Search: \(searchChat.threadId)")
+                    let rowIndex: Int = self.searchChatArray.firstIndex(of: searchChat)!
+                    let indexPath:IndexPath = IndexPath(row: rowIndex, section: 0);
+                    self.chatTableView.selectRow(at: indexPath, animated: true, scrollPosition: .top)
+                    self.chatTableView.delegate?.tableView!(self.chatTableView, didSelectRowAt: indexPath)
+                    break
+                }
+            }
+        }
     }
     
     func showActivityIndicator() {

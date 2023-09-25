@@ -18,6 +18,7 @@ class VideoCallViewController: UIViewController {
     let appID = "9080b05c7b544be0b39fc84577ecb4c4"
     var token : String? = "007eJxTYDgodSYoJ122ZhY3t/VC+1eR9+7LTkpvN3kt+f9EeeQqtjIFhrSURFOjVANzUwOjJBMDQzNLExNLcwPTNEsLAwNTy8TEe/o7UhoCGRkmCd1iYIRCEF+EoTi9JCytsDTMJdA3OTwiLCyy3MeNgQEA/8IjrQ=="
     var channelName : String = "4JBDNkKrIq5QvFJQdf08"
+    var fromNotification = false
     var agoraId : Int = 0
     var userId : String = ""
     var muteAudio = false
@@ -25,10 +26,14 @@ class VideoCallViewController: UIViewController {
     
     @IBOutlet weak var localVideoView: UIView!
     @IBOutlet weak var remoteVideoView: UIView!
+    @IBOutlet weak var localOverlayVideoView: UIView!
+    
+    @IBOutlet weak var remoteOverlayVideoView: UIView!
     @IBOutlet weak var micButton: UIButton!
     @IBOutlet weak var videoButton: UIButton!
     
     var joined: Bool = false
+    let videoView = UIView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,6 +62,9 @@ class VideoCallViewController: UIViewController {
             {
               print("Rtc token : \(data["rtcToken"]!)")
               self.token = data["rtcToken"]! as? String
+              if(!self.fromNotification){
+                  self.startFirebaseCall()
+              }
               DispatchQueue.main.async {
                   Task {
                       await self.joinChannel()
@@ -126,11 +134,7 @@ class VideoCallViewController: UIViewController {
                leaveChannel()
            }
        }
-    
-    @objc func cancelButtonAction(sender: UIButton!) {
-        self.dismiss(animated: false)
-       }
-    
+
     func checkForPermissions() async -> Bool {
         var hasPermissions = await self.avAuthorization(mediaType: .video)
         if !hasPermissions { return false }
@@ -169,9 +173,10 @@ class VideoCallViewController: UIViewController {
        }
     
     @IBAction func backAction(_ sender: Any) {
+        leaveChannel()
         self.dismiss(animated: false)
     }
-    
+        
     @IBAction func hangUpAction(_ sender: Any) {
         leaveChannel()
         self.dismiss(animated: false)
@@ -180,28 +185,42 @@ class VideoCallViewController: UIViewController {
     @IBAction func videoOffAction(_ sender: Any) {
         if (muteVideo){
             muteVideo = false
+            videoButton.setImage(UIImage(named: "video"), for: .normal)
+            localOverlayVideoView.isHidden = true
         }else{
             muteVideo = true
+            videoButton.setImage(UIImage(named: "videoff"), for: .normal)
+            localOverlayVideoView.isHidden = false
         }
-        agoraEngine.muteLocalVideoStream(muteVideo)
+        agoraEngine.enableLocalVideo(!muteVideo)
     }
     
     @IBAction func audioOffAction(_ sender: Any) {
         if (muteAudio){
             muteAudio = false
+            micButton.setImage(UIImage(named: "micwhite"), for: .normal)
         }else{
             muteAudio = true
+            micButton.setImage(UIImage(named: "micoff"), for: .normal)
         }
-       // enableAudio(isEnabled: !muteAudio)
         agoraEngine.muteLocalAudioStream(muteAudio)
     }
     
-    func enableAudio(isEnabled: Bool) {
-        let movieFileOutput : AVCaptureMovieFileOutput = AVCaptureMovieFileOutput()
-        let audioConnection :AVCaptureConnection? = movieFileOutput.connection(with:AVMediaType.audio)
-        if let connection = audioConnection {
-            print("Audio Enabled : \(isEnabled)")
-            connection.isEnabled = isEnabled
+    func startFirebaseCall(){
+        lazy var functions = Functions.functions()
+        functions.httpsCallable("startChatCall").call(["threadId": channelName, "meetingLink": "https://app.jurni.io/meet/\(channelName)"] as [String : Any]) { result, error in
+          if let error = error as NSError? {
+            if error.domain == FunctionsErrorDomain {
+              let code = FunctionsErrorCode(rawValue: error.code)
+              let message = error.localizedDescription
+              print("Error : \(message) Code \(code)")
+                
+            }
+          }
+          if let data = result?.data as? [String: Any]
+            {
+              print("Data: \(data)")
+            }
         }
     }
 }
@@ -209,11 +228,28 @@ class VideoCallViewController: UIViewController {
 extension VideoCallViewController: AgoraRtcEngineDelegate {
     // Callback called when a new host joins the channel
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int) {
-        let videoCanvas = AgoraRtcVideoCanvas()
-        videoCanvas.uid = uid
-        videoCanvas.renderMode = .hidden
-        videoCanvas.view = remoteVideoView
-        self.agoraEngine.setupRemoteVideo(videoCanvas)
-        print("Remote user joined: \(uid)")
+            let videoCanvas = AgoraRtcVideoCanvas()
+            videoCanvas.uid = uid
+            videoCanvas.renderMode = .hidden
+            videoCanvas.view = remoteVideoView
+            self.agoraEngine.setupRemoteVideo(videoCanvas)
+    }
+    
+     func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
+             let videoCanvas = AgoraRtcVideoCanvas()
+             videoCanvas.uid = uid
+             videoCanvas.renderMode = .hidden
+             videoCanvas.view = UIView()
+             self.agoraEngine.setupRemoteVideo(videoCanvas)
+    }
+    
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didLocalVideoEnabled enabled: Bool, byUid uid: UInt) {
+        if(enabled){
+            remoteOverlayVideoView.isHidden = true
+        }else{
+            remoteOverlayVideoView.isHidden = false
+        }
     }
 }
+
+
