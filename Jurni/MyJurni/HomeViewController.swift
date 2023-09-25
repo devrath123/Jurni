@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import FirebaseFirestore
 import FirebaseAuth
+import OneSignal
 
 class HomeViewController : UIViewController, UITableViewDataSource, UITableViewDelegate{
     
@@ -17,6 +18,7 @@ class HomeViewController : UIViewController, UITableViewDataSource, UITableViewD
     var jurniArray = [MyJurni]()
     var jurniDocumentArray = [QueryDocumentSnapshot]()
     var selectedJurniDocument: QueryDocumentSnapshot? = nil
+    var channelName = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +33,46 @@ class HomeViewController : UIViewController, UITableViewDataSource, UITableViewD
         myJurniTableView.register(myJurniNib, forCellReuseIdentifier: "MyJurniTableViewCell")
         
         fetchJurnis()
+        setNotificationWhileAppOpen()
+    }
+    
+    func setNotificationWhileAppOpen(){
+        let notificationWillShowInForegroundBlock: OSNotificationWillShowInForegroundBlock = { notification, completion in
+          print("Received Notification: ", notification.notificationId ?? "no id")
+          print("launchURL: ", notification.launchURL ?? "no launch url")
+          print("content_available = \(notification.contentAvailable)")
+           
+
+          if notification.notificationId == "example_silent_notif" {
+            // Complete with null means don't show a notification
+            completion(nil)
+          } else {
+            // Complete with a notification means it will show
+            completion(notification)
+          }
+        }
+        OneSignal.setNotificationWillShowInForegroundHandler(notificationWillShowInForegroundBlock)
+
+        
+        let notificationOpenedBlock: OSNotificationOpenedBlock = { result in
+            // This block gets called when the user reacts to a notification received
+            let notification: OSNotification = result.notification
+            print("Message: ", notification.body ?? "empty body")
+            print("badge number: ", notification.badge)
+            print("notification sound: ", notification.sound ?? "No sound")
+                    
+            if let additionalData = notification.additionalData {
+                print("additionalData: ", additionalData)
+                if (additionalData["channelName"] != nil){
+                    self.channelName = additionalData["channelName"] as! String
+                    DispatchQueue.main.async{
+                        self.performSegue(withIdentifier: "videoCallDashboardSegue", sender: nil)
+                    }
+                }
+            }
+        }
+
+        OneSignal.setNotificationOpenedHandler(notificationOpenedBlock)
     }
     
     func fetchJurnis(){
@@ -131,8 +173,14 @@ class HomeViewController : UIViewController, UITableViewDataSource, UITableViewD
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let destinationVC = segue.destination as! MyJurniDetailsViewController
+        if (segue.identifier == "videoCallDashboardSegue"){
+            let destinationVC = segue.destination as! VideoCallViewController
+            destinationVC.channelName = channelName
+            destinationVC.fromNotification = true
+        }else{
+            let destinationVC = segue.destination as! MyJurniDetailsViewController
             destinationVC.jurniDocument = selectedJurniDocument
+        }
     }
 }
 

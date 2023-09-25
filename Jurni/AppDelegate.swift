@@ -24,7 +24,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          
          // OneSignal initialization
          OneSignal.initWithLaunchOptions(launchOptions)
-         OneSignal.setAppId("b9f49301-9151-415a-92e9-eb0cbc3a1e8a")
+        // OneSignal.setAppId("b9f49301-9151-415a-92e9-eb0cbc3a1e8a") Staging
+         OneSignal.setAppId("980394aa-6569-4dd1-9c55-7597edcee11b")  //Prod
          
          // promptForPushNotifications will show the native iOS notification permission prompt.
          // We recommend removing the following code and instead using an In-App Message to prompt for notification permission (See step 8)
@@ -32,6 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
            print("User accepted notifications: \(accepted)")
          })
         
+        application.isIdleTimerDisabled = true
         return true
     }
 

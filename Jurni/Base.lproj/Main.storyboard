@@ -2893,6 +2893,7 @@
                         <outlet property="myJurniTableView" destination="gIi-1S-nC8" id="Sbt-Qu-iA4"/>
                         <outlet property="sideMenuBtn" destination="cN2-t0-se7" id="IIO-lN-5cs"/>
                         <segue destination="Kr6-Kc-x9d" kind="showDetail" identifier="jurniDetailsSegue" id="f9f-ao-792"/>
+                        <segue destination="T9v-Hk-GFs" kind="showDetail" identifier="videoCallDashboardSegue" id="SCh-gu-541"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WMx-Iy-rSD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -3436,6 +3437,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
+        <segue reference="SCh-gu-541"/>
         <segue reference="cRD-cX-usZ"/>
         <segue reference="DsH-O5-CNI"/>
     </inferredMetricsTieBreakers>
