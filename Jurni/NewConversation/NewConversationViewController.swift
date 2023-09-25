@@ -21,6 +21,7 @@ class NewConversationViewController: UIViewController, UITableViewDelegate, UITa
     var searchMemberArray = [Member]()
     var selectedMemberArray = [Member]()
     var newConversationProtocol : NewConversationProtocol?
+    var addToChatPopUpShown = false
     
     var chats : [Chat]? = nil
     
@@ -159,18 +160,22 @@ class NewConversationViewController: UIViewController, UITableViewDelegate, UITa
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if(!addToChatPopUpShown){
+            showOptionForSingleOrGroupChat(row: indexPath.row)
+        }else{
             selectedTableViewVisibility(isHidden: false)
-            
+
             let selectedMember = searchMemberArray[indexPath.row]
             selectedMemberArray.append(selectedMember)
-            
+
             let searchedIndex: Int = searchMemberArray.firstIndex(of: selectedMember)!
             searchMemberArray.remove(at: searchedIndex)
             let memberIndex: Int = memberArray.firstIndex(of: selectedMember)!
             memberArray.remove(at: memberIndex)
-            
+
             membersTableView.reloadData()
             selectedMemberCollectionView.reloadData()
+        }
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -252,6 +257,24 @@ class NewConversationViewController: UIViewController, UITableViewDelegate, UITa
     
     
     @IBAction func startConversationAction(_ sender: Any) {
+        showGroupNameAlert()
+    }
+    
+    func showGroupNameAlert(){
+        let alert = UIAlertController(title: "Chat Room Name", message: "", preferredStyle: .alert)
+        alert.addTextField { (textField) in
+            textField.placeholder = "Choose a name or leave blank"
+        }
+
+        alert.addAction(UIAlertAction(title: "Start Chatting", style: .default, handler: { [weak alert] (_) in
+            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+            self.startConversation(name: textField?.text ?? "")
+        }))
+
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func startConversation(name: String = ""){
         let communityId : String = (UserDefaults.standard.string(forKey: Constants.COMMUNITY_ID) ?? "") as String
         let userId : String = Auth.auth().currentUser!.uid
         let firestore = Firestore.firestore()
@@ -277,7 +300,7 @@ class NewConversationViewController: UIViewController, UITableViewDelegate, UITa
         for chat in self.chats!{
             if(chat.membersIds.count == membersIds.count && chat.membersIds.sorted() == membersIds.sorted()){
                 self.dismiss(animated: true, completion: nil)
-                self.newConversationProtocol?.newConversationFailure(message: "Chat Already exists with selected members.")
+                self.newConversationProtocol?.loadEarlierConversation(threadId: chat.threadId)
                 return
             }
         }
@@ -288,7 +311,7 @@ class NewConversationViewController: UIViewController, UITableViewDelegate, UITa
             "community": communityReference,
             "thread_id": docRef.documentID,
             "members": members,
-            "name": "",
+            "name": name,
             "owner": ownerReference,
             "type": "thread"
         ]){ err in
@@ -296,6 +319,7 @@ class NewConversationViewController: UIViewController, UITableViewDelegate, UITa
                 print("Error updating document: \(err)")
                 self.newConversationProtocol?.newConversationFailure(message: "Please try again later.")
             } else {
+                print("Thread Id New Conv: \(docRef.documentID)")
                 self.newConversationProtocol?.newConversationSuccess(threadId: docRef.documentID)
             }
             self.dismiss(animated: true, completion: nil)
@@ -306,10 +330,42 @@ class NewConversationViewController: UIViewController, UITableViewDelegate, UITa
         selectedMemberView.isHidden = isHidden
     }
     
+    func showOptionForSingleOrGroupChat(row: Int){
+        let refreshAlert = UIAlertController(title: "", message: "Do you want to add someone else to this chat ?", preferredStyle: UIAlertController.Style.alert)
+
+        refreshAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { [self] (action: UIAlertAction!) in
+            refreshAlert.dismiss(animated: true)
+            addToChatPopUpShown = true
+            selectedTableViewVisibility(isHidden: false)
+            
+            let selectedMember = searchMemberArray[row]
+            selectedMemberArray.append(selectedMember)
+            
+            let searchedIndex: Int = searchMemberArray.firstIndex(of: selectedMember)!
+            searchMemberArray.remove(at: searchedIndex)
+            let memberIndex: Int = memberArray.firstIndex(of: selectedMember)!
+            memberArray.remove(at: memberIndex)
+            
+            membersTableView.reloadData()
+            selectedMemberCollectionView.reloadData()
+        }))
+
+        refreshAlert.addAction(UIAlertAction(title: "No thanks", style: .cancel, handler: { (action: UIAlertAction!) in
+            refreshAlert.dismiss(animated: true)
+            let selectedMember = self.searchMemberArray[row]
+            self.selectedMemberArray.append(selectedMember)
+            
+            self.startConversation()
+        }))
+
+        present(refreshAlert, animated: true, completion: nil)
+    }
+    
 }
 
 protocol NewConversationProtocol{
     func newConversationSuccess(threadId: String)
     func newConversationFailure(message: String)
+    func loadEarlierConversation(threadId: String)
 }
 

@@ -778,7 +778,7 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="333" height="90"/>
                                                 <subviews>
                                                     <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="BSe-td-fgT">
-                                                        <rect key="frame" x="0.0" y="0.0" width="278" height="90"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="268" height="90"/>
                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Jcm-AZ-U35">
@@ -854,15 +854,16 @@
                                                             <outlet property="delegate" destination="AVG-kS-dsE" id="IPz-Od-ABg"/>
                                                         </connections>
                                                     </collectionView>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2jT-hk-JdB">
-                                                        <rect key="frame" x="288" y="30" width="30" height="30"/>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="characterWrap" role="primary" translatesAutoresizingMaskIntoConstraints="NO" id="2jT-hk-JdB">
+                                                        <rect key="frame" x="278" y="25" width="40" height="40"/>
+                                                        <color key="backgroundColor" red="0.79607843140000001" green="0.25882352939999997" blue="0.47450980390000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="height" constant="30" id="EfH-bk-hQi"/>
-                                                            <constraint firstAttribute="width" constant="30" id="ejU-qv-Obk"/>
+                                                            <constraint firstAttribute="height" constant="40" id="EfH-bk-hQi"/>
+                                                            <constraint firstAttribute="width" constant="40" id="ejU-qv-Obk"/>
                                                         </constraints>
-                                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                        <state key="normal" backgroundImage="startconver">
+                                                        <state key="normal" title=" Start  Chat">
                                                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         </state>
                                                         <connections>
@@ -3491,7 +3492,6 @@
         <image name="settingwhitebg" width="100" height="50"/>
         <image name="settingwhiteborder" width="100" height="50"/>
         <image name="splash" width="360" height="640"/>
-        <image name="startconver" width="15" height="15"/>
         <image name="state" width="20" height="20"/>
         <image name="submitbg" width="200" height="60"/>
         <image name="total" width="350" height="42"/>
