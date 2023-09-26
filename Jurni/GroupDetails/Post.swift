@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseFirestoreSwift
 
 class Post: NSObject {
     var postType: String
@@ -13,6 +14,7 @@ class Post: NSObject {
     var postContent: PostContent
     var user: User
     var postReaction: PostReaction
+    @DocumentID var id: String?
    
     init(postType: String, postTime: Date, postContent: PostContent, user: User,
          postReaction: PostReaction) {
@@ -28,8 +30,8 @@ class Post: NSObject {
 
 struct PostContent{
     var postText: String = ""
-    var postImageUrls: [String] = []
-    var postVideoUrl: String = ""
+    var postImageUrls: [String]
+    var postVideoUrl: [String]
 }
 
 struct User{
@@ -44,5 +46,11 @@ struct PostReaction{
     var sad: Int = 0
     var surprise: Int = 0
     var thumbsUp: Int = 0
+}
+
+struct Comment {
+    var content: String
+    var from: String
+    var timestamp: Date
 }
 

@@ -102,12 +102,12 @@ class GroupsViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedGroup = groupArray[indexPath.row]
-      //  self.performSegue(withIdentifier: "groupDetailsSegue", sender: nil)
+        self.performSegue(withIdentifier: "groupDetailsSegue", sender: nil)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-      //  let destinationVC = segue.destination as! GroupDetailsViewController
-      //  destinationVC.groupDetails = selectedGroup
+        let destinationVC = segue.destination as! GroupDetailsViewController
+        destinationVC.groupDetails = selectedGroup
     }
     
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3ADCF3EB2AB2507C0004C546 /* PostTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3ADCF3E92AB2507C0004C546 /* PostTableViewCell.xib */; };
 		A3E8325D2924B0E300A3806E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E8325C2924B0E300A3806E /* AppDelegate.swift */; };
 		A3E8325F2924B0E300A3806E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E8325E2924B0E300A3806E /* SceneDelegate.swift */; };
 		A3E832612924B0E300A3806E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E832602924B0E300A3806E /* ViewController.swift */; };
@@ -30,8 +31,6 @@
 		B80E47192A38F1F4007A858E /* ChatOwnerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E47172A38F1F4007A858E /* ChatOwnerCollectionViewCell.swift */; };
 		B80E471A2A38F1F4007A858E /* ChatOwnerCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B80E47182A38F1F4007A858E /* ChatOwnerCollectionViewCell.xib */; };
 		B8170EEC2A31BF4500B539D1 /* ChatOwnerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8170EEB2A31BF4500B539D1 /* ChatOwnerTableViewCell.swift */; };
-		B81AED0429F05D1B0075F57E /* PostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81AED0229F05D1B0075F57E /* PostTableViewCell.swift */; };
-		B81AED0529F05D1B0075F57E /* PostTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B81AED0329F05D1B0075F57E /* PostTableViewCell.xib */; };
 		B81C4CBD2A1FA10A00A38EEF /* ChatDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81C4CBC2A1FA10A00A38EEF /* ChatDetailsViewController.swift */; };
 		B81D1C0C2951C8D00072F602 /* PaymentPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81D1C0B2951C8D00072F602 /* PaymentPlan.swift */; };
 		B81D1C112951E92C0072F602 /* UpdatePaymentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81D1C0F2951E92C0072F602 /* UpdatePaymentTableViewCell.swift */; };
@@ -110,6 +109,10 @@
 		B8D7820C29F19C1D0065AF85 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D7820B29F19C1D0065AF85 /* Post.swift */; };
 		B8E9F42D2A54499900252C82 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = B8E9F42C2A54499900252C82 /* Kingfisher */; };
 		B8EEF37C2A1CF72500DF6A8B /* NewConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8EEF37B2A1CF72500DF6A8B /* NewConversationViewController.swift */; };
+		EB7E2E312ABBC562006ABEC1 /* PostDateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7E2E302ABBC562006ABEC1 /* PostDateExtension.swift */; };
+		EBA7BD162ABCD4C80092684D /* CommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBA7BD152ABCD4C80092684D /* CommentView.swift */; };
+		EBF76DEF2AB3CF9300417F1C /* PostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF76DEE2AB3CF9300417F1C /* PostTableViewCell.swift */; };
+		EBF76DF52AB3E1F800417F1C /* CommentView.xib in Resources */ = {isa = PBXBuildFile; fileRef = EBF76DF42AB3E1F800417F1C /* CommentView.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -137,6 +140,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3ADCF3E92AB2507C0004C546 /* PostTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PostTableViewCell.xib; sourceTree = "<group>"; };
 		A3E832592924B0E300A3806E /* Jurni.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Jurni.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3E8325C2924B0E300A3806E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A3E8325E2924B0E300A3806E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -163,8 +167,6 @@
 		B80E47172A38F1F4007A858E /* ChatOwnerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatOwnerCollectionViewCell.swift; sourceTree = "<group>"; };
 		B80E47182A38F1F4007A858E /* ChatOwnerCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatOwnerCollectionViewCell.xib; sourceTree = "<group>"; };
 		B8170EEB2A31BF4500B539D1 /* ChatOwnerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatOwnerTableViewCell.swift; sourceTree = "<group>"; };
-		B81AED0229F05D1B0075F57E /* PostTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTableViewCell.swift; sourceTree = "<group>"; };
-		B81AED0329F05D1B0075F57E /* PostTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PostTableViewCell.xib; sourceTree = "<group>"; };
 		B81C4CBC2A1FA10A00A38EEF /* ChatDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDetailsViewController.swift; sourceTree = "<group>"; };
 		B81D1C0B2951C8D00072F602 /* PaymentPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentPlan.swift; sourceTree = "<group>"; };
 		B81D1C0F2951E92C0072F602 /* UpdatePaymentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePaymentTableViewCell.swift; sourceTree = "<group>"; };
@@ -218,6 +220,10 @@
 		B8D2D746298D54AB00D577DB /* JurniChapterTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = JurniChapterTableViewCell.xib; sourceTree = "<group>"; };
 		B8D7820B29F19C1D0065AF85 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		B8EEF37B2A1CF72500DF6A8B /* NewConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationViewController.swift; sourceTree = "<group>"; };
+		EB7E2E302ABBC562006ABEC1 /* PostDateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDateExtension.swift; sourceTree = "<group>"; };
+		EBA7BD152ABCD4C80092684D /* CommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
+		EBF76DEE2AB3CF9300417F1C /* PostTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTableViewCell.swift; sourceTree = "<group>"; };
+		EBF76DF42AB3E1F800417F1C /* CommentView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CommentView.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -327,8 +333,10 @@
 		B81AED0129F05CE20075F57E /* Post */ = {
 			isa = PBXGroup;
 			children = (
-				B81AED0229F05D1B0075F57E /* PostTableViewCell.swift */,
-				B81AED0329F05D1B0075F57E /* PostTableViewCell.xib */,
+				3ADCF3E92AB2507C0004C546 /* PostTableViewCell.xib */,
+				EBF76DEE2AB3CF9300417F1C /* PostTableViewCell.swift */,
+				EBF76DF42AB3E1F800417F1C /* CommentView.xib */,
+				EBA7BD152ABCD4C80092684D /* CommentView.swift */,
 			);
 			path = Post;
 			sourceTree = "<group>";
@@ -522,6 +530,7 @@
 				B81AED0129F05CE20075F57E /* Post */,
 				B8A75EF129AD25540014CEA8 /* GroupDetailsViewController.swift */,
 				B8D7820B29F19C1D0065AF85 /* Post.swift */,
+				EB7E2E302ABBC562006ABEC1 /* PostDateExtension.swift */,
 			);
 			path = GroupDetails;
 			sourceTree = "<group>";
@@ -694,16 +703,17 @@
 				B80CF378296DB4850080FC1B /* MyJurniTableViewCell.xib in Resources */,
 				B88AE1D12A1D40A900CAD0EC /* MemberDetailTableViewCell.xib in Resources */,
 				B8C869502A5C5C6A008B3709 /* GroupMembersTableViewCell.xib in Resources */,
+				EBF76DF52AB3E1F800417F1C /* CommentView.xib in Resources */,
 				B809EEB32934DF73006EB46D /* GoogleService-Info.plist in Resources */,
 				B8B477172A38B2C10049F751 /* ChatUserCollectionViewCell.xib in Resources */,
 				B881FD062A1FECEA00B23C8B /* ChatOwnerTableViewCell.xib in Resources */,
 				B81D1C122951E92C0072F602 /* UpdatePaymentTableViewCell.xib in Resources */,
 				B80241592A321FDF0043FA9E /* ChatUserTableViewCell.xib in Resources */,
 				B894C79D295362F8007728FE /* PaymentPlanTableViewCell.xib in Resources */,
+				3ADCF3EB2AB2507C0004C546 /* PostTableViewCell.xib in Resources */,
 				A3E832662924B0E500A3806E /* Assets.xcassets in Resources */,
 				B849A163299EC01A004B580F /* GroupTableViewCell.xib in Resources */,
 				A3E832642924B0E300A3806E /* Main.storyboard in Resources */,
-				B81AED0529F05D1B0075F57E /* PostTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -749,7 +759,6 @@
 				B894C7A1295385AC007728FE /* UpcomingPaymentTableViewCell.swift in Sources */,
 				B8D2D744298D51E400D577DB /* JurniChapter.swift in Sources */,
 				B83F6B7D294CB09700CAC63F /* PaymentMethodBean.swift in Sources */,
-				B81AED0429F05D1B0075F57E /* PostTableViewCell.swift in Sources */,
 				A3E832612924B0E300A3806E /* ViewController.swift in Sources */,
 				A3E8325D2924B0E300A3806E /* AppDelegate.swift in Sources */,
 				B8769E7C2A0D0A120009D082 /* Chat.swift in Sources */,
@@ -783,6 +792,7 @@
 				B8D2D747298D54AB00D577DB /* JurniChapterTableViewCell.swift in Sources */,
 				B82C68032978359200C47DF1 /* MyJurniDetailsViewController.swift in Sources */,
 				B881FD0C2A1FEE2E00B23C8B /* ChatMessage.swift in Sources */,
+				EBA7BD162ABCD4C80092684D /* CommentView.swift in Sources */,
 				B8D7820C29F19C1D0065AF85 /* Post.swift in Sources */,
 				B8984E392A1D13060004E920 /* Member.swift in Sources */,
 				B80B856F2941CDBB00199686 /* ContactDetailsViewController.swift in Sources */,
@@ -795,8 +805,10 @@
 				B88AE1D02A1D40A900CAD0EC /* MemberDetailTableViewCell.swift in Sources */,
 				B8769E792A0D035C0009D082 /* ChatTableViewCell.swift in Sources */,
 				B82BC9BB29D5C8FA00C3F258 /* ChatViewController.swift in Sources */,
+				EB7E2E312ABBC562006ABEC1 /* PostDateExtension.swift in Sources */,
 				B87BFD6C297998D600248688 /* MyJurniStepChaptersViewController.swift in Sources */,
 				B80B7E982A236BD700E6C8FA /* SelectedCollectionViewCell.swift in Sources */,
+				EBF76DEF2AB3CF9300417F1C /* PostTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
