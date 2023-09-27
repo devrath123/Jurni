@@ -11,8 +11,9 @@ import FirebaseFirestore
 import FirebaseDatabase
 import FirebaseAuth
 import FirebaseStorage
+import PhotosUI
 
-class GroupDetailsViewController: UIViewController {
+class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate, PHPickerViewControllerDelegate {
     
     @IBOutlet weak var groupNameLabel: UILabel!
     @IBOutlet weak var membersCountLabel: UILabel!
@@ -24,11 +25,19 @@ class GroupDetailsViewController: UIViewController {
     var avpPlayerController = AVPlayerViewController()
     var posts: [Post] = []
     
+    let imagePicker = UIImagePickerController()
+    var selectedImages: [UIImage] = []
+    var videoURL: URL?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         groupPostTableView.dataSource = self
         groupPostTableView.delegate = self
+        imagePicker.delegate = self
         
+        let headerNib = UINib(nibName: "ComposeMessageTableViewCell", bundle: nil)
+        groupPostTableView.register(headerNib, forCellReuseIdentifier: "ComposeMessageTableViewCell")
+
         let nib = UINib(nibName: "PostTableViewCell", bundle: nil)
         groupPostTableView.register(nib, forCellReuseIdentifier: "PostTableViewCell")
         fetchPosts()
@@ -42,12 +51,14 @@ class GroupDetailsViewController: UIViewController {
     
     func fetchPosts(){
         let defaultStore = Firestore.firestore()
+        print("Group id: \(self.groupDetails?.groupId)")
         defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").getDocuments(){ (querySnapshot, err) in
             if let err = err {
                 print("Error getting documents: \(err) :(")
             } else {
                 if let documents = querySnapshot?.documents {
                     for document in documents {
+                        print("Doc id: \(document.documentID)")
                         let id = document.documentID
                         let postType = document.get("type") as? String
                         let timestamp = document.get("timestamp") as! Timestamp
@@ -177,6 +188,95 @@ class GroupDetailsViewController: UIViewController {
             player.play()
         }
     }
+    
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        if results.count == 0 {
+            // User canceled out of picker
+            print("User canceled")
+            selectedImages = []
+          //  delegate?.resetCells()
+        }else{
+            for result in results {
+                result.itemProvider.loadObject(ofClass: UIImage.self) { (object, error) in
+                    if let image = object as? UIImage {
+                        self.selectedImages.append(image)
+//                        if (results.count == self.selectedImages.count){
+//                            self.postCellImageDelegate?.setImages(images: self.selectedImages)
+//                        }
+                    }
+                    
+                    
+                }
+            }
+        }
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let videoURL = info[.mediaURL] as? URL {
+            self.videoURL = videoURL
+           // tableView.reloadData()
+        }
+        
+        dismiss(animated: true, completion: nil)
+    }
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+      //  delegate?.resetCells()
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func randomString(length: Int) -> String {
+        let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        return String((0..<length).map{ _ in letters.randomElement()! })
+    }
+    
+    func postDataToFirebase(dataType: String, content: [String: Any]){
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMMM d, yyyy 'at' h:mm:ss a 'UTC'ZZZZZ"
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 5 * 3600 + 30 * 60) // UTC+5:30
+        let date = Date() // Replace this with your specific Date object
+        let da = dateFormatter.string(from: date)
+        let timestamp = dateFormatter.date(from: da)
+        
+//        let dateFormatter = DateFormatter()
+//        dateFormatter.dateFormat = "MMMM d, yyyy 'at' h:mm:ss a 'UTC'ZZZZZ"
+//        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+//        dateFormatter.timeZone = TimeZone(secondsFromGMT: 5 * 3600 + 30 * 60) // UTC+5:30
+//        let date = Date() // Replace this with your specific Date object
+//        let timestamp = dateFormatter.string(from: date)
+        let randomId = String("\(randomString(length: 20))")
+        let groupId = self.groupDetails?.groupId ?? ""
+        let from = Auth.auth().currentUser!.uid
+        let ownerString = Firestore.firestore().collection("users").document(from)
+        let ownerReference = Firestore.firestore().document(ownerString.path)
+        
+        let reactions = [
+            "THUMB_UP": 0,
+            "LOVE": 0,
+            "SAD": 0,
+            "ANGRY": 0,
+            "SURPRISE": 0,
+            "LAUGH": 0 ]
+        let docRef = Firestore.firestore().collection("groups").document(groupId).collection("posts").document(randomId)
+        docRef.setData([
+            "from": ownerReference,
+            "type": dataType,
+            "meta": content,
+            "reactions": reactions,
+            "timestamp": timestamp
+        ]){ err in
+            if let err = err {
+                print("Error updating document: \(err)")
+            } else {
+                print("successfully uploded ")
+                DispatchQueue.global().async {
+                    self.fetchPosts()
+                }
+            }
+        }
+    }
 }
 
 extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource {
@@ -189,6 +289,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         let post = posts[indexPath.row]
         cell.delegate = self
         cell.configurePostCell(with: post)
+        
         if !post.postContent.postVideoUrl.isEmpty{
             playVideo(videoUrl: post.postContent.postVideoUrl[0], videoView: cell.videoContainerView)
         }
@@ -197,6 +298,29 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             
         }
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        
+        let headerCell = tableView.dequeueReusableCell(withIdentifier: "ComposeMessageTableViewCell") as! ComposeMessageTableViewCell
+        headerCell.groupDetails = self.groupDetails
+        headerCell.apiCallDelegate = self
+       
+        headerCell.selectImageHandler = {
+            var configuration = PHPickerConfiguration()
+            configuration.selectionLimit = 0  // 0 means no limit
+            configuration.filter = .images
+            
+            let picker = PHPickerViewController(configuration: configuration)
+            picker.delegate = self
+            self.present(picker, animated: true, completion: nil)
+        }
+        return headerCell
+        
+        }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 250
     }
 }
 
@@ -217,3 +341,17 @@ extension GroupDetailsViewController: ReactionTableViewCellDelegate {
     }
 }
 
+
+extension GroupDetailsViewController: ApiCallDelegate{
+//    func resetCells() {
+//
+//    }
+//
+//    func setImages(images: [UIImage]) {
+//
+//    }
+    
+    func postMessage(message: String){
+        self.postDataToFirebase(dataType: "text", content: ["content" : message])
+    }
+}

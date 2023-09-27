@@ -187,24 +187,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     
     
     func setPosterAvatar(with post: Post) {
-        posterProfilePicImageView.layer.cornerRadius = posterProfilePicImageView.frame.size.width / 2
-        posterProfilePicImageView.layer.masksToBounds = true
-        let posterImageURL = URL(string: post.user.userAvatar)
-        if(posterImageURL != nil){
-            DispatchQueue.global().async {
-                let data = try? Data(contentsOf: posterImageURL!)
-                DispatchQueue.main.async {
-                                        self.userInitiaTextLabel.isHidden = true
-                    self.posterProfilePicImageView.image = UIImage(data: data!)
-                }
-            }
-        } else {
-            DispatchQueue.main.async {
-                self.userInitiaTextLabel.isHidden = false
-                self.userInitiaTextLabel.text = String(post.user.userName.prefix(1))
-                self.posterProfilePicImageView.layer.backgroundColor = UIColor.lightGray.cgColor
-            }
-        }
+        self.posterProfilePicImageView.image = UIImage(named: "userblue")
     }
     
     func textFieldDidChange(_ textField: UITextField) {

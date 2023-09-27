@@ -48,7 +48,7 @@ class ComposeMessageTableViewCell: UITableViewCell, UITextViewDelegate {
     // MARK: - Lifecycles
     override func awakeFromNib() {
         super.awakeFromNib()
-        backgroundBorderView.layer.cornerRadius = 50
+        backgroundBorderView.layer.cornerRadius = 20
         backgroundBorderView.layer.borderWidth = 1.0
         backgroundBorderView.layer.borderColor = UIColor.opaqueSeparator.cgColor
         
@@ -56,6 +56,7 @@ class ComposeMessageTableViewCell: UITableViewCell, UITextViewDelegate {
         selectedVideoView.isHidden = true
         cancelPhotoButton.isHidden = true
         messageTextView.delegate = self
+       
         let previewImages = UITapGestureRecognizer(target: self, action: #selector(imageCountLabelTapped))
         imageCountLabel.isUserInteractionEnabled = true
         imageCountLabel.addGestureRecognizer(previewImages)
@@ -215,16 +216,16 @@ class ComposeMessageTableViewCell: UITableViewCell, UITextViewDelegate {
         //     player.play()
     }
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if messageTextView.textColor == UIColor.placeholderText {
-            messageTextView.text = nil
-            messageTextView.textColor = UIColor.black// Set the text color to the desired color when editing starts.
-        }
+//        if messageTextView.textColor == UIColor.placeholderText {
+//            messageTextView.text = nil
+//            messageTextView.textColor = UIColor.black// Set the text color to the desired color when editing starts.
+//        }
     }
     func textViewDidEndEditing(_ textView: UITextView) {
-        if messageTextView.text.isEmpty {
-            messageTextView.text = "Write something here..."
-            messageTextView.textColor = UIColor.placeholderText
-        }
+//        if messageTextView.text.isEmpty {
+//            messageTextView.text = "Write something here..."
+//            messageTextView.textColor = UIColor.placeholderText
+//        }
     }
     // MARK: - Actions
     
