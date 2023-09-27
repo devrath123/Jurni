@@ -3,7 +3,7 @@
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
@@ -1617,7 +1617,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="orO-2K-mbF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4360.8695652173919" y="229.6875"/>
+            <point key="canvasLocation" x="3921" y="229"/>
         </scene>
         <!--Settings View Controller-->
         <scene sceneID="QE5-fx-l3O">
