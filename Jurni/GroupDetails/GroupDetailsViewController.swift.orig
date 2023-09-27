@@ -38,11 +38,14 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
         groupPostTableView.delegate = self
         imagePicker.delegate = self
         
+<<<<<<< HEAD
+        setupCollectionView() // should only load for individual table view cell interaction and not for all posts at once
+        
+=======
         let headerNib = UINib(nibName: "ComposeMessageTableViewCell", bundle: nil)
         groupPostTableView.register(headerNib, forCellReuseIdentifier: "ComposeMessageTableViewCell")
 
-        setupCollectionView() // should only load for individual table view cell interaction and not for all posts at once
-        
+>>>>>>> main
         let nib = UINib(nibName: "PostTableViewCell", bundle: nil)
         groupPostTableView.register(nib, forCellReuseIdentifier: "PostTableViewCell")
         fetchPosts()
@@ -383,6 +386,15 @@ extension String {
         return html.string
     }
 }
+<<<<<<< HEAD
+=======
+
+extension GroupDetailsViewController: ReactionTableViewCellDelegate {
+    func reactionButtonTapped(postID: String, isLiked: Bool) {
+        addReaction(postID: postID, isLiked: isLiked)
+    }
+}
+
 
 extension GroupDetailsViewController: ApiCallDelegate{
 //    func resetCells() {
@@ -397,3 +409,4 @@ extension GroupDetailsViewController: ApiCallDelegate{
         self.postDataToFirebase(dataType: "text", content: ["content" : message])
     }
 }
+>>>>>>> main

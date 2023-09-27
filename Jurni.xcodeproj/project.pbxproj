@@ -63,13 +63,6 @@
 		B881FD0C2A1FEE2E00B23C8B /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881FD0B2A1FEE2E00B23C8B /* ChatMessage.swift */; };
 		B88AE1D02A1D40A900CAD0EC /* MemberDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AE1CE2A1D40A900CAD0EC /* MemberDetailTableViewCell.swift */; };
 		B88AE1D12A1D40A900CAD0EC /* MemberDetailTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B88AE1CF2A1D40A900CAD0EC /* MemberDetailTableViewCell.xib */; };
-		B8918CAA2AC41C0800B39F81 /* ComposeMessageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8918CA32AC41C0800B39F81 /* ComposeMessageTableViewCell.xib */; };
-		B8918CAB2AC41C0800B39F81 /* DummyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8918CA42AC41C0800B39F81 /* DummyTableViewController.swift */; };
-		B8918CAC2AC41C0800B39F81 /* ImagePreviewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8918CA52AC41C0800B39F81 /* ImagePreviewTableViewCell.swift */; };
-		B8918CAD2AC41C0800B39F81 /* LoadedImagesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8918CA62AC41C0800B39F81 /* LoadedImagesTableViewController.swift */; };
-		B8918CAE2AC41C0800B39F81 /* ImagePreviewTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8918CA72AC41C0800B39F81 /* ImagePreviewTableViewCell.xib */; };
-		B8918CAF2AC41C0800B39F81 /* DummyMessageTableViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B8918CA82AC41C0800B39F81 /* DummyMessageTableViewController.storyboard */; };
-		B8918CB02AC41C0800B39F81 /* ComposeMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8918CA92AC41C0800B39F81 /* ComposeMessageTableViewCell.swift */; };
 		B894C79C295362F8007728FE /* PaymentPlanTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B894C79A295362F8007728FE /* PaymentPlanTableViewCell.swift */; };
 		B894C79D295362F8007728FE /* PaymentPlanTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B894C79B295362F8007728FE /* PaymentPlanTableViewCell.xib */; };
 		B894C7A1295385AC007728FE /* UpcomingPaymentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B894C79F295385AC007728FE /* UpcomingPaymentTableViewCell.swift */; };
@@ -118,6 +111,14 @@
 		B8EEF37C2A1CF72500DF6A8B /* NewConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8EEF37B2A1CF72500DF6A8B /* NewConversationViewController.swift */; };
 		EB7E2E312ABBC562006ABEC1 /* PostDateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7E2E302ABBC562006ABEC1 /* PostDateExtension.swift */; };
 		EBA7BD162ABCD4C80092684D /* CommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBA7BD152ABCD4C80092684D /* CommentView.swift */; };
+		EBBD68812AC47B690086D90F /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBBD68802AC47B690086D90F /* ImageCell.swift */; };
+		EBBD68942AC48CA10086D90F /* DummyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBBD68902AC48CA10086D90F /* DummyTableViewController.swift */; };
+		EBBD68952AC48CA10086D90F /* DummyMessageTableViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EBBD68912AC48CA10086D90F /* DummyMessageTableViewController.storyboard */; };
+		EBBD68962AC48CA10086D90F /* ComposeMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBBD68922AC48CA10086D90F /* ComposeMessageTableViewCell.swift */; };
+		EBBD68972AC48CA10086D90F /* ComposeMessageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = EBBD68932AC48CA10086D90F /* ComposeMessageTableViewCell.xib */; };
+		EBBD689B2AC48CBB0086D90F /* ImagePreviewTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = EBBD68982AC48CBA0086D90F /* ImagePreviewTableViewCell.xib */; };
+		EBBD689C2AC48CBB0086D90F /* LoadedImagesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBBD68992AC48CBA0086D90F /* LoadedImagesTableViewController.swift */; };
+		EBBD689D2AC48CBB0086D90F /* ImagePreviewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBBD689A2AC48CBB0086D90F /* ImagePreviewTableViewCell.swift */; };
 		EBF76DEF2AB3CF9300417F1C /* PostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF76DEE2AB3CF9300417F1C /* PostTableViewCell.swift */; };
 		EBF76DF52AB3E1F800417F1C /* CommentView.xib in Resources */ = {isa = PBXBuildFile; fileRef = EBF76DF42AB3E1F800417F1C /* CommentView.xib */; };
 /* End PBXBuildFile section */
@@ -205,13 +206,6 @@
 		B881FD0B2A1FEE2E00B23C8B /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		B88AE1CE2A1D40A900CAD0EC /* MemberDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberDetailTableViewCell.swift; sourceTree = "<group>"; };
 		B88AE1CF2A1D40A900CAD0EC /* MemberDetailTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MemberDetailTableViewCell.xib; sourceTree = "<group>"; };
-		B8918CA32AC41C0800B39F81 /* ComposeMessageTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ComposeMessageTableViewCell.xib; path = "../../../../../../addpost ui/ComposeMessageTableViewCell.xib"; sourceTree = "<group>"; };
-		B8918CA42AC41C0800B39F81 /* DummyTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DummyTableViewController.swift; path = "../../../../../../addpost ui/DummyTableViewController.swift"; sourceTree = "<group>"; };
-		B8918CA52AC41C0800B39F81 /* ImagePreviewTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImagePreviewTableViewCell.swift; path = "../../../../../../addpost ui/ImagePreviewTableViewCell.swift"; sourceTree = "<group>"; };
-		B8918CA62AC41C0800B39F81 /* LoadedImagesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoadedImagesTableViewController.swift; path = "../../../../../../addpost ui/LoadedImagesTableViewController.swift"; sourceTree = "<group>"; };
-		B8918CA72AC41C0800B39F81 /* ImagePreviewTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ImagePreviewTableViewCell.xib; path = "../../../../../../addpost ui/ImagePreviewTableViewCell.xib"; sourceTree = "<group>"; };
-		B8918CA82AC41C0800B39F81 /* DummyMessageTableViewController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = DummyMessageTableViewController.storyboard; path = "../../../../../../addpost ui/DummyMessageTableViewController.storyboard"; sourceTree = "<group>"; };
-		B8918CA92AC41C0800B39F81 /* ComposeMessageTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ComposeMessageTableViewCell.swift; path = "../../../../../../addpost ui/ComposeMessageTableViewCell.swift"; sourceTree = "<group>"; };
 		B894C79A295362F8007728FE /* PaymentPlanTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentPlanTableViewCell.swift; sourceTree = "<group>"; };
 		B894C79B295362F8007728FE /* PaymentPlanTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PaymentPlanTableViewCell.xib; sourceTree = "<group>"; };
 		B894C79F295385AC007728FE /* UpcomingPaymentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingPaymentTableViewCell.swift; sourceTree = "<group>"; };
@@ -236,6 +230,14 @@
 		B8EEF37B2A1CF72500DF6A8B /* NewConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationViewController.swift; sourceTree = "<group>"; };
 		EB7E2E302ABBC562006ABEC1 /* PostDateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDateExtension.swift; sourceTree = "<group>"; };
 		EBA7BD152ABCD4C80092684D /* CommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
+		EBBD68802AC47B690086D90F /* ImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCell.swift; sourceTree = "<group>"; };
+		EBBD68902AC48CA10086D90F /* DummyTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DummyTableViewController.swift; sourceTree = "<group>"; };
+		EBBD68912AC48CA10086D90F /* DummyMessageTableViewController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = DummyMessageTableViewController.storyboard; sourceTree = "<group>"; };
+		EBBD68922AC48CA10086D90F /* ComposeMessageTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposeMessageTableViewCell.swift; sourceTree = "<group>"; };
+		EBBD68932AC48CA10086D90F /* ComposeMessageTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ComposeMessageTableViewCell.xib; sourceTree = "<group>"; };
+		EBBD68982AC48CBA0086D90F /* ImagePreviewTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImagePreviewTableViewCell.xib; sourceTree = "<group>"; };
+		EBBD68992AC48CBA0086D90F /* LoadedImagesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadedImagesTableViewController.swift; sourceTree = "<group>"; };
+		EBBD689A2AC48CBB0086D90F /* ImagePreviewTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePreviewTableViewCell.swift; sourceTree = "<group>"; };
 		EBF76DEE2AB3CF9300417F1C /* PostTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTableViewCell.swift; sourceTree = "<group>"; };
 		EBF76DF42AB3E1F800417F1C /* CommentView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CommentView.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -347,17 +349,18 @@
 		B81AED0129F05CE20075F57E /* Post */ = {
 			isa = PBXGroup;
 			children = (
-				B8918CA92AC41C0800B39F81 /* ComposeMessageTableViewCell.swift */,
-				B8918CA32AC41C0800B39F81 /* ComposeMessageTableViewCell.xib */,
-				B8918CA82AC41C0800B39F81 /* DummyMessageTableViewController.storyboard */,
-				B8918CA42AC41C0800B39F81 /* DummyTableViewController.swift */,
-				B8918CA52AC41C0800B39F81 /* ImagePreviewTableViewCell.swift */,
-				B8918CA72AC41C0800B39F81 /* ImagePreviewTableViewCell.xib */,
-				B8918CA62AC41C0800B39F81 /* LoadedImagesTableViewController.swift */,
+				EBBD68922AC48CA10086D90F /* ComposeMessageTableViewCell.swift */,
+				EBBD68932AC48CA10086D90F /* ComposeMessageTableViewCell.xib */,
+				EBBD68912AC48CA10086D90F /* DummyMessageTableViewController.storyboard */,
+				EBBD68902AC48CA10086D90F /* DummyTableViewController.swift */,
+				EBBD689A2AC48CBB0086D90F /* ImagePreviewTableViewCell.swift */,
+				EBBD68982AC48CBA0086D90F /* ImagePreviewTableViewCell.xib */,
+				EBBD68992AC48CBA0086D90F /* LoadedImagesTableViewController.swift */,
 				3ADCF3E92AB2507C0004C546 /* PostTableViewCell.xib */,
 				EBF76DEE2AB3CF9300417F1C /* PostTableViewCell.swift */,
 				EBF76DF42AB3E1F800417F1C /* CommentView.xib */,
 				EBA7BD152ABCD4C80092684D /* CommentView.swift */,
+				EBBD68802AC47B690086D90F /* ImageCell.swift */,
 			);
 			path = Post;
 			sourceTree = "<group>";
@@ -713,7 +716,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B8918CAA2AC41C0800B39F81 /* ComposeMessageTableViewCell.xib in Resources */,
 				B8D2D748298D54AB00D577DB /* JurniChapterTableViewCell.xib in Resources */,
 				B894C7A2295385AC007728FE /* UpcomingPaymentTableViewCell.xib in Resources */,
 				B866D7202AC0B6230007E1B3 /* meeting-notification.caf in Resources */,
@@ -726,18 +728,19 @@
 				B88AE1D12A1D40A900CAD0EC /* MemberDetailTableViewCell.xib in Resources */,
 				B8C869502A5C5C6A008B3709 /* GroupMembersTableViewCell.xib in Resources */,
 				EBF76DF52AB3E1F800417F1C /* CommentView.xib in Resources */,
+				EBBD689B2AC48CBB0086D90F /* ImagePreviewTableViewCell.xib in Resources */,
 				B809EEB32934DF73006EB46D /* GoogleService-Info.plist in Resources */,
-				B8918CAE2AC41C0800B39F81 /* ImagePreviewTableViewCell.xib in Resources */,
 				B8B477172A38B2C10049F751 /* ChatUserCollectionViewCell.xib in Resources */,
 				B881FD062A1FECEA00B23C8B /* ChatOwnerTableViewCell.xib in Resources */,
 				B81D1C122951E92C0072F602 /* UpdatePaymentTableViewCell.xib in Resources */,
 				B80241592A321FDF0043FA9E /* ChatUserTableViewCell.xib in Resources */,
 				B894C79D295362F8007728FE /* PaymentPlanTableViewCell.xib in Resources */,
+				EBBD68972AC48CA10086D90F /* ComposeMessageTableViewCell.xib in Resources */,
 				3ADCF3EB2AB2507C0004C546 /* PostTableViewCell.xib in Resources */,
 				A3E832662924B0E500A3806E /* Assets.xcassets in Resources */,
-				B8918CAF2AC41C0800B39F81 /* DummyMessageTableViewController.storyboard in Resources */,
 				B849A163299EC01A004B580F /* GroupTableViewCell.xib in Resources */,
 				A3E832642924B0E300A3806E /* Main.storyboard in Resources */,
+				EBBD68952AC48CA10086D90F /* DummyMessageTableViewController.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -779,11 +782,11 @@
 			files = (
 				B82C680529783F8400C47DF1 /* JurniStep.swift in Sources */,
 				B809EEB52934DF73006EB46D /* DashboardViewController.swift in Sources */,
+				EBBD689C2AC48CBB0086D90F /* LoadedImagesTableViewController.swift in Sources */,
 				B86800842A3B6A61005D4738 /* VideoCallViewController.swift in Sources */,
 				B894C7A1295385AC007728FE /* UpcomingPaymentTableViewCell.swift in Sources */,
 				B8D2D744298D51E400D577DB /* JurniChapter.swift in Sources */,
 				B83F6B7D294CB09700CAC63F /* PaymentMethodBean.swift in Sources */,
-				B8918CAC2AC41C0800B39F81 /* ImagePreviewTableViewCell.swift in Sources */,
 				A3E832612924B0E300A3806E /* ViewController.swift in Sources */,
 				A3E8325D2924B0E300A3806E /* AppDelegate.swift in Sources */,
 				B8769E7C2A0D0A120009D082 /* Chat.swift in Sources */,
@@ -795,7 +798,6 @@
 				B80E47192A38F1F4007A858E /* ChatOwnerCollectionViewCell.swift in Sources */,
 				B825746C294F02E400F82957 /* UpdatePaymentPopUpViewController.swift in Sources */,
 				B80241582A321FDF0043FA9E /* ChatUserTableViewCell.swift in Sources */,
-				B8918CB02AC41C0800B39F81 /* ComposeMessageTableViewCell.swift in Sources */,
 				B8240AE929893E59005EAACC /* CircularProgressView.swift in Sources */,
 				B8AEB60829A69185005DA908 /* TempJurniStep.swift in Sources */,
 				B81C4CBD2A1FA10A00A38EEF /* ChatDetailsViewController.swift in Sources */,
@@ -813,15 +815,15 @@
 				B849A15F299EB6F9004B580F /* Group.swift in Sources */,
 				B8AFBCA029E6A7DE00C145F1 /* CalendarViewController.swift in Sources */,
 				B82650D129434B6B004784CE /* OnboardingResponseViewController.swift in Sources */,
-				B8918CAD2AC41C0800B39F81 /* LoadedImagesTableViewController.swift in Sources */,
 				B81D1C0C2951C8D00072F602 /* PaymentPlan.swift in Sources */,
 				B80CF377296DB4850080FC1B /* MyJurniTableViewCell.swift in Sources */,
 				B8D2D747298D54AB00D577DB /* JurniChapterTableViewCell.swift in Sources */,
-				B8918CAB2AC41C0800B39F81 /* DummyTableViewController.swift in Sources */,
 				B82C68032978359200C47DF1 /* MyJurniDetailsViewController.swift in Sources */,
 				B881FD0C2A1FEE2E00B23C8B /* ChatMessage.swift in Sources */,
 				EBA7BD162ABCD4C80092684D /* CommentView.swift in Sources */,
 				B8D7820C29F19C1D0065AF85 /* Post.swift in Sources */,
+				EBBD68962AC48CA10086D90F /* ComposeMessageTableViewCell.swift in Sources */,
+				EBBD68812AC47B690086D90F /* ImageCell.swift in Sources */,
 				B8984E392A1D13060004E920 /* Member.swift in Sources */,
 				B80B856F2941CDBB00199686 /* ContactDetailsViewController.swift in Sources */,
 				B809EEB62934DF73006EB46D /* ResetViewController.swift in Sources */,
@@ -833,7 +835,9 @@
 				B88AE1D02A1D40A900CAD0EC /* MemberDetailTableViewCell.swift in Sources */,
 				B8769E792A0D035C0009D082 /* ChatTableViewCell.swift in Sources */,
 				B82BC9BB29D5C8FA00C3F258 /* ChatViewController.swift in Sources */,
+				EBBD689D2AC48CBB0086D90F /* ImagePreviewTableViewCell.swift in Sources */,
 				EB7E2E312ABBC562006ABEC1 /* PostDateExtension.swift in Sources */,
+				EBBD68942AC48CA10086D90F /* DummyTableViewController.swift in Sources */,
 				B87BFD6C297998D600248688 /* MyJurniStepChaptersViewController.swift in Sources */,
 				B80B7E982A236BD700E6C8FA /* SelectedCollectionViewCell.swift in Sources */,
 				EBF76DEF2AB3CF9300417F1C /* PostTableViewCell.swift in Sources */,

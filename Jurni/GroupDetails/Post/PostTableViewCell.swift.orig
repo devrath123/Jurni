@@ -217,6 +217,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
     
     func setPosterAvatar(with post: Post) {
+<<<<<<< HEAD
         posterProfilePicImageView.layer.cornerRadius = posterProfilePicImageView.frame.size.width / 2
         posterProfilePicImageView.layer.masksToBounds = true
         let posterImageURL = URL(string: post.user.userAvatar)
@@ -235,6 +236,9 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
                 self.posterProfilePicImageView.layer.backgroundColor = UIColor.lightGray.cgColor
             }
         }
+=======
+        self.posterProfilePicImageView.image = UIImage(named: "userblue")
+>>>>>>> main
     }
     
     func textFieldDidChange(_ textField: UITextField) {
