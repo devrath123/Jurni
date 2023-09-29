@@ -13,7 +13,8 @@ import FirebaseAuth
 import FirebaseStorage
 import PhotosUI
 
-class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate, PHPickerViewControllerDelegate {
+
+class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate, PHPickerViewControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UITextViewDelegate {
     
     @IBOutlet weak var groupNameLabel: UILabel!
     @IBOutlet weak var membersCountLabel: UILabel!
@@ -26,8 +27,13 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     var posts: [Post] = []
     
     let imagePicker = UIImagePickerController()
+    var activityView: UIActivityIndicatorView?
     var selectedImages: [UIImage] = []
     var videoURL: URL?
+    
+    let MESSAGE_TYPE_TEXT = "text"
+    let MESSAGE_TYPE_IMAGE = "image"
+    let MESSAGE_TYPE_VIDEO = "video"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +41,9 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
         groupPostTableView.delegate = self
         imagePicker.delegate = self
         
+//        showActivityIndicator()
+        groupPostTableView.rowHeight = UITableView.automaticDimension
+        self.groupPostTableView.estimatedRowHeight = 100
         let headerNib = UINib(nibName: "ComposeMessageTableViewCell", bundle: nil)
         groupPostTableView.register(headerNib, forCellReuseIdentifier: "ComposeMessageTableViewCell")
 
@@ -143,10 +152,11 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                                         self.posts.append(post)
                                         
                                         self.posts = self.posts.sorted(by: { $0.postTime.compare($1.postTime as Date) == .orderedDescending })
-                                        
+                                        self.hideActivityIndicator()
                                         self.groupPostTableView.reloadData()
                                     } else {
                                         print("User document not found for UID: \(uid)")
+                                        self.hideActivityIndicator()
                                     }
                                 }
                             }
@@ -205,14 +215,21 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                 result.itemProvider.loadObject(ofClass: UIImage.self) { (object, error) in
                     if let image = object as? UIImage {
                         self.selectedImages.append(image)
-//                        if (results.count == self.selectedImages.count){
-//                            self.postCellImageDelegate?.setImages(images: self.selectedImages)
-//                        }
+                        DispatchQueue.main.async {
+                            self.groupPostTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+                        }
                     }
-                    
-                    
                 }
             }
+            
+
+            DispatchQueue.main.async {
+                self.groupPostTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+                self.groupPostTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+                self.groupPostTableView.reloadData()
+                        }
+           
+           
         }
         picker.dismiss(animated: true, completion: nil)
     }
@@ -245,12 +262,6 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
         let da = dateFormatter.string(from: date)
         let timestamp = dateFormatter.date(from: da)
         
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "MMMM d, yyyy 'at' h:mm:ss a 'UTC'ZZZZZ"
-//        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-//        dateFormatter.timeZone = TimeZone(secondsFromGMT: 5 * 3600 + 30 * 60) // UTC+5:30
-//        let date = Date() // Replace this with your specific Date object
-//        let timestamp = dateFormatter.string(from: date)
         let randomId = String("\(randomString(length: 20))")
         let groupId = self.groupDetails?.groupId ?? ""
         let from = Auth.auth().currentUser!.uid
@@ -276,87 +287,361 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                 print("Error updating document: \(err)")
             } else {
                 print("successfully uploded ")
-                DispatchQueue.global().async {
+                DispatchQueue.main.async {
+                    self.hideActivityIndicator()
+                    self.selectedImages.removeAll()
                     self.fetchPosts()
+                    self.groupPostTableView.reloadData()
+                    self.groupPostTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+                    self.groupPostTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
                 }
             }
         }
     }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.selectedImages.count
+        }
+
+        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+            
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCollectionViewCell", for: indexPath) as? PhotoCollectionViewCell else { return UICollectionViewCell() }
+            
+          
+            cell.deleteImageBtn.addTarget(self, action: #selector(deleteSeletedImage(sender:)), for: .touchUpInside)
+            cell.deleteImageBtn.tag = indexPath.item
+            cell.backgroundColor = UIColor.white
+            cell.avtarImageView.image =  self.selectedImages[indexPath.item]
+            cell.avtarImageView.layer.cornerRadius = 10
+            cell.avtarImageView.layer.masksToBounds = true
+            cell.avtarImageView.contentMode = .scaleToFill
+            
+            return cell
+        }
+    
 }
 
 extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return posts.count
+        if section == 0{
+            return 1
+        }
+        else{
+            return posts.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "PostTableViewCell", for: indexPath) as? PostTableViewCell else { return UITableViewCell() }
-        let post = posts[indexPath.row]
-        cell.delegate = self
-        cell.configurePostCell(with: post)
         
-        if !post.postContent.postVideoUrl.isEmpty{
-          //  playVideo(videoUrl: post.postContent.postVideoUrl[0], videoView: cell.videoContainerView)
-        }
-        cell.createCommentHandler = { postId, text in
-            self.createComment(postID: postId, content: text)
+        if indexPath.section == 0{
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "ComposeMessageTableViewCell") as? ComposeMessageTableViewCell else { return UITableViewCell() }
             
+            cell.containerView.backgroundColor = UIColor.white
+            cell.backgroundColor = UIColor.white
+           
+            
+            cell.photoCollectionView.delegate = self
+            cell.photoCollectionView.dataSource = self
+            
+            
+            let photoNib = UINib(nibName: "PhotoCollectionViewCell", bundle: nil)
+            cell.photoCollectionView.register(photoNib, forCellWithReuseIdentifier: "PhotoCollectionViewCell")
+            
+            
+            
+            cell.uploadPhotoBtn.addTarget(self, action: #selector(uploadImages(_:)), for: .touchUpInside)
+            cell.uploadVideoBtn.addTarget(self, action: #selector(uploadVideo(_:)), for: .touchUpInside)
+            cell.publishBtn.addTarget(self, action: #selector(publishPost(_:)), for: .touchUpInside)
+            
+            cell.writeSomthingTextView.attributedPlaceholder = NSAttributedString(
+                string: "Write something here...",
+                attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray]
+            )
+            cell.containerView.layer.borderColor = UIColor.lightGray.cgColor
+            
+            
+            let height = cell.photoCollectionView.collectionViewLayout.collectionViewContentSize.height
+            cell.collectionHeightConstraint.constant = height
+            cell.collectionHeightConstraint.constant = CGFloat(self.selectedImages.count * 140)
+            
+            cell.photoCollectionView.reloadData()
+            groupPostTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+            
+            
+            return cell
         }
-        return cell
+        
+        else{
+            
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "PostTableViewCell", for: indexPath) as? PostTableViewCell else { return UITableViewCell() }
+            let post = posts[indexPath.row ]
+            //        cell.delegate = self
+            cell.configurePostCell(with: post)
+            
+            if !post.postContent.postVideoUrl.isEmpty{
+//                playVideo(videoUrl: post.postContent.postVideoUrl[0], videoView: cell.videoContainerView)
+            }
+            cell.createCommentHandler = { postId, text in
+                self.createComment(postID: postId, content: text)
+                
+            }
+            return cell
+        }
+        
+        
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
-        let headerCell = tableView.dequeueReusableCell(withIdentifier: "ComposeMessageTableViewCell") as! ComposeMessageTableViewCell
-        headerCell.groupDetails = self.groupDetails
-       // headerCell.apiCallDelegate = self
-       
-        headerCell.selectImageHandler = {
-            var configuration = PHPickerConfiguration()
-            configuration.selectionLimit = 0  // 0 means no limit
-            configuration.filter = .images
-            
-            let picker = PHPickerViewController(configuration: configuration)
-            picker.delegate = self
-            self.present(picker, animated: true, completion: nil)
-        }
-        return headerCell
-        
-        }
     
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 250
+    @objc func uploadImages(_ sender: UIButton?){
+        
+//        var position: CGPoint = sender!.convert(.zero, to: self.groupPostTableView)
+//        let indexPath = self.groupPostTableView.indexPathForRow(at: position)
+//        let cell: ComposeMessageTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! ComposeMessageTableViewCell
+//
+//        cell.videoView.isHidden = true
+//        var configuration = PHPickerConfiguration()
+//        configuration.selectionLimit = 0  // 0 means no limit
+//        configuration.filter = .images
+//
+//        let picker = PHPickerViewController(configuration: configuration)
+//        picker.delegate = self
+//        self.present(picker, animated: true, completion: nil)
+        
     }
+    
+    
+    
+    @objc func uploadVideo(_ sender: UIButton?){
+        
+        var position: CGPoint = sender!.convert(.zero, to: self.groupPostTableView)
+        let indexPath = self.groupPostTableView.indexPathForRow(at: position)
+        let cell: ComposeMessageTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! ComposeMessageTableViewCell
+        
+        cell.videoView.isHidden = true
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 0  // 0 means no limit
+        configuration.filter = .images
+        
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        self.present(picker, animated: true, completion: nil)
+        
+    }
+    
+    @objc func publishPost(_ sender: UIButton){
+        
+        let position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
+        let indexPath = self.groupPostTableView.indexPathForRow(at: position)
+        let cell: ComposeMessageTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! ComposeMessageTableViewCell
+        
+        //        let text = cell.writeSomthingTextView.text
+        
+        
+        guard let unwrappedValue = cell.writeSomthingTextView.text else {
+            print("Optional Value is nil")
+            return
+        }
+        
+        if (self.selectedImages.count > 0)
+            
+        {
+            
+            self.showActivityIndicator()
+            var urls = [String]()
+            self.uploadImagesToFirebaseStorage(images: self.selectedImages) { result in
+                switch result {
+                case .success(let downloadURLs):
+                    print("Images uploaded successfully. Download URLs: \(downloadURLs)")
+                    urls = downloadURLs
+                    self.postDataToFirebase(dataType: self.MESSAGE_TYPE_IMAGE, content: ["content" : unwrappedValue, "url": urls])
+                case .failure(let error):
+                    print("Error uploading images: \(error.localizedDescription)")
+                }
+            }
+            
+        }
+        else if (self.videoURL != nil)
+        {
+            
+        }
+        else{
+            self.showActivityIndicator()
+            self.postDataToFirebase(dataType: self.MESSAGE_TYPE_TEXT, content: ["content" : unwrappedValue])
+        }
+        cell.writeSomthingTextView.text = ""
+        cell.writeSomthingTextView.placeholder = "Write something here..."
+        
+    }
+    
+    
+    
+    @objc func deleteSeletedImage( sender: UIButton){
+        
+        var position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
+        let indexPath = self.groupPostTableView.indexPathForRow(at: position)
+        let cell: ComposeMessageTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! ComposeMessageTableViewCell
+        cell.photoCollectionView.reloadData()
+        
+        let buttonTag = sender.tag
+        print(buttonTag, selectedImages.count, "delete click")
+        
+        selectedImages.remove(at: buttonTag)
+        let sectionIndex = 0 // Change this to your specific section index
+        groupPostTableView.reloadData()
+        groupPostTableView.reloadSections(IndexSet(integer: sectionIndex), with: .automatic)
+        
+    }
+    
+    
+    func uploadImagesToFirebaseStorage(images: [UIImage], completion: @escaping (Result<[String], Error>) -> Void) {
+        
+        var uploadURLs: [String] = []
+        var uploadErrors: [Error] = []
+        
+        let dispatchGroup = DispatchGroup()
+        
+        for image in images {
+            dispatchGroup.enter()
+            
+            guard let imageData = image.jpegData(compressionQuality: 0.5) else {
+                uploadErrors.append(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to convert image to data"]))
+                dispatchGroup.leave()
+                continue
+            }
+            
+            // Create a unique name for the image (e.g., using a timestamp)
+            let imageName = String("\(randomString(length: 5)).png")
+            
+            // Reference to the Firebase Storage bucket
+            let storageRef = Storage.storage().reference().child("grouppost/\(imageName)")
+            
+            // Upload the image data to Firebase Storage
+            let uploadTask = storageRef.putData(imageData, metadata: nil) { (metadata, error) in
+                if let error = error {
+                    uploadErrors.append(error)
+                    dispatchGroup.leave()
+                } else {
+                    // Once the upload is complete, get the download URL
+                    storageRef.downloadURL { (url, error) in
+                        if let error = error {
+                            uploadErrors.append(error)
+                        } else if let downloadURL = url {
+                            uploadURLs.append(downloadURL.absoluteString)
+                        }
+                        dispatchGroup.leave()
+                    }
+                }
+            }
+            
+            // You can also observe the upload progress if needed
+            //            uploadTask.observe(.progress) { snapshot in
+            //                let percentComplete = 100.0 * Double(snapshot.progress!.completedUnitCount) / Double(snapshot.progress!.totalUnitCount)
+            //                print("Upload progress: \(percentComplete)%")
+            //            }
+        }
+        
+        
+        
+        
+        dispatchGroup.notify(queue: .main) {
+            if !uploadErrors.isEmpty {
+                completion(.failure(uploadErrors.first!))
+            } else {
+                completion(.success(uploadURLs))
+            }
+        }
+    }
+    
+    
+    
+    func uploadVideoToFirebaseStorage(videoURL: URL, completion: @escaping (Result<URL, Error>) -> Void) {
+        let storageRef = Storage.storage().reference()
+        
+        // Create a unique name for the video (e.g., using a timestamp)
+        let videoName = String("\(randomString(length: 5)).mp4")
+        
+        // Reference to the Firebase Storage bucket with the video's name
+        let videoRef = storageRef.child("video/\(videoName)")
+        
+        // Upload the video file
+        DispatchQueue.main.async {
+            let uploadTask = videoRef.putFile(from: videoURL, metadata: nil) { (metadata, error) in
+                if let error = error {
+                    completion(.failure(error))
+                } else {
+                    // Once the upload is complete, get the download URL
+                    videoRef.downloadURL { (url, error) in
+                        if let error = error {
+                            completion(.failure(error))
+                        } else if let downloadURL = url {
+                            completion(.success(downloadURL))
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    func showActivityIndicator() {
+        activityView = UIActivityIndicatorView(style: .large)
+        activityView?.center = self.view.center
+        activityView?.color = .black
+        self.view.addSubview(activityView!)
+        activityView?.startAnimating()
+    }
+    
+    func hideActivityIndicator(){
+        if (activityView != nil){
+            activityView?.stopAnimating()
+        }
+    }
+    
+    
+    
+    //extension GroupDetailsViewController: ApiCallDelegate{
+    //    func resetCells() {
+    //
+    //    }
+    //
+    //    func setImages(images: [UIImage]) {
+    //
+    //    }
+    
+    //    func postMessage(message: String){
+    //        self.postDataToFirebase(dataType: "text", content: ["content" : message])
+    //    }
+    //}
+    //    func resetCells() {
+    //
+    //    }
+    //
+    //    func setImages(images: [UIImage]) {
+    
+    //    func postMessage(message: String){
+    //        self.postDataToFirebase(dataType: "text", content: ["content" : message])
+    //    }
 }
-
 extension String {
-    func htmlAttributedString() -> String? {
-        guard let data = self.data(using: String.Encoding.utf16, allowLossyConversion: false) else { return nil }
-        guard let html = try? NSMutableAttributedString(
-            data: data,
-            options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html],
-            documentAttributes: nil) else { return nil }
-        return html.string
-    }
+    func htmlAttributedString() -> String? {
+        guard let data = self.data(using: String.Encoding.utf16, allowLossyConversion: false) else { return nil }
+        guard let html = try? NSMutableAttributedString(
+            data: data,
+            options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html],
+            documentAttributes: nil) else { return nil }
+        return html.string
+    }
 }
 
 extension GroupDetailsViewController: ReactionTableViewCellDelegate {
-    func reactionButtonTapped(postID: String, isLiked: Bool) {
-        addReaction(postID: postID, isLiked: isLiked)
-    }
+    func reactionButtonTapped(postID: String, isLiked: Bool) {
+        addReaction(postID: postID, isLiked: isLiked)
+    }
 }
-
-
-//extension GroupDetailsViewController: ApiCallDelegate{
-////    func resetCells() {
-////
-////    }
-////
-////    func setImages(images: [UIImage]) {
-////
-////    }
-//
-//    func postMessage(message: String){
-//        self.postDataToFirebase(dataType: "text", content: ["content" : message])
-//    }
-//}
