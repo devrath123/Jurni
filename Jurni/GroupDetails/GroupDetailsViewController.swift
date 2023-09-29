@@ -18,15 +18,12 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     @IBOutlet weak var groupNameLabel: UILabel!
     @IBOutlet weak var membersCountLabel: UILabel!
     @IBOutlet weak var groupPostTableView: UITableView!
-//    @IBOutlet weak var imagesCollectionView: UICollectionView!
     
     // MARK: - Properties
     var groupDetails: Group?
     var player: AVPlayer!
     var avpPlayerController = AVPlayerViewController()
     var posts: [Post] = []
-    var images: [UIImage] = [] // table view cell that is clicked on sends its images to this array
-    var imagesCollectionView: UICollectionView!
     
     let imagePicker = UIImagePickerController()
     var selectedImages: [UIImage] = []
@@ -41,8 +38,6 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
         let headerNib = UINib(nibName: "ComposeMessageTableViewCell", bundle: nil)
         groupPostTableView.register(headerNib, forCellReuseIdentifier: "ComposeMessageTableViewCell")
 
-        setupCollectionView() // should only load for individual table view cell interaction and not for all posts at once
-        
         let nib = UINib(nibName: "PostTableViewCell", bundle: nil)
         groupPostTableView.register(nib, forCellReuseIdentifier: "PostTableViewCell")
         fetchPosts()
@@ -63,11 +58,11 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
             } else {
                 if let documents = querySnapshot?.documents {
                     for document in documents {
-                        print("Doc id: \(document.documentID)")
+                        print("Doc : \(document.data())")
                         let id = document.documentID
                         let postType = document.get("type") as? String
-                        let timestamp = document.get("timestamp") as? Timestamp
-                        let postTime = timestamp?.dateValue() ?? Date()
+                        let timestamp = document.get("timestamp") as! Timestamp
+                        let postTime = timestamp.dateValue()
                         
                         let mediaURL = document.get("meta.url")
                         var videoArray: [String] = []
@@ -83,6 +78,8 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                         case "video":
                             if let videoURL = mediaURL as? String {
                                 videoArray = [videoURL]
+                            }else if let multipleVideoURLs = mediaURL as? [String] {
+                                videoArray = multipleVideoURLs
                             }
                             
                         case "text":
@@ -95,6 +92,7 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                         }
                         
                         let postContent = document.get("meta.content") as? String
+                        let postText = postContent?.htmlAttributedString() ?? ""
                         /// User id format example - from: /users/lzlXd3G5vhUFj1HIEjcmuLVLG4g1
                         /// needs UID to be retrieved as corresponding user's username
                         if let reactionsData = document.get("reactions") as? [String:Any] {
@@ -106,9 +104,9 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                                 surprise: reactionsData["SURPRISE"] as? Int ?? 0,
                                 thumbsUp: reactionsData["THUMB_UP"] as? Int ?? 0
                             )
+                           
                             
-                            if let posterIDPath = document.get("from") as? DocumentReference {
-                                
+                            let posterIDPath = document.get("from") as! DocumentReference
                             let pathString = posterIDPath.path
                             let components = pathString.components(separatedBy: "/")
                             if let uid = components.last{
@@ -138,21 +136,19 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                                         
                                         let postUser = User(userName: userName, userAvatar: userImage)
                                         
-                                        let post = Post(postType: postType ?? "", postTime: postTime, postContent: PostContent(postText: postContent ?? "", postImageUrls: imageArray, postVideoUrl: videoArray), user: postUser, postReaction: reactions)
+                                        let post = Post(postType: postType ?? "", postTime: postTime, postContent: PostContent(postText: postText, postImageUrls: imageArray, postVideoUrl: videoArray), user: postUser, postReaction: reactions)
                                         
                                         post.id = id
                                         
                                         self.posts.append(post)
+                                        
+                                        self.posts = self.posts.sorted(by: { $0.postTime.compare($1.postTime as Date) == .orderedDescending })
                                         
                                         self.groupPostTableView.reloadData()
                                     } else {
                                         print("User document not found for UID: \(uid)")
                                     }
                                 }
-                            } //uid
-                            } //posterIDPath
-                            else {
-                                print("Error: posterIDPath is not a document reference")
                             }
                         }
                     }
@@ -161,19 +157,6 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
         }
     }
     
-    func setupCollectionView() {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 0
-        layout.minimumInteritemSpacing = 0
-        
-        imagesCollectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
-        imagesCollectionView.dataSource = self
-        imagesCollectionView.delegate = self
-        imagesCollectionView.isPagingEnabled = true
-        imagesCollectionView.register(ImageCell.self, forCellWithReuseIdentifier: "ImageCell")
-    }
-
     func createComment(postID: String,content: String) {
         
         let defaultStore = Firestore.firestore()
@@ -190,9 +173,9 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     }
     func addReaction(postID: String, isLiked: Bool) {
         print("Attempting to add this reaction \(isLiked), to this postID: \(postID)")
-        
+       
     }
-    
+
     
     @IBAction func backClick(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
@@ -205,8 +188,8 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
             avpPlayerController.player = player
             avpPlayerController.view.frame.size.height = videoView.frame.size.height
             avpPlayerController.view.frame.size.width = videoView.frame.size.width
-            
-            videoView.addSubview(avpPlayerController.view)
+
+                        videoView.addSubview(avpPlayerController.view)
             player.play()
         }
     }
@@ -313,7 +296,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         cell.configurePostCell(with: post)
         
         if !post.postContent.postVideoUrl.isEmpty{
-            playVideo(videoUrl: post.postContent.postVideoUrl[0], videoView: cell.videoContainerView)
+          //  playVideo(videoUrl: post.postContent.postVideoUrl[0], videoView: cell.videoContainerView)
         }
         cell.createCommentHandler = { postId, text in
             self.createComment(postID: postId, content: text)
@@ -326,7 +309,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         
         let headerCell = tableView.dequeueReusableCell(withIdentifier: "ComposeMessageTableViewCell") as! ComposeMessageTableViewCell
         headerCell.groupDetails = self.groupDetails
-        headerCell.apiCallDelegate = self
+       // headerCell.apiCallDelegate = self
        
         headerCell.selectImageHandler = {
             var configuration = PHPickerConfiguration()
@@ -346,33 +329,6 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
     }
 }
 
-
-extension GroupDetailsViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
-
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        images.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCell", for: indexPath) as! ImageCell
-        let image = images[indexPath.row]
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return collectionView.bounds.size
-    }
-    
-}
-
-
-extension GroupDetailsViewController: ReactionTableViewCellDelegate {
-    func reactionButtonTapped(postID: String, isLiked: Bool) {
-        addReaction(postID: postID, isLiked: isLiked)
-    }
-}
-
 extension String {
     func htmlAttributedString() -> String? {
         guard let data = self.data(using: String.Encoding.utf16, allowLossyConversion: false) else { return nil }
@@ -384,16 +340,23 @@ extension String {
     }
 }
 
-extension GroupDetailsViewController: ApiCallDelegate{
-//    func resetCells() {
-//
-//    }
-//
-//    func setImages(images: [UIImage]) {
-//
-//    }
-    
-    func postMessage(message: String){
-        self.postDataToFirebase(dataType: "text", content: ["content" : message])
+extension GroupDetailsViewController: ReactionTableViewCellDelegate {
+    func reactionButtonTapped(postID: String, isLiked: Bool) {
+        addReaction(postID: postID, isLiked: isLiked)
     }
 }
+
+
+//extension GroupDetailsViewController: ApiCallDelegate{
+////    func resetCells() {
+////
+////    }
+////
+////    func setImages(images: [UIImage]) {
+////
+////    }
+//
+//    func postMessage(message: String){
+//        self.postDataToFirebase(dataType: "text", content: ["content" : message])
+//    }
+//}
