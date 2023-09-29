@@ -6,8 +6,7 @@
 //
 
 import UIKit
-import FirebaseAuth
-import FirebaseFirestore
+import Kingfisher
 
 protocol ReactionTableViewCellDelegate: AnyObject {
     func reactionButtonTapped(postID: String, isLiked: Bool)
@@ -31,6 +30,8 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet weak var photoTwoImageView: UIImageView!
     @IBOutlet weak var photoThreeImageView: UIImageView!
     @IBOutlet weak var photoTwoOfTwoImageView: UIImageView!
+    @IBOutlet weak var photoTwoThreeStackView: UIStackView!
+    
     
     @IBOutlet weak var moreImagesButton: UIButton!
     @IBOutlet weak var numberOfReactionsLabel: UILabel!
@@ -41,6 +42,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet weak var userInitiaTextLabel: UILabel!
     @IBOutlet weak var newCommentTextField: UITextField!
     @IBOutlet weak var sendCommentButton: UIButton!
+    @IBOutlet weak var playVideoImageView: UIImageView!
     
     
     // MARK: - Properties
@@ -64,20 +66,28 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
     
     func configurePostCell(with post: Post) {
-        
+        hideImageVideoViews()
         self.postID = post.id
         setPosterAvatar(with: post)
-        setCurrentUserAvatar()
         setPostText(with: post)
-        setPostImages(with: post)
-        setPostVideo(with: post)
+        if (!post.postContent.postImageUrls.isEmpty){
+            setPostImages(with: post)
+        }
+        if (!post.postContent.postVideoUrl.isEmpty){
+            setPostVideo(with: post)
+        }
         postBorderView.layer.cornerRadius = 20
         postBorderView.layer.borderWidth = 1.0
-        postBorderView.layer.borderColor = UIColor.opaqueSeparator.cgColor
+        postBorderView.layer.borderColor = UIColor.lightGray.cgColor
+        
+        setRoundedCorner(view: photoOneImageView)
+        setRoundedCorner(view: photoTwoImageView)
+        setRoundedCorner(view: photoThreeImageView)
+        setRoundedCorner(view: photoTwoOfTwoImageView)
+        setRoundedCorner(view: moreImagesButton)
         
         posterNameLabel.text = post.user.userName
         timeSincePostLabel.text = post.postTime.getMessagePostedDay()
-        
         
         var totalReactions: Int{
             return post.postReaction.angry + post.postReaction.laugh + post.postReaction.love + post.postReaction.sad + post.postReaction.surprise + post.postReaction.thumbsUp
@@ -86,154 +96,106 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         
     }
     
+    func setRoundedCorner(view: UIView){
+        view.layer.cornerRadius = 10
+        view.layer.borderWidth = 0.5
+        view.layer.borderColor = UIColor.lightGray.cgColor
+    }
+    
     
     func setPostVideo(with post: Post) {
-        if !post.postContent.postVideoUrl.isEmpty, !post.postContent.postVideoUrl[0].isEmpty{
-        }else{
-            self.videoContainerView.isHidden = true
-        }
+        self.videoContainerView.isHidden = false
+        self.playVideoImageView.isHidden = false
     }
     
     func setPostImages(with post: Post) {
-        if !post.postContent.postImageUrls.isEmpty, !post.postContent.postImageUrls[0].isEmpty {
-            if let photoOneURL = URL(string: post.postContent.postImageUrls[0]) {
-                DispatchQueue.global().async {
-                    if let photoOneData = try? Data(contentsOf: photoOneURL){
-                        DispatchQueue.main.async {
-                            self.photoOneImageView.image = UIImage(data: photoOneData)
-                            self.photoOneImageView.contentMode = .scaleAspectFill
-                            self.photoOneImageView.isHidden = false
-                            self.videoContainerView.isHidden = true
-                        }
-                    }
-                }
-            }
-        } else {
-            self.photoOneImageView.isHidden = true
-            self.photoTwoImageView.isHidden = true
-            self.photoThreeImageView.isHidden = true
-            self.imagesStackView.isHidden = true
-            print("Text: \(post.postContent.postText)")
-            print("Image size:\(post.postContent.postImageUrls.count)")
-        }
-        
-        if post.postContent.postImageUrls.count == 2 {
+        switch post.postContent.postImageUrls.count {
+        case 1:
+            self.photoOneImageView.isHidden = false
+            self.photoOneImageView.contentMode = .scaleAspectFill
+            setImage(url: post.postContent.postImageUrls[0], imageView: photoOneImageView)
+            
+        case 2:
+            self.photoOneImageView.isHidden = false
+            self.photoOneImageView.contentMode = .scaleAspectFill
+            self.photoTwoThreeStackView.isHidden = false
             self.photoTwoOfTwoImageView.isHidden = false
-            self.photoOneImageView.isHidden = false
-            self.photoTwoImageView.isHidden = true
-            self.photoThreeImageView.isHidden = true
-            self.videoContainerView.isHidden = true
-            if let photoTwoOfTwoURL = URL(string: post.postContent.postImageUrls[1]) {
-                DispatchQueue.global().async {
-                    if let photoTwoData = try? Data(contentsOf: photoTwoOfTwoURL){
-                        DispatchQueue.main.async {
-                            self.photoTwoOfTwoImageView.image = UIImage(data: photoTwoData)
-                            self.photoTwoOfTwoImageView.contentMode = .scaleAspectFill
-                        }
-                    }
-                }
-            }
+            self.photoTwoOfTwoImageView.contentMode = .scaleAspectFill
             
-        } else if
-            post.postContent.postImageUrls.count == 1 {
+            setImage(url: post.postContent.postImageUrls[0], imageView: photoOneImageView)
+            setImage(url: post.postContent.postImageUrls[1], imageView: photoTwoOfTwoImageView)
+            
+        case 3:
             self.photoOneImageView.isHidden = false
-            self.photoTwoImageView.isHidden = true
-            self.photoTwoOfTwoImageView.isHidden = true
-            self.photoThreeImageView.isHidden = true
-            self.videoContainerView.isHidden = true
-        } else if
-            post.postContent.postImageUrls.count >= 3 {
+            self.photoOneImageView.contentMode = .scaleAspectFill
+            self.photoTwoThreeStackView.isHidden = false
             self.photoTwoImageView.isHidden = false
+            self.photoTwoImageView.contentMode = .scaleAspectFill
             self.photoThreeImageView.isHidden = false
+            self.photoThreeImageView.contentMode = .scaleAspectFill
+            
+            setImage(url: post.postContent.postImageUrls[0], imageView: photoOneImageView)
+            setImage(url: post.postContent.postImageUrls[1], imageView: photoTwoImageView)
+            setImage(url: post.postContent.postImageUrls[2], imageView: photoThreeImageView)
+            
+            
+        case 4..<100:
             self.photoOneImageView.isHidden = false
-            self.photoTwoOfTwoImageView.isHidden = true
-            self.videoContainerView.isHidden = true
+            self.photoOneImageView.contentMode = .scaleAspectFill
+            self.photoTwoThreeStackView.isHidden = false
+            self.photoTwoImageView.isHidden = false
+            self.photoTwoImageView.contentMode = .scaleAspectFill
+            self.photoThreeImageView.isHidden = false
+            self.photoThreeImageView.contentMode = .scaleAspectFill
+            self.moreImagesButton.isHidden = false
+            self.moreImagesButton.setTitle(" +\(post.postContent.postImageUrls.count - 3)", for: .normal)
             
-            if let photoTwoURL = URL(string: post.postContent.postImageUrls[1]) {
-                DispatchQueue.global().async {
-                    if let photoTwoData = try? Data(contentsOf: photoTwoURL){
-                        DispatchQueue.main.async {
-                            self.photoTwoImageView.image = UIImage(data: photoTwoData)
-                            self.photoTwoImageView.contentMode = .scaleAspectFill
-                            
-                        }
-                    }
-                }
-            }
+            setImage(url: post.postContent.postImageUrls[0], imageView: photoOneImageView)
+            setImage(url: post.postContent.postImageUrls[1], imageView: photoTwoImageView)
+            setImage(url: post.postContent.postImageUrls[2], imageView: photoThreeImageView)
             
-            if let photoThreeURL = URL(string: post.postContent.postImageUrls[2]) {
-                DispatchQueue.global().async {
-                    if let photoThreeData = try? Data(contentsOf: photoThreeURL){
-                        DispatchQueue.main.async {
-                            self.photoThreeImageView.image = UIImage(data: photoThreeData)
-                            self.photoThreeImageView.contentMode = .scaleAspectFill
-                        }
-                    }
-                }
-            }
+        default: print("Image size:\(post.postContent.postImageUrls.count)")
         }
         
-        let additionalImageCount = max(0, post.postContent.postImageUrls.count - 3)
-        if additionalImageCount > 0 {
-            self.moreImagesButton.isHidden = false
-            self.moreImagesButton.setTitle("+ \(additionalImageCount)", for: .normal)
-        } else {
-            self.moreImagesButton.isHidden = true
+    }
+    
+    func setImage(url: String, imageView: UIImageView){
+        if(url != ""){
+            let imageUrl = URL(string:  url)
+            imageView.kf.setImage(with: imageUrl)
         }
     }
+    
+    func hideImageVideoViews(){
+        photoOneImageView.isHidden = true
+        photoTwoImageView.isHidden = true
+        photoThreeImageView.isHidden = true
+        photoTwoOfTwoImageView.isHidden = true
+        photoTwoThreeStackView.isHidden = true
+        videoContainerView.isHidden = true
+        moreImagesButton.isHidden = true
+        playVideoImageView.isHidden = true
+    }
+    
     
     func setPostText(with post: Post){
-        let htmlString = post.postContent.postText
-        if let data = htmlString.data(using: .utf8),
-           let attributedString = try? NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil) {
-            postTextContentLabel.attributedText = attributedString
-        }
+        postTextContentLabel.text = post.postContent.postText
     }
     
-    func setCurrentUserAvatar(){
-        currentUserProfilePicView.layer.cornerRadius = currentUserProfilePicView.frame.size.width / 2
-        currentUserProfilePicView.layer.masksToBounds = true
-        let defaultStore = Firestore.firestore()
-        let currentUIDString: String = Auth.auth().currentUser!.uid
-        let userRef = defaultStore.collection("users").document(currentUIDString)
-        userRef.getDocument { document, error in
-            if let document = document, document.exists {
-                var userImageString: String = ""
-                if(document.get("avatar") != nil) {
-                    let image = document.get("avatar") as! String
-                    userImageString = image
-                    let userImageURL = URL(string: userImageString)
-                    DispatchQueue.global().async {
-                        let data = try? Data(contentsOf: userImageURL!)
-                        DispatchQueue.main.async {
-                            self.currentUserProfilePicView.image = UIImage(data: data!)
-                        }
-                    }
-                } else {
-                    self.currentUserProfilePicView.layer.backgroundColor = UIColor.lightGray.cgColor
-                }
-            }
-        }
-    }
     
     func setPosterAvatar(with post: Post) {
+        self.userInitiaTextLabel.isHidden = true
+        posterProfilePicImageView.image = nil
+        
         posterProfilePicImageView.layer.cornerRadius = posterProfilePicImageView.frame.size.width / 2
         posterProfilePicImageView.layer.masksToBounds = true
         let posterImageURL = URL(string: post.user.userAvatar)
         if(posterImageURL != nil){
-            DispatchQueue.global().async {
-                let data = try? Data(contentsOf: posterImageURL!)
-                DispatchQueue.main.async {
-                    self.userInitiaTextLabel.isHidden = true
-                    self.posterProfilePicImageView.image = UIImage(data: data!)
-                }
-            }
+            posterProfilePicImageView.kf.setImage(with: posterImageURL)
         } else {
-            DispatchQueue.main.async {
-                self.userInitiaTextLabel.isHidden = false
-                self.userInitiaTextLabel.text = String(post.user.userName.prefix(1))
-                self.posterProfilePicImageView.layer.backgroundColor = UIColor.lightGray.cgColor
-            }
+            self.userInitiaTextLabel.isHidden = false
+            self.userInitiaTextLabel.text = String(post.user.userName.prefix(1))
+            self.posterProfilePicImageView.layer.backgroundColor = UIColor.lightGray.cgColor
         }
     }
     
@@ -246,9 +208,8 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
     
     @IBAction func moreImagesButtonTapped(_ sender: Any) {
-        // send post.images to images array on view controller and trigger the collection view to load
+        
     }
-    
     @IBAction func reactButtonTapped(_ sender: Any) {
         guard let postID else { return }
         isLiked.toggle()
