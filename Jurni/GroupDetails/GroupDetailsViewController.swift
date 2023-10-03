@@ -25,7 +25,7 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     var player: AVPlayer!
     var avpPlayerController = AVPlayerViewController()
     var posts: [Post] = []
-    
+    var selectedPost: Post? = nil
     let imagePicker = UIImagePickerController()
     var activityView: UIActivityIndicatorView?
     var selectedImages: [UIImage] = []
@@ -395,7 +395,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             cell.createCommentHandler = { postId, text in
                 self.createComment(postID: postId, content: text)
             }
-            
+            cell.commentBtnTap.addTarget(self, action: #selector(commentClick(_:)), for: .touchUpInside)
             cell.reactionHandler = {index, reaction in
                 self.updateReactionToFirebase(index: index, reaction: reaction)
             }
@@ -405,6 +405,14 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         
         
     }
+    
+    @objc func commentClick(_ sender: UIButton){
+            let position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
+            let indexPath = self.groupPostTableView.indexPathForRow(at: position)
+            selectedPost = posts[indexPath!.row]
+
+            self.performSegue(withIdentifier: "commentListSegue", sender: nil)
+        }
     
     
     @objc func uploadImages(_ sender: UIButton?){
@@ -667,6 +675,12 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             }
         }
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+            let destinationVC = segue.destination as! CommentViewController
+            destinationVC.postDetails = selectedPost
+            destinationVC.groupDetails = self.groupDetails
+        }
 }
 extension String {
  func htmlAttributedString() -> String? {

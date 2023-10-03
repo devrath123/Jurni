@@ -49,8 +49,9 @@ struct PostReaction{
 }
 
 struct Comment {
-    var content: String
-    var from: String
-    var timestamp: Date
+    var id: String?
+       var content: String = ""
+       var from: User
+       var timestamp: Date
 }
 

@@ -32,7 +32,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet weak var photoTwoOfTwoImageView: UIImageView!
     @IBOutlet weak var photoTwoThreeStackView: UIStackView!
     
-    
+    @IBOutlet weak var commentBtnTap: UIButton!
     @IBOutlet weak var moreImagesButton: UIButton!
     @IBOutlet weak var numberOfReactionsLabel: UILabel!
     @IBOutlet weak var numberOfCommentsLabel: UILabel!

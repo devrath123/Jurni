@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		3ADCF3EB2AB2507C0004C546 /* PostTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3ADCF3E92AB2507C0004C546 /* PostTableViewCell.xib */; };
 		5D2704E22AC6FB6800062D36 /* ComposeMessageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DA93D5E2AC492A100BCDBC6 /* ComposeMessageTableViewCell.xib */; };
+		5D7667F62ACC966D00C9FA8B /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7667F32ACC966D00C9FA8B /* CommentCell.swift */; };
+		5D7667F72ACC966D00C9FA8B /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7667F42ACC966D00C9FA8B /* CommentViewController.swift */; };
+		5D7667F82ACC966D00C9FA8B /* CommentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D7667F52ACC966D00C9FA8B /* CommentCell.xib */; };
 		5DA93D5F2AC492A100BCDBC6 /* ComposeMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA93D5D2AC492A100BCDBC6 /* ComposeMessageTableViewCell.swift */; };
 		5DA93D6E2AC4985900BCDBC6 /* PhotoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA93D6C2AC4985900BCDBC6 /* PhotoCollectionViewCell.swift */; };
 		5DA93D6F2AC4985900BCDBC6 /* PhotoCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DA93D6D2AC4985900BCDBC6 /* PhotoCollectionViewCell.xib */; };
@@ -150,6 +153,9 @@
 
 /* Begin PBXFileReference section */
 		3ADCF3E92AB2507C0004C546 /* PostTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PostTableViewCell.xib; sourceTree = "<group>"; };
+		5D7667F32ACC966D00C9FA8B /* CommentCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentCell.swift; sourceTree = "<group>"; };
+		5D7667F42ACC966D00C9FA8B /* CommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
+		5D7667F52ACC966D00C9FA8B /* CommentCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CommentCell.xib; sourceTree = "<group>"; };
 		5DA93D5D2AC492A100BCDBC6 /* ComposeMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeMessageTableViewCell.swift; sourceTree = "<group>"; };
 		5DA93D5E2AC492A100BCDBC6 /* ComposeMessageTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ComposeMessageTableViewCell.xib; sourceTree = "<group>"; };
 		5DA93D6C2AC4985900BCDBC6 /* PhotoCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -283,6 +289,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5D7667F22ACC964A00C9FA8B /* Comment */ = {
+			isa = PBXGroup;
+			children = (
+				5D7667F32ACC966D00C9FA8B /* CommentCell.swift */,
+				5D7667F52ACC966D00C9FA8B /* CommentCell.xib */,
+				5D7667F42ACC966D00C9FA8B /* CommentViewController.swift */,
+			);
+			path = Comment;
+			sourceTree = "<group>";
+		};
 		A3E832502924B0E200A3806E = {
 			isa = PBXGroup;
 			children = (
@@ -544,6 +560,7 @@
 		B8A75EF029AD24A90014CEA8 /* GroupDetails */ = {
 			isa = PBXGroup;
 			children = (
+				5D7667F22ACC964A00C9FA8B /* Comment */,
 				B81AED0129F05CE20075F57E /* Post */,
 				B8A75EF129AD25540014CEA8 /* GroupDetailsViewController.swift */,
 				B8D7820B29F19C1D0065AF85 /* Post.swift */,
@@ -709,6 +726,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D7667F82ACC966D00C9FA8B /* CommentCell.xib in Resources */,
 				5D2704E22AC6FB6800062D36 /* ComposeMessageTableViewCell.xib in Resources */,
 				B8D2D748298D54AB00D577DB /* JurniChapterTableViewCell.xib in Resources */,
 				B894C7A2295385AC007728FE /* UpcomingPaymentTableViewCell.xib in Resources */,
@@ -772,6 +790,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D7667F72ACC966D00C9FA8B /* CommentViewController.swift in Sources */,
 				B82C680529783F8400C47DF1 /* JurniStep.swift in Sources */,
 				B809EEB52934DF73006EB46D /* DashboardViewController.swift in Sources */,
 				EBBD689C2AC48CBB0086D90F /* (null) in Sources */,
@@ -835,6 +854,7 @@
 				B87BFD6C297998D600248688 /* MyJurniStepChaptersViewController.swift in Sources */,
 				B80B7E982A236BD700E6C8FA /* SelectedCollectionViewCell.swift in Sources */,
 				EBF76DEF2AB3CF9300417F1C /* PostTableViewCell.swift in Sources */,
+				5D7667F62ACC966D00C9FA8B /* CommentCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
