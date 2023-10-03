@@ -35,6 +35,8 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     let MESSAGE_TYPE_IMAGE = "image"
     let MESSAGE_TYPE_VIDEO = "video"
     
+    var previousSmileyIndex = -1
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         groupPostTableView.dataSource = self
@@ -346,6 +348,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             cell.containerView.backgroundColor = UIColor.white
             cell.backgroundColor = UIColor.white
            
+            print("Compose: \(indexPath.row)")
             
             cell.photoCollectionView.delegate = self
             cell.photoCollectionView.dataSource = self
@@ -381,17 +384,22 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         else{
             
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "PostTableViewCell", for: indexPath) as? PostTableViewCell else { return UITableViewCell() }
-            let post = posts[indexPath.row ]
+            let post = posts[indexPath.row]
             //        cell.delegate = self
-            cell.configurePostCell(with: post)
+            cell.configurePostCell(with: post, index: indexPath.row)
+            print("Refresh for position: \(indexPath.row)")
             
             if !post.postContent.postVideoUrl.isEmpty{
 //                playVideo(videoUrl: post.postContent.postVideoUrl[0], videoView: cell.videoContainerView)
             }
             cell.createCommentHandler = { postId, text in
                 self.createComment(postID: postId, content: text)
-                
             }
+            
+            cell.reactionHandler = {index, reaction in
+                self.updateReactionToFirebase(index: index, reaction: reaction)
+            }
+            
             return cell
         }
         
@@ -604,44 +612,75 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         }
     }
     
-    
-    
-    //extension GroupDetailsViewController: ApiCallDelegate{
-    //    func resetCells() {
-    //
-    //    }
-    //
-    //    func setImages(images: [UIImage]) {
-    //
-    //    }
-    
-    //    func postMessage(message: String){
-    //        self.postDataToFirebase(dataType: "text", content: ["content" : message])
-    //    }
-    //}
-    //    func resetCells() {
-    //
-    //    }
-    //
-    //    func setImages(images: [UIImage]) {
-    
-    //    func postMessage(message: String){
-    //        self.postDataToFirebase(dataType: "text", content: ["content" : message])
-    //    }
+    func updateReactionToFirebase(index: Int,reaction: String){
+        let post = posts[index]
+        let groupId = self.groupDetails?.groupId ?? ""
+        print("Index: \(index) Post : \(reaction)")
+        
+        var thumbsUp = post.postReaction.thumbsUp
+        var love = post.postReaction.love
+        var laugh = post.postReaction.laugh
+        var surprise = post.postReaction.surprise
+        var sad = post.postReaction.sad
+        var angry = post.postReaction.angry
+        switch reaction{
+            case "THUMBS_UP": thumbsUp += 1
+            case "LOVE": love += 1
+            case "LAUGH": laugh += 1
+            case "SURPRISE": surprise += 1
+            case "SAD": sad += 1
+            case "ANGRY": angry += 1
+            
+            default: print("Default")
+        }
+        
+        let docRef = Firestore.firestore().collection("groups").document(groupId).collection("posts").document(post.id!)
+        let reactions = [
+            "THUMB_UP": thumbsUp,
+            "LOVE": love,
+            "SAD": sad,
+            "ANGRY": angry,
+            "SURPRISE": surprise,
+            "LAUGH": laugh ]
+        let chatData: [String:Any] = [
+            "reactions": reactions
+        ]
+                
+        docRef.updateData(chatData){ err in
+            if err != nil {
+                print("Error updating Profile. Try again.")
+            } else {
+                print("Profile updated successfully")
+                switch reaction{
+                   case "THUMBS_UP": post.postReaction.thumbsUp += 1
+                    case "LOVE": post.postReaction.love += 1
+                    case "LAUGH": post.postReaction.laugh += 1
+                    case "SURPRISE": post.postReaction.surprise += 1
+                    case "SAD": post.postReaction.sad += 1
+                    case "ANGRY": post.postReaction.angry += 1
+                    
+                    default: print("Default")
+                }
+                DispatchQueue.main.async {
+                    self.groupPostTableView.reloadData()
+                }
+            }
+        }
+    }
 }
 extension String {
-    func htmlAttributedString() -> String? {
-        guard let data = self.data(using: String.Encoding.utf16, allowLossyConversion: false) else { return nil }
-        guard let html = try? NSMutableAttributedString(
-            data: data,
-            options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html],
-            documentAttributes: nil) else { return nil }
-        return html.string
-    }
+ func htmlAttributedString() -> String? {
+ guard let data = self.data(using: String.Encoding.utf16, allowLossyConversion: false) else { return nil }
+  guard let html = try? NSMutableAttributedString(
+  data: data,
+    options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html],
+     documentAttributes: nil) else { return nil }
+     return html.string
+ }
 }
 
 extension GroupDetailsViewController: ReactionTableViewCellDelegate {
-    func reactionButtonTapped(postID: String, isLiked: Bool) {
-        addReaction(postID: postID, isLiked: isLiked)
-    }
+ func reactionButtonTapped(postID: String, isLiked: Bool) {
+ addReaction(postID: postID, isLiked: isLiked)
+  }
 }

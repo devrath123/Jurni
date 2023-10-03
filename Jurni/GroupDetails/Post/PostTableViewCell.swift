@@ -43,11 +43,19 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet weak var newCommentTextField: UITextField!
     @IBOutlet weak var sendCommentButton: UIButton!
     @IBOutlet weak var playVideoImageView: UIImageView!
-    
+    @IBOutlet weak var heartImageView: UIImageView!
+    @IBOutlet weak var showSmileysView: UIView!
+    @IBOutlet weak var thumbsUp: UIButton!
+    @IBOutlet weak var laugh: UIButton!
+    @IBOutlet weak var surprise: UIButton!
+    @IBOutlet weak var sad: UIButton!
+    @IBOutlet weak var angry: UIButton!
+    @IBOutlet weak var love: UIButton!
     
     // MARK: - Properties
     var postID: String?
     var createCommentHandler: ((_ postID: String,_ text:String) -> Void)?
+    var reactionHandler: ((_ index: Int,_ reaction:String) -> Void)?
     private var commentViews: [CommentView] = []
     private var visibleCommentViews: [CommentView] {
         return subviews as? [CommentView] ?? []
@@ -65,7 +73,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         
     }
     
-    func configurePostCell(with post: Post) {
+    func configurePostCell(with post: Post, index: Int) {
         hideImageVideoViews()
         self.postID = post.id
         setPosterAvatar(with: post)
@@ -94,6 +102,37 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         }
         numberOfReactionsLabel.text = "\(totalReactions)"
         
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewClickSelector))
+        postBorderView.addGestureRecognizer(tapGesture)
+        
+        let showSmileysGesture = UITapGestureRecognizer(target: self, action: #selector(showSmileysTapped))
+        heartImageView.isUserInteractionEnabled = true
+        heartImageView.tag = index
+        heartImageView.addGestureRecognizer(showSmileysGesture)
+        
+        let showLaughTapped = UITapGestureRecognizer(target: self, action: #selector(showLaughTapped))
+        laugh.tag = index
+        laugh.addGestureRecognizer(showLaughTapped)
+        
+        let showSurpriseTapped = UITapGestureRecognizer(target: self, action: #selector(showSurpriseTapped))
+        surprise.tag = index
+        surprise.addGestureRecognizer(showSurpriseTapped)
+        
+        let showSadTapped = UITapGestureRecognizer(target: self, action: #selector(showSadTapped))
+        sad.tag = index
+        sad.addGestureRecognizer(showSadTapped)
+        
+        let showAngryTapped = UITapGestureRecognizer(target: self, action: #selector(showAngryTapped))
+        angry.tag = index
+        angry.addGestureRecognizer(showAngryTapped)
+        
+        let showThumbsTapped = UITapGestureRecognizer(target: self, action: #selector(showThumbsTapped))
+        thumbsUp.tag = index
+        thumbsUp.addGestureRecognizer(showThumbsTapped)
+        
+        let loveTapped = UITapGestureRecognizer(target: self, action: #selector(showLoveTapped))
+        love.tag = index
+        love.addGestureRecognizer(loveTapped)
     }
     
     func setRoundedCorner(view: UIView){
@@ -211,14 +250,9 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         
     }
     @IBAction func reactButtonTapped(_ sender: Any) {
-        guard let postID else { return }
-        isLiked.toggle()
-        if isLiked {
-            reactToggleButton.setImage(UIImage(named: "react-10px"), for: .normal)
-        } else {
-            reactToggleButton.setImage(UIImage(named: "grey-react-15px"), for: .normal)
-        }
-        delegate?.reactionButtonTapped(postID: postID, isLiked: isLiked)
+        
+    //    showSmileysView.isHidden = false
+        
     }
     
     @IBAction func seeAllCommentsTapped(_ sender: Any) {
@@ -229,5 +263,50 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         guard let comment = newCommentTextField.text, !comment.isEmpty,
               let postID = self.postID else { return }
         createCommentHandler?(postID, comment)
+    }
+    
+    @objc func viewClickSelector(){
+        postBorderView.endEditing(true)
+        showSmileysView.isHidden = true
+    }
+    
+    @objc func showSmileysTapped(tapGestureRecognizer: UITapGestureRecognizer){
+        showSmileysView.isHidden = false
+    }
+    
+    @objc func showThumbsTapped(tapGestureRecognizer: UITapGestureRecognizer){
+        let view = tapGestureRecognizer.view as! UIButton
+        showSmileysView.isHidden = true
+        reactionHandler?(view.tag, "THUMBS_UP")
+    }
+    
+    @objc func showLoveTapped(tapGestureRecognizer: UITapGestureRecognizer){
+        let view = tapGestureRecognizer.view as! UIButton
+        showSmileysView.isHidden = true
+        reactionHandler?(view.tag, "LOVE")
+    }
+    
+    @objc func showLaughTapped(tapGestureRecognizer: UITapGestureRecognizer){
+        let view = tapGestureRecognizer.view as! UIButton
+        showSmileysView.isHidden = true
+        reactionHandler?(view.tag, "LAUGH")
+    }
+    
+    @objc func showSurpriseTapped(tapGestureRecognizer: UITapGestureRecognizer){
+        let view = tapGestureRecognizer.view as! UIButton
+        showSmileysView.isHidden = true
+        reactionHandler?(view.tag, "SURPRISE")
+    }
+    
+    @objc func showSadTapped(tapGestureRecognizer: UITapGestureRecognizer){
+        let view = tapGestureRecognizer.view as! UIButton
+        showSmileysView.isHidden = true
+        reactionHandler?(view.tag, "SAD")
+    }
+    
+    @objc func showAngryTapped(tapGestureRecognizer: UITapGestureRecognizer){
+        let view = tapGestureRecognizer.view as! UIButton
+        showSmileysView.isHidden = true
+        reactionHandler?(view.tag, "ANGRY")
     }
 }
