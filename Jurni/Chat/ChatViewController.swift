@@ -40,7 +40,7 @@ class ChatViewController: UIViewController,UITableViewDelegate, UITableViewDataS
         let groupNib = UINib(nibName: "ChatTableViewCell", bundle: nil)
         chatTableView.register(groupNib, forCellReuseIdentifier: "ChatTableViewCell")
         
-        userName = UserDefaults.standard.string(forKey: Constants.FIRST_NAME)! + " " + UserDefaults.standard.string(forKey: Constants.LAST_NAME)!
+        userName = (UserDefaults.standard.string(forKey: Constants.FIRST_NAME) ?? "") + " " + (UserDefaults.standard.string(forKey: Constants.LAST_NAME) ?? "")
         
         fetchChats()
     }

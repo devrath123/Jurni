@@ -96,6 +96,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         
         posterNameLabel.text = post.user.userName
         timeSincePostLabel.text = post.postTime.getMessagePostedDay()
+        numberOfCommentsLabel.text = "\(post.commentsCount)"
         
         var totalReactions: Int{
             return post.postReaction.angry + post.postReaction.laugh + post.postReaction.love + post.postReaction.sad + post.postReaction.surprise + post.postReaction.thumbsUp

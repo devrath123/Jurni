@@ -35,20 +35,18 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     let MESSAGE_TYPE_IMAGE = "image"
     let MESSAGE_TYPE_VIDEO = "video"
     
-    var previousSmileyIndex = -1
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         groupPostTableView.dataSource = self
         groupPostTableView.delegate = self
         imagePicker.delegate = self
         
-//        showActivityIndicator()
+        //        showActivityIndicator()
         groupPostTableView.rowHeight = UITableView.automaticDimension
         self.groupPostTableView.estimatedRowHeight = 100
         let headerNib = UINib(nibName: "ComposeMessageTableViewCell", bundle: nil)
         groupPostTableView.register(headerNib, forCellReuseIdentifier: "ComposeMessageTableViewCell")
-
+        
         let nib = UINib(nibName: "PostTableViewCell", bundle: nil)
         groupPostTableView.register(nib, forCellReuseIdentifier: "PostTableViewCell")
         fetchPosts()
@@ -68,6 +66,7 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                 print("Error getting documents: \(err) :(")
             } else {
                 if let documents = querySnapshot?.documents {
+                    let jurniGroup =  DispatchGroup()
                     for document in documents {
                         print("Doc : \(document.data())")
                         let id = document.documentID
@@ -104,6 +103,9 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                         
                         let postContent = document.get("meta.content") as? String
                         let postText = postContent?.htmlAttributedString() ?? ""
+                        let comments = document.get("comments")
+                        
+                        
                         /// User id format example - from: /users/lzlXd3G5vhUFj1HIEjcmuLVLG4g1
                         /// needs UID to be retrieved as corresponding user's username
                         if let reactionsData = document.get("reactions") as? [String:Any] {
@@ -115,7 +117,11 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                                 surprise: reactionsData["SURPRISE"] as? Int ?? 0,
                                 thumbsUp: reactionsData["THUMB_UP"] as? Int ?? 0
                             )
-                           
+                            var commentsCount = 0
+                            defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").document(id).collection("comments").getDocuments(){ (querySnapshot, err) in
+                                print("Comments: \(querySnapshot?.documents.count)")
+                                commentsCount = querySnapshot?.documents.count ?? 0
+                            }
                             
                             let posterIDPath = document.get("from") as! DocumentReference
                             let pathString = posterIDPath.path
@@ -147,7 +153,7 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                                         
                                         let postUser = User(userName: userName, userAvatar: userImage)
                                         
-                                        let post = Post(postType: postType ?? "", postTime: postTime, postContent: PostContent(postText: postText, postImageUrls: imageArray, postVideoUrl: videoArray), user: postUser, postReaction: reactions)
+                                        let post = Post(postType: postType ?? "", postTime: postTime, postContent: PostContent(postText: postText, postImageUrls: imageArray, postVideoUrl: videoArray), user: postUser, postReaction: reactions, commentsCount: commentsCount)
                                         
                                         post.id = id
                                         
@@ -185,9 +191,9 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     }
     func addReaction(postID: String, isLiked: Bool) {
         print("Attempting to add this reaction \(isLiked), to this postID: \(postID)")
-       
+        
     }
-
+    
     
     @IBAction func backClick(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
@@ -200,8 +206,8 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
             avpPlayerController.player = player
             avpPlayerController.view.frame.size.height = videoView.frame.size.height
             avpPlayerController.view.frame.size.width = videoView.frame.size.width
-
-                        videoView.addSubview(avpPlayerController.view)
+            
+            videoView.addSubview(avpPlayerController.view)
             player.play()
         }
     }
@@ -211,7 +217,7 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
             // User canceled out of picker
             print("User canceled")
             selectedImages = []
-          //  delegate?.resetCells()
+            //  delegate?.resetCells()
         }else{
             for result in results {
                 result.itemProvider.loadObject(ofClass: UIImage.self) { (object, error) in
@@ -224,14 +230,14 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                 }
             }
             
-
+            
             DispatchQueue.main.async {
                 self.groupPostTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
                 self.groupPostTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
                 self.groupPostTableView.reloadData()
-                        }
-           
-           
+            }
+            
+            
         }
         picker.dismiss(animated: true, completion: nil)
     }
@@ -239,13 +245,12 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let videoURL = info[.mediaURL] as? URL {
             self.videoURL = videoURL
-           // tableView.reloadData()
+            // tableView.reloadData()
         }
         
         dismiss(animated: true, completion: nil)
     }
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-      //  delegate?.resetCells()
         dismiss(animated: true, completion: nil)
     }
     
@@ -304,23 +309,23 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.selectedImages.count
-        }
-
-        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-            
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCollectionViewCell", for: indexPath) as? PhotoCollectionViewCell else { return UICollectionViewCell() }
-            
-          
-            cell.deleteImageBtn.addTarget(self, action: #selector(deleteSeletedImage(sender:)), for: .touchUpInside)
-            cell.deleteImageBtn.tag = indexPath.item
-            cell.backgroundColor = UIColor.white
-            cell.avtarImageView.image =  self.selectedImages[indexPath.item]
-            cell.avtarImageView.layer.cornerRadius = 10
-            cell.avtarImageView.layer.masksToBounds = true
-            cell.avtarImageView.contentMode = .scaleToFill
-            
-            return cell
-        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCollectionViewCell", for: indexPath) as? PhotoCollectionViewCell else { return UICollectionViewCell() }
+        
+        
+        cell.deleteImageBtn.addTarget(self, action: #selector(deleteSeletedImage(sender:)), for: .touchUpInside)
+        cell.deleteImageBtn.tag = indexPath.item
+        cell.backgroundColor = UIColor.white
+        cell.avtarImageView.image =  self.selectedImages[indexPath.item]
+        cell.avtarImageView.layer.cornerRadius = 10
+        cell.avtarImageView.layer.masksToBounds = true
+        cell.avtarImageView.contentMode = .scaleToFill
+        
+        return cell
+    }
     
 }
 
@@ -347,7 +352,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             
             cell.containerView.backgroundColor = UIColor.white
             cell.backgroundColor = UIColor.white
-           
+            
             print("Compose: \(indexPath.row)")
             
             cell.photoCollectionView.delegate = self
@@ -390,7 +395,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             print("Refresh for position: \(indexPath.row)")
             
             if !post.postContent.postVideoUrl.isEmpty{
-//                playVideo(videoUrl: post.postContent.postVideoUrl[0], videoView: cell.videoContainerView)
+                //                playVideo(videoUrl: post.postContent.postVideoUrl[0], videoView: cell.videoContainerView)
             }
             cell.createCommentHandler = { postId, text in
                 self.createComment(postID: postId, content: text)
@@ -407,32 +412,16 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
     }
     
     @objc func commentClick(_ sender: UIButton){
-            let position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
-            let indexPath = self.groupPostTableView.indexPathForRow(at: position)
-            selectedPost = posts[indexPath!.row]
-
-            self.performSegue(withIdentifier: "commentListSegue", sender: nil)
-        }
-    
-    
-    @objc func uploadImages(_ sender: UIButton?){
+        let position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
+        let indexPath = self.groupPostTableView.indexPathForRow(at: position)
+        selectedPost = posts[indexPath!.row]
         
-//        var position: CGPoint = sender!.convert(.zero, to: self.groupPostTableView)
-//        let indexPath = self.groupPostTableView.indexPathForRow(at: position)
-//        let cell: ComposeMessageTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! ComposeMessageTableViewCell
-//
-//        cell.videoView.isHidden = true
-//        var configuration = PHPickerConfiguration()
-//        configuration.selectionLimit = 0  // 0 means no limit
-//        configuration.filter = .images
-//
-//        let picker = PHPickerViewController(configuration: configuration)
-//        picker.delegate = self
-//        self.present(picker, animated: true, completion: nil)
-        
+        self.performSegue(withIdentifier: "commentListSegue", sender: nil)
     }
     
     
+    @objc func uploadImages(_ sender: UIButton?){
+    }
     
     @objc func uploadVideo(_ sender: UIButton?){
         
@@ -456,9 +445,6 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         let position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
         let indexPath = self.groupPostTableView.indexPathForRow(at: position)
         let cell: ComposeMessageTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! ComposeMessageTableViewCell
-        
-        //        let text = cell.writeSomthingTextView.text
-        
         
         guard let unwrappedValue = cell.writeSomthingTextView.text else {
             print("Optional Value is nil")
@@ -623,7 +609,6 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
     func updateReactionToFirebase(index: Int,reaction: String){
         let post = posts[index]
         let groupId = self.groupDetails?.groupId ?? ""
-        print("Index: \(index) Post : \(reaction)")
         
         var thumbsUp = post.postReaction.thumbsUp
         var love = post.postReaction.love
@@ -632,14 +617,14 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         var sad = post.postReaction.sad
         var angry = post.postReaction.angry
         switch reaction{
-            case "THUMBS_UP": thumbsUp += 1
-            case "LOVE": love += 1
-            case "LAUGH": laugh += 1
-            case "SURPRISE": surprise += 1
-            case "SAD": sad += 1
-            case "ANGRY": angry += 1
+        case "THUMBS_UP": thumbsUp += 1
+        case "LOVE": love += 1
+        case "LAUGH": laugh += 1
+        case "SURPRISE": surprise += 1
+        case "SAD": sad += 1
+        case "ANGRY": angry += 1
             
-            default: print("Default")
+        default: print("Default")
         }
         
         let docRef = Firestore.firestore().collection("groups").document(groupId).collection("posts").document(post.id!)
@@ -653,21 +638,21 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         let chatData: [String:Any] = [
             "reactions": reactions
         ]
-                
+        
         docRef.updateData(chatData){ err in
             if err != nil {
                 print("Error updating Profile. Try again.")
             } else {
                 print("Profile updated successfully")
                 switch reaction{
-                   case "THUMBS_UP": post.postReaction.thumbsUp += 1
-                    case "LOVE": post.postReaction.love += 1
-                    case "LAUGH": post.postReaction.laugh += 1
-                    case "SURPRISE": post.postReaction.surprise += 1
-                    case "SAD": post.postReaction.sad += 1
-                    case "ANGRY": post.postReaction.angry += 1
+                case "THUMBS_UP": post.postReaction.thumbsUp += 1
+                case "LOVE": post.postReaction.love += 1
+                case "LAUGH": post.postReaction.laugh += 1
+                case "SURPRISE": post.postReaction.surprise += 1
+                case "SAD": post.postReaction.sad += 1
+                case "ANGRY": post.postReaction.angry += 1
                     
-                    default: print("Default")
+                default: print("Default")
                 }
                 DispatchQueue.main.async {
                     self.groupPostTableView.reloadData()
@@ -677,24 +662,24 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-            let destinationVC = segue.destination as! CommentViewController
-            destinationVC.postDetails = selectedPost
-            destinationVC.groupDetails = self.groupDetails
-        }
+        let destinationVC = segue.destination as! CommentViewController
+        destinationVC.postDetails = selectedPost
+        destinationVC.groupDetails = self.groupDetails
+    }
 }
 extension String {
- func htmlAttributedString() -> String? {
- guard let data = self.data(using: String.Encoding.utf16, allowLossyConversion: false) else { return nil }
-  guard let html = try? NSMutableAttributedString(
-  data: data,
-    options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html],
-     documentAttributes: nil) else { return nil }
-     return html.string
- }
+    func htmlAttributedString() -> String? {
+        guard let data = self.data(using: String.Encoding.utf16, allowLossyConversion: false) else { return nil }
+        guard let html = try? NSMutableAttributedString(
+            data: data,
+            options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html],
+            documentAttributes: nil) else { return nil }
+        return html.string
+    }
 }
 
 extension GroupDetailsViewController: ReactionTableViewCellDelegate {
- func reactionButtonTapped(postID: String, isLiked: Bool) {
- addReaction(postID: postID, isLiked: isLiked)
-  }
+    func reactionButtonTapped(postID: String, isLiked: Bool) {
+        addReaction(postID: postID, isLiked: isLiked)
+    }
 }

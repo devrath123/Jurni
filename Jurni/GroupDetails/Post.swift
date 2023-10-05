@@ -14,16 +14,17 @@ class Post: NSObject {
     var postContent: PostContent
     var user: User
     var postReaction: PostReaction
+    var commentsCount: Int
     @DocumentID var id: String?
    
     init(postType: String, postTime: Date, postContent: PostContent, user: User,
-         postReaction: PostReaction) {
+         postReaction: PostReaction, commentsCount: Int) {
         self.postType = postType
         self.postTime = postTime
         self.postContent = postContent
         self.user = user
         self.postReaction = postReaction
-        
+        self.commentsCount = commentsCount
         super.init()
     }
 }

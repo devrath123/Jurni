@@ -59,7 +59,7 @@ class GroupsViewController: UIViewController, UITableViewDelegate, UITableViewDa
                      //   print("\(document.documentID) ==> \(document.data())")
                         let name = document.get("name") as! String
                         let groupMeta : [String : Any] = document.get("meta") as! [String : Any]
-                        let groupLogo = groupMeta["banner"] as? String
+                        let groupLogo = groupMeta["bannerItem"] as? String
                         let groupBanner = groupMeta["groupBanner"] as? String
                         
                         self.groupArray.append(Group(groupId: document.documentID, groupName: name, groupLogo: groupLogo ?? "", groupBanner: groupBanner ?? "", membersCount: members.count))
