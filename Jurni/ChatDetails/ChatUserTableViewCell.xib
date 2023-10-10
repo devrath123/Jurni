@@ -20,7 +20,7 @@
                     <view contentMode="right" translatesAutoresizingMaskIntoConstraints="NO" id="46c-K2-MsB">
                         <rect key="frame" x="0.0" y="0.0" width="400" height="241"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="right" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Owner" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cPT-z2-6JV">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="right" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cPT-z2-6JV">
                                 <rect key="frame" x="10" y="10" width="250" height="15"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="250" id="YXX-7e-5yh"/>

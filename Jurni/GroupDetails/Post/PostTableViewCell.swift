@@ -8,8 +8,8 @@
 import UIKit
 import Kingfisher
 
-protocol ReactionTableViewCellDelegate: AnyObject {
-    func reactionButtonTapped(postID: String, isLiked: Bool)
+protocol PostTableViewCellDelegate: AnyObject {
+    func moreImagesButtonTapped(cell: PostTableViewCell)
 }
 
 class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
@@ -43,7 +43,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet weak var newCommentTextField: UITextField!
     @IBOutlet weak var sendCommentButton: UIButton!
     @IBOutlet weak var playVideoImageView: UIImageView!
-    @IBOutlet weak var heartImageView: UIImageView!
+   // @IBOutlet weak var heartImageView: UIImageView!
     @IBOutlet weak var showSmileysView: UIView!
     @IBOutlet weak var thumbsUp: UIButton!
     @IBOutlet weak var laugh: UIButton!
@@ -51,6 +51,13 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet weak var sad: UIButton!
     @IBOutlet weak var angry: UIButton!
     @IBOutlet weak var love: UIButton!
+    
+    @IBOutlet weak var thumbsUpLabel: UILabel!
+    @IBOutlet weak var laughLabel: UILabel!
+    @IBOutlet weak var surpriseLabel: UILabel!
+    @IBOutlet weak var sadLabel: UILabel!
+    @IBOutlet weak var angryLabel: UILabel!
+    @IBOutlet weak var loveLabel: UILabel!
     
     // MARK: - Properties
     var postID: String?
@@ -61,7 +68,6 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         return subviews as? [CommentView] ?? []
     }
     var isLiked: Bool = false
-    weak var delegate: ReactionTableViewCellDelegate?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -75,6 +81,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     
     func configurePostCell(with post: Post, index: Int) {
         hideImageVideoViews()
+        hideAllSmileyLabels()
         self.postID = post.id
         setPosterAvatar(with: post)
         setPostText(with: post)
@@ -107,9 +114,9 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         postBorderView.addGestureRecognizer(tapGesture)
         
         let showSmileysGesture = UITapGestureRecognizer(target: self, action: #selector(showSmileysTapped))
-        heartImageView.isUserInteractionEnabled = true
-        heartImageView.tag = index
-        heartImageView.addGestureRecognizer(showSmileysGesture)
+        reactToggleButton.isUserInteractionEnabled = true
+        reactToggleButton.tag = index
+        reactToggleButton.addGestureRecognizer(showSmileysGesture)
         
         let showLaughTapped = UITapGestureRecognizer(target: self, action: #selector(showLaughTapped))
         laugh.tag = index
@@ -134,6 +141,27 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         let loveTapped = UITapGestureRecognizer(target: self, action: #selector(showLoveTapped))
         love.tag = index
         love.addGestureRecognizer(loveTapped)
+        
+        if (post.postReaction.angry > 0){
+            showSmiley(smiley: "ANGRY")
+        }
+        if (post.postReaction.sad > 0){
+            showSmiley(smiley: "SAD")
+        }
+        if (post.postReaction.laugh > 0){
+            showSmiley(smiley: "LAUGH")
+        }
+        if (post.postReaction.surprise > 0){
+            showSmiley(smiley: "SURPRISE")
+        }
+        if (post.postReaction.love > 0){
+            showSmiley(smiley: "LOVE")
+        }
+        if (post.postReaction.thumbsUp > 0){
+            showSmiley(smiley: "THUMBSUP")
+        }
+        
+        
     }
     
     func setRoundedCorner(view: UIView){
@@ -251,9 +279,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         
     }
     @IBAction func reactButtonTapped(_ sender: Any) {
-        
-    //    showSmileysView.isHidden = false
-        
+      //  showSmileysView.isHidden = false
     }
     
     @IBAction func seeAllCommentsTapped(_ sender: Any) {
@@ -309,5 +335,26 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         let view = tapGestureRecognizer.view as! UIButton
         showSmileysView.isHidden = true
         reactionHandler?(view.tag, "ANGRY")
+    }
+    
+    func hideAllSmileyLabels(){
+        laughLabel.isHidden = true
+        sadLabel.isHidden = true
+        surpriseLabel.isHidden = true
+        loveLabel.isHidden = true
+        thumbsUpLabel.isHidden = true
+        angryLabel.isHidden = true
+    }
+    
+    func showSmiley(smiley: String){
+        switch smiley{
+        case "LAUGH": laughLabel.isHidden = false
+        case "SAD": sadLabel.isHidden = false
+        case "SURPRISE": surpriseLabel.isHidden = false
+        case "LOVE": loveLabel.isHidden = false
+        case "THUMBSUP": thumbsUpLabel.isHidden = false
+        case "ANGRY": angryLabel.isHidden = false
+        default: print("Default")
+        }
     }
 }

@@ -189,11 +189,6 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
             }
         }
     }
-    func addReaction(postID: String, isLiked: Bool) {
-        print("Attempting to add this reaction \(isLiked), to this postID: \(postID)")
-        
-    }
-    
     
     @IBAction func backClick(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
@@ -390,9 +385,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "PostTableViewCell", for: indexPath) as? PostTableViewCell else { return UITableViewCell() }
             let post = posts[indexPath.row]
-            //        cell.delegate = self
             cell.configurePostCell(with: post, index: indexPath.row)
-            print("Refresh for position: \(indexPath.row)")
             
             if !post.postContent.postVideoUrl.isEmpty{
                 //                playVideo(videoUrl: post.postContent.postVideoUrl[0], videoView: cell.videoContainerView)
@@ -678,8 +671,3 @@ extension String {
     }
 }
 
-extension GroupDetailsViewController: ReactionTableViewCellDelegate {
-    func reactionButtonTapped(postID: String, isLiked: Bool) {
-        addReaction(postID: postID, isLiked: isLiked)
-    }
-}

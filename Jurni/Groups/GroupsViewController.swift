@@ -104,10 +104,6 @@ class GroupsViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedGroup = groupArray[indexPath.row]
-      //  self.performSegue(withIdentifier: "groupDetailsSegue", sender: nil)
-      //  let viewController = DummyTableViewController()
-        print("you're the man")
-      // present(viewController, animated: true)
         self.performSegue(withIdentifier: "groupDetailsSegue", sender: nil)
     }
     
