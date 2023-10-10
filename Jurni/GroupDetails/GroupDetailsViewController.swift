@@ -12,9 +12,9 @@ import FirebaseDatabase
 import FirebaseAuth
 import FirebaseStorage
 import PhotosUI
+import MobileCoreServices
 
-
-class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate, PHPickerViewControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UITextViewDelegate {
+class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate, PHPickerViewControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UITextViewDelegate, UIActionSheetDelegate {
     
     @IBOutlet weak var groupNameLabel: UILabel!
     @IBOutlet weak var membersCountLabel: UILabel!
@@ -59,6 +59,8 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     // MARK: - Methods
     
     func fetchPosts(){
+        
+        self.posts.removeAll()
         let defaultStore = Firestore.firestore()
         print("Group id: \(self.groupDetails?.groupId)")
         defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").getDocuments(){ (querySnapshot, err) in
@@ -118,11 +120,11 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                                 thumbsUp: reactionsData["THUMB_UP"] as? Int ?? 0
                             )
                             var commentsCount = 0
-                            defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").document(id).collection("comments").getDocuments(){ (querySnapshot, err) in
-                                print("Comments: \(querySnapshot?.documents.count)")
-                                commentsCount = querySnapshot?.documents.count ?? 0
-                            }
-                            
+//                            defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").document(id).collection("comments").getDocuments(){ (querySnapshot, err) in
+//                                print("Comments: \(querySnapshot?.documents.count)")
+//                                commentsCount = querySnapshot?.documents.count ?? 0
+//                            }
+//                            
                             let posterIDPath = document.get("from") as! DocumentReference
                             let pathString = posterIDPath.path
                             let components = pathString.components(separatedBy: "/")
@@ -151,17 +153,27 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                                             }
                                         }
                                         
-                                        let postUser = User(userName: userName, userAvatar: userImage)
                                         
-                                        let post = Post(postType: postType ?? "", postTime: postTime, postContent: PostContent(postText: postText, postImageUrls: imageArray, postVideoUrl: videoArray), user: postUser, postReaction: reactions, commentsCount: commentsCount)
-                                        
-                                        post.id = id
-                                        
-                                        self.posts.append(post)
-                                        
-                                        self.posts = self.posts.sorted(by: { $0.postTime.compare($1.postTime as Date) == .orderedDescending })
-                                        self.hideActivityIndicator()
-                                        self.groupPostTableView.reloadData()
+                                    let commentsRef = defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").document(id).collection("comments")
+                                        commentsRef.getDocuments { (querySnapshot, err) in
+                                            if let err = err {
+                                                print("Error getting comments documents: \(err)")
+                                            } else {
+                                                commentsCount = querySnapshot?.documents.count ?? 0
+                                                
+                                                
+                                                let postUser = User(userName: userName, userAvatar: userImage)
+                                                
+                                                let post = Post(postType: postType ?? "", postTime: postTime, postContent: PostContent(postText: postText, postImageUrls: imageArray, postVideoUrl: videoArray), user: postUser, postReaction: reactions, commentsCount: commentsCount)
+                                                
+                                                post.id = id
+                                                
+                                                self.posts.append(post)
+                                                
+                                                self.posts = self.posts.sorted(by: { $0.postTime.compare($1.postTime as Date) == .orderedDescending })
+                                                self.hideActivityIndicator()
+                                                self.groupPostTableView.reloadData()
+                                            }}
                                     } else {
                                         print("User document not found for UID: \(uid)")
                                         self.hideActivityIndicator()
@@ -177,35 +189,60 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     
     func createComment(postID: String,content: String) {
         
+        self.showActivityIndicator()
         let defaultStore = Firestore.firestore()
         let document = defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").document(postID).collection("comments").document()
-        let dataToSend : [String: Any] = ["content": content,"from": Auth.auth().currentUser!.uid, "timestamp":FieldValue.serverTimestamp()]
+        
+        let from = Auth.auth().currentUser!.uid
+        let ownerString = Firestore.firestore().collection("users").document(from)
+        let ownerReference = Firestore.firestore().document(ownerString.path)
+        
+        let dataToSend : [String: Any] = ["content": content,"from": ownerReference, "timestamp":FieldValue.serverTimestamp()]
         document.setData(dataToSend) { error in
             if let error = error {
                 print("error creating comment")
             } else {
                 print("sucessful getting a comment")
+            
+                self.fetchPosts()
+
                 
             }
         }
     }
     
+    func addReaction(postID: String, isLiked: Bool) {
+        print("Attempting to add this reaction \(isLiked), to this postID: \(postID)")
+        
+    }
+    
+    
     @IBAction func backClick(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
     
-    func playVideo(videoUrl: String, videoView: UIView){
-        let videoUrl = URL(string: videoUrl)
-        if(videoUrl != nil){
-            player = AVPlayer(url: videoUrl!)
-            avpPlayerController.player = player
-            avpPlayerController.view.frame.size.height = videoView.frame.size.height
-            avpPlayerController.view.frame.size.width = videoView.frame.size.width
-            
-            videoView.addSubview(avpPlayerController.view)
-            player.play()
-        }
+    
+    func playVideo(videoUrl: URL, videoView: UIView) {
+        
+        let videoURL =  videoUrl
+        self.player = AVPlayer(url: videoURL)
+        self.avpPlayerController = AVPlayerViewController()
+        avpPlayerController.player = self.player
+        avpPlayerController.view.frame = videoView.bounds
+//        avpPlayerController.player?.play()
+//        avpPlayerController.player?.pause()
+        self.avpPlayerController.showsPlaybackControls = true
+        videoView.addSubview(avpPlayerController.view)
     }
+    
+    func play() {
+        self.avpPlayerController.player?.play()
+        }
+
+        func pause() {
+            self.avpPlayerController.player?.pause()
+        }
+    
     
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         if results.count == 0 {
@@ -213,18 +250,21 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
             print("User canceled")
             selectedImages = []
             //  delegate?.resetCells()
-        }else{
+        }
+        else{
             for result in results {
-                result.itemProvider.loadObject(ofClass: UIImage.self) { (object, error) in
-                    if let image = object as? UIImage {
-                        self.selectedImages.append(image)
-                        DispatchQueue.main.async {
-                            self.groupPostTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+                if result.itemProvider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
+                    result.itemProvider.loadObject(ofClass: UIImage.self) { (object, error) in
+                        if let image = object as? UIImage {
+                            self.selectedImages.append(image)
+                            DispatchQueue.main.async {
+                                self.groupPostTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+                            }
                         }
                     }
                 }
+                
             }
-            
             
             DispatchQueue.main.async {
                 self.groupPostTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
@@ -240,7 +280,13 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let videoURL = info[.mediaURL] as? URL {
             self.videoURL = videoURL
-            // tableView.reloadData()
+            DispatchQueue.main.async {
+                let cell: ComposeMessageTableViewCell = self.groupPostTableView.cellForRow(at: IndexPath(row: 0, section: 0))! as! ComposeMessageTableViewCell
+                cell.imgView.isHidden = true
+                //            self.groupPostTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                self.groupPostTableView.reloadData()
+            }
+            
         }
         
         dismiss(animated: true, completion: nil)
@@ -292,6 +338,7 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                 DispatchQueue.main.async {
                     self.hideActivityIndicator()
                     self.selectedImages.removeAll()
+                    self.videoURL = nil
                     self.fetchPosts()
                     self.groupPostTableView.reloadData()
                     self.groupPostTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
@@ -354,13 +401,43 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             cell.photoCollectionView.dataSource = self
             
             
+            if let url = self.videoURL {
+                cell.videoViewHeightConstraint.constant = CGFloat(140)
+                cell.videoView.isHidden = false
+                cell.deleteVideoBtnView.isHidden = false
+                cell.imgView.isHidden = true
+                cell.playVideoImg.isHidden = false
+                playVideo(videoUrl: url , videoView: cell.videoView)
+            }
+            else{
+                cell.videoViewHeightConstraint.constant = CGFloat(40)
+                cell.deleteVideoBtnView.isHidden = true
+                cell.imgView.isHidden = false
+                cell.videoView.isHidden = true
+                cell.playVideoImg.isHidden = true
+            }
+            
+            if (self.selectedImages.count > 0)
+            {
+                cell.videoBtnView.isHidden = true
+            }
+            else{
+                cell.videoBtnView.isHidden = false
+            }
+            
+            
+            
+            
             let photoNib = UINib(nibName: "PhotoCollectionViewCell", bundle: nil)
             cell.photoCollectionView.register(photoNib, forCellWithReuseIdentifier: "PhotoCollectionViewCell")
             
             
-            
+            let tapGesture = UITapGestureRecognizer (target: self, action: #selector(imgTap(tapGesture:)))
+            cell.playVideoImg.addGestureRecognizer(tapGesture)
+            cell.playVideoImg.isUserInteractionEnabled = true
             cell.uploadPhotoBtn.addTarget(self, action: #selector(uploadImages(_:)), for: .touchUpInside)
             cell.uploadVideoBtn.addTarget(self, action: #selector(uploadVideo(_:)), for: .touchUpInside)
+            cell.deleteVideoBtn.addTarget(self, action: #selector(deleteVideo(_:)), for: .touchUpInside)
             cell.publishBtn.addTarget(self, action: #selector(publishPost(_:)), for: .touchUpInside)
             
             cell.writeSomthingTextView.attributedPlaceholder = NSAttributedString(
@@ -385,15 +462,48 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "PostTableViewCell", for: indexPath) as? PostTableViewCell else { return UITableViewCell() }
             let post = posts[indexPath.row]
+//            cell.imageDelegate = self
             cell.configurePostCell(with: post, index: indexPath.row)
             
             if !post.postContent.postVideoUrl.isEmpty{
-                //                playVideo(videoUrl: post.postContent.postVideoUrl[0], videoView: cell.videoContainerView)
+                playVideo(videoUrl: URL(string: post.postContent.postVideoUrl[0])!, videoView: cell.videoContainerView)
             }
             cell.createCommentHandler = { postId, text in
                 self.createComment(postID: postId, content: text)
             }
+
+            
+            let picOne = UITapGestureRecognizer(target: self, action: #selector(picOneTapped))
+            cell.photoOneImageView.isUserInteractionEnabled = true
+            cell.photoOneImageView.tag = indexPath.row
+            cell.photoOneImageView.addGestureRecognizer(picOne)
+            
+            
+            let picTwo = UITapGestureRecognizer(target: self, action: #selector(picTwoTapped))
+            cell.photoTwoImageView.isUserInteractionEnabled = true
+            cell.photoTwoImageView.tag = indexPath.row
+            cell.photoTwoImageView.addGestureRecognizer(picTwo)
+            
+            
+            let picThree = UITapGestureRecognizer(target: self, action: #selector(picThreeTapped))
+            cell.photoThreeImageView.isUserInteractionEnabled = true
+            cell.photoThreeImageView.tag = indexPath.row
+            cell.photoThreeImageView.addGestureRecognizer(picThree)
+            
+            
+            let picThreeOfThree = UITapGestureRecognizer(target: self, action: #selector(picThreeOfThreeTapped))
+            cell.photoTwoOfTwoImageView.isUserInteractionEnabled = true
+            cell.photoTwoOfTwoImageView.tag = indexPath.row
+            cell.photoTwoOfTwoImageView.addGestureRecognizer(picThreeOfThree)
+            
+            
+            
+            cell.newCommentTextField.layer.borderColor = UIColor.lightGray.cgColor
+            cell.newCommentTextField.layer.borderWidth = 1
             cell.commentBtnTap.addTarget(self, action: #selector(commentClick(_:)), for: .touchUpInside)
+            cell.theeDotsBtnTap.addTarget(self, action: #selector(openActionsheet(_:)), for: .touchUpInside)
+            cell.sendCommentButton.addTarget(self, action: #selector(createCommentClick(_:)), for: .touchUpInside)
+            cell.moreImagesButton.addTarget(self, action: #selector(moreImages(_:)), for: .touchUpInside)
             cell.reactionHandler = {index, reaction in
                 self.updateReactionToFirebase(index: index, reaction: reaction)
             }
@@ -404,16 +514,150 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         
     }
     
+    @objc func picOneTapped(tapGestureRecognizer: UITapGestureRecognizer){
+        
+        let view = tapGestureRecognizer.view as! UIImageView
+        let postImages = posts[view.tag].postContent.postImageUrls[0]
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "ImageGalleryViewController") as! ImageGalleryViewController
+        vc.postImageUrls = [postImages]
+        self.present(vc, animated: true, completion: nil)
+        
+    }
+    
+    @objc func picTwoTapped(tapGestureRecognizer: UITapGestureRecognizer){
+        
+        let view = tapGestureRecognizer.view as! UIImageView
+        let postImages = posts[view.tag].postContent.postImageUrls[1]
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "ImageGalleryViewController") as! ImageGalleryViewController
+        vc.postImageUrls = [postImages]
+        self.present(vc, animated: true, completion: nil)
+        
+    }
+    
+    @objc func picThreeTapped(tapGestureRecognizer: UITapGestureRecognizer){
+        
+        let view = tapGestureRecognizer.view as! UIImageView
+        let postImages = posts[view.tag].postContent.postImageUrls[2]
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "ImageGalleryViewController") as! ImageGalleryViewController
+        vc.postImageUrls = [postImages]
+        self.present(vc, animated: true, completion: nil)
+        
+    }
+    
+    @objc func picThreeOfThreeTapped(tapGestureRecognizer: UITapGestureRecognizer){
+        
+        let view = tapGestureRecognizer.view as! UIImageView
+        let postImages = posts[view.tag].postContent.postImageUrls[1]
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "ImageGalleryViewController") as! ImageGalleryViewController
+        vc.postImageUrls = [postImages]
+        self.present(vc, animated: true, completion: nil)
+        
+    }
+    
+    
+    
+//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//        if indexPath.section != 0{
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "PostTableViewCell", for: indexPath) as? PostTableViewCell
+//            
+//            let post = posts[indexPath.row]
+//            if !post.postContent.postVideoUrl.isEmpty{
+//                self.play()
+//            }
+//        }
+//    }
+//
+//    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//        if indexPath.section != 0{
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "PostTableViewCell", for: indexPath) as? PostTableViewCell
+//            
+//            let post = posts[indexPath.row]
+//            if !post.postContent.postVideoUrl.isEmpty{
+//                self.pause()
+//            }
+//        }
+//    }
+    
+    
+    
     @objc func commentClick(_ sender: UIButton){
+        
         let position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
         let indexPath = self.groupPostTableView.indexPathForRow(at: position)
         selectedPost = posts[indexPath!.row]
-        
         self.performSegue(withIdentifier: "commentListSegue", sender: nil)
+    }
+    
+    @objc func createCommentClick(_ sender: UIButton){
+        
+        let position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
+        let indexPath = self.groupPostTableView.indexPathForRow(at: position)
+        let cell: PostTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! PostTableViewCell
+        if (cell.newCommentTextField.text?.trimmingCharacters(in: .whitespaces).isEmpty == false)
+        {
+            self.createComment(postID: posts[indexPath!.row].id!, content: cell.newCommentTextField.text ??  "")
+            cell.newCommentTextField.text = ""
+        }
+       
+    }
+    
+    
+    
+    
+    @objc func openActionsheet(_ sender: UIButton?) {
+        
+        let position: CGPoint = sender!.convert(.zero, to: self.groupPostTableView)
+        let indexPath = self.groupPostTableView.indexPathForRow(at: position)
+        
+        // create an actionSheet
+        let actionSheetController: UIAlertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+        // create an action
+        let firstAction: UIAlertAction = UIAlertAction(title: "Edit", style: .default) { action -> Void in
+
+            print("Edit")
+        }
+
+        let secondAction: UIAlertAction = UIAlertAction(title: "Delete", style: .default) { action -> Void in
+
+//            print("delete Action pressed")
+            self.deletePost(postID: self.posts[indexPath!.row].id!)
+        }
+
+        let cancelAction: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in }
+
+        // add actions
+//        actionSheetController.addAction(firstAction)
+        actionSheetController.addAction(secondAction)
+        actionSheetController.addAction(cancelAction)
+
+
+        // present an actionSheet...
+        // present(actionSheetController, animated: true, completion: nil)   // doesn't work for iPad
+
+        actionSheetController.popoverPresentationController?.sourceView = self.view // works for both iPhone & iPad
+
+        present(actionSheetController, animated: true) {
+            print("option menu presented")
+        }
     }
     
     
     @objc func uploadImages(_ sender: UIButton?){
+        
+        var position: CGPoint = sender!.convert(.zero, to: self.groupPostTableView)
+        let indexPath = self.groupPostTableView.indexPathForRow(at: position)
+        let cell: ComposeMessageTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! ComposeMessageTableViewCell
+        
+        cell.videoBtnView.isHidden = true
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 0  // 0 means no limit
+        configuration.filter = .images
+        
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        self.present(picker, animated: true, completion: nil)
+        
     }
     
     @objc func uploadVideo(_ sender: UIButton?){
@@ -422,14 +666,38 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         let indexPath = self.groupPostTableView.indexPathForRow(at: position)
         let cell: ComposeMessageTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! ComposeMessageTableViewCell
         
-        cell.videoView.isHidden = true
-        var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 0  // 0 means no limit
-        configuration.filter = .images
+        cell.imgView.isHidden = true
+        imagePicker.delegate = self
+        imagePicker.sourceType = .photoLibrary
+        imagePicker.mediaTypes = [kUTTypeMovie as String]
+        //        imagePicker.allowsEditing = false
         
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = self
-        self.present(picker, animated: true, completion: nil)
+        present(imagePicker, animated: true)
+        
+    }
+    
+    @objc func deleteVideo(_ sender: UIButton?){
+        
+        var position: CGPoint = sender!.convert(.zero, to: self.groupPostTableView)
+        let indexPath = self.groupPostTableView.indexPathForRow(at: position)
+        let cell: ComposeMessageTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! ComposeMessageTableViewCell
+        self.videoURL = nil
+        cell.videoViewHeightConstraint.constant = CGFloat(40)
+        cell.videoView.isHidden = true
+        cell.imgView.isHidden = false
+        cell.deleteVideoBtnView.isHidden = true
+        
+        let sectionIndex = 0 // Change this to your specific section index
+        //                groupPostTableView.reloadData()
+        groupPostTableView.reloadSections(IndexSet(integer: sectionIndex), with: .automatic)
+        
+    }
+    
+    @objc func imgTap(tapGesture: UITapGestureRecognizer) {
+        let imgView = tapGesture.view as! UIImageView
+        let idToMove = imgView.tag
+        let cell: ComposeMessageTableViewCell = self.groupPostTableView.cellForRow(at: IndexPath(row: 0, section: 0))! as! ComposeMessageTableViewCell
+        cell.playVideoImg.isHidden = true
         
     }
     
@@ -465,6 +733,22 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         else if (self.videoURL != nil)
         {
             
+            self.showActivityIndicator()
+            var urls = [String]()
+            
+            self.uploadVideoToFirebaseStorage(videoURL: self.videoURL!) { result in
+                switch result {
+                case .success(let downloadURLs):
+                    print("Images uploaded successfully. Download URLs: \(downloadURLs)")
+                    urls.append(downloadURLs.absoluteString)
+                    self.postDataToFirebase(dataType: self.MESSAGE_TYPE_VIDEO, content: ["content" : unwrappedValue, "url": urls])
+                case .failure(let error):
+                    print("Error uploading video: \(error.localizedDescription)")
+                    self.hideActivityIndicator()
+                }
+            }
+            
+            
         }
         else{
             self.showActivityIndicator()
@@ -475,6 +759,23 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         
     }
     
+    
+    func deletePost(postID: String) {
+        
+        self.showActivityIndicator()
+        let defaultStore = Firestore.firestore()
+        let document = defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").document(postID)
+        
+        document.delete() { error in
+            if let error = error {
+                print("error creating comment", error)
+            } else {
+                print("sucessful getting a comment")
+                self.fetchPosts()
+                
+            }
+        }
+    }
     
     
     @objc func deleteSeletedImage( sender: UIButton){
@@ -493,6 +794,24 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         groupPostTableView.reloadSections(IndexSet(integer: sectionIndex), with: .automatic)
         
     }
+    
+    
+    @objc func moreImages(_ sender: UIButton){
+        
+        var position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
+        let indexPath = self.groupPostTableView.indexPathForRow(at: position)
+//        let cell: PostTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! PostTableViewCell
+       
+        
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "ImageGalleryViewController") as! ImageGalleryViewController
+//        let imageGalleryVC = ImageGalleryViewController()
+//        imageGalleryVC.modalPresentationStyle = .overCurrentContext
+//        guard let postImageUrls = cell.post?.postContent.postImageUrls else { return }
+        vc.postImageUrls = self.posts[indexPath!.row].postContent.postImageUrls
+        self.present(vc, animated: true, completion: nil)
+        
+    }
+  
     
     
     func uploadImagesToFirebaseStorage(images: [UIImage], completion: @escaping (Result<[String], Error>) -> Void) {
@@ -557,32 +876,42 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
     
     
     func uploadVideoToFirebaseStorage(videoURL: URL, completion: @escaping (Result<URL, Error>) -> Void) {
-        let storageRef = Storage.storage().reference()
         
-        // Create a unique name for the video (e.g., using a timestamp)
+        
         let videoName = String("\(randomString(length: 5)).mp4")
-        
-        // Reference to the Firebase Storage bucket with the video's name
-        let videoRef = storageRef.child("video/\(videoName)")
-        
-        // Upload the video file
-        DispatchQueue.main.async {
-            let uploadTask = videoRef.putFile(from: videoURL, metadata: nil) { (metadata, error) in
-                if let error = error {
-                    completion(.failure(error))
-                } else {
-                    // Once the upload is complete, get the download URL
-                    videoRef.downloadURL { (url, error) in
-                        if let error = error {
-                            completion(.failure(error))
-                        } else if let downloadURL = url {
-                            completion(.success(downloadURL))
+        do {
+            let data = try Data(contentsOf: videoURL)
+            
+            let storageRef = Storage.storage().reference().child("videos").child(videoName)
+            if let uploadData = data as Data? {
+                let metaData = StorageMetadata()
+                metaData.contentType = "video/mp4"
+                storageRef.putData(data, metadata: metaData) { metadata, error in
+                    if let error = error {
+                        // Handle error
+                        completion(.failure(error))
+                    } else {
+                        // Once the upload is complete, get the download URL
+                        storageRef.downloadURL { (url, error) in
+                            if let error = error {
+                                // Handle error
+                                completion(.failure(error))
+                            } else if let downloadURL = url {
+                                // Video uploaded successfully, return the download URL
+                                completion(.success(downloadURL))
+                            }
                         }
                     }
                 }
             }
+        }catch let error {
+            print(error.localizedDescription)
         }
+        
     }
+    
+    
+    
     
     
     func showActivityIndicator() {
@@ -668,6 +997,12 @@ extension String {
             options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html],
             documentAttributes: nil) else { return nil }
         return html.string
+    }
+}
+
+extension GroupDetailsViewController: ReactionTableViewCellDelegate {
+    func reactionButtonTapped(postID: String, isLiked: Bool) {
+        addReaction(postID: postID, isLiked: isLiked)
     }
 }
 
