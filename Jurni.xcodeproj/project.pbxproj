@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,7 +12,6 @@
 		5D7667F62ACC966D00C9FA8B /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7667F32ACC966D00C9FA8B /* CommentCell.swift */; };
 		5D7667F72ACC966D00C9FA8B /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7667F42ACC966D00C9FA8B /* CommentViewController.swift */; };
 		5D7667F82ACC966D00C9FA8B /* CommentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D7667F52ACC966D00C9FA8B /* CommentCell.xib */; };
-		5D99D0452AD57CD5008BBD69 /* ImageGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D99D0442AD57CD5008BBD69 /* ImageGalleryViewController.swift */; };
 		5D99D04C2AD59E7E008BBD69 /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D99D04A2AD59E7E008BBD69 /* ImageCell.swift */; };
 		5D99D04D2AD59E7E008BBD69 /* ImageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D99D04B2AD59E7E008BBD69 /* ImageCell.xib */; };
 		5DA93D5F2AC492A100BCDBC6 /* ComposeMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA93D5D2AC492A100BCDBC6 /* ComposeMessageTableViewCell.swift */; };
@@ -117,6 +116,7 @@
 		B8D2D747298D54AB00D577DB /* JurniChapterTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D2D745298D54AB00D577DB /* JurniChapterTableViewCell.swift */; };
 		B8D2D748298D54AB00D577DB /* JurniChapterTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8D2D746298D54AB00D577DB /* JurniChapterTableViewCell.xib */; };
 		B8D7820C29F19C1D0065AF85 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D7820B29F19C1D0065AF85 /* Post.swift */; };
+		B8D981622AD5D16A004E5CAA /* ImageGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D981612AD5D16A004E5CAA /* ImageGalleryViewController.swift */; };
 		B8E9F42D2A54499900252C82 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = B8E9F42C2A54499900252C82 /* Kingfisher */; };
 		B8EEF37C2A1CF72500DF6A8B /* NewConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8EEF37B2A1CF72500DF6A8B /* NewConversationViewController.swift */; };
 		EB7E2E312ABBC562006ABEC1 /* PostDateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7E2E302ABBC562006ABEC1 /* PostDateExtension.swift */; };
@@ -159,7 +159,6 @@
 		5D7667F32ACC966D00C9FA8B /* CommentCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentCell.swift; sourceTree = "<group>"; };
 		5D7667F42ACC966D00C9FA8B /* CommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
 		5D7667F52ACC966D00C9FA8B /* CommentCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CommentCell.xib; sourceTree = "<group>"; };
-		5D99D0442AD57CD5008BBD69 /* ImageGalleryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImageGalleryViewController.swift; path = ../../../../../Downloads/ImageGalleryViewController.swift; sourceTree = "<group>"; };
 		5D99D04A2AD59E7E008BBD69 /* ImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCell.swift; sourceTree = "<group>"; };
 		5D99D04B2AD59E7E008BBD69 /* ImageCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImageCell.xib; sourceTree = "<group>"; };
 		5DA93D5D2AC492A100BCDBC6 /* ComposeMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeMessageTableViewCell.swift; sourceTree = "<group>"; };
@@ -244,6 +243,7 @@
 		B8D2D745298D54AB00D577DB /* JurniChapterTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JurniChapterTableViewCell.swift; sourceTree = "<group>"; };
 		B8D2D746298D54AB00D577DB /* JurniChapterTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = JurniChapterTableViewCell.xib; sourceTree = "<group>"; };
 		B8D7820B29F19C1D0065AF85 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
+		B8D981612AD5D16A004E5CAA /* ImageGalleryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageGalleryViewController.swift; sourceTree = "<group>"; };
 		B8EEF37B2A1CF72500DF6A8B /* NewConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationViewController.swift; sourceTree = "<group>"; };
 		EB7E2E302ABBC562006ABEC1 /* PostDateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDateExtension.swift; sourceTree = "<group>"; };
 		EBA7BD152ABCD4C80092684D /* CommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
@@ -368,7 +368,7 @@
 		B81AED0129F05CE20075F57E /* Post */ = {
 			isa = PBXGroup;
 			children = (
-				5D99D0442AD57CD5008BBD69 /* ImageGalleryViewController.swift */,
+				B8D981612AD5D16A004E5CAA /* ImageGalleryViewController.swift */,
 				5DA93D6C2AC4985900BCDBC6 /* PhotoCollectionViewCell.swift */,
 				5DA93D6D2AC4985900BCDBC6 /* PhotoCollectionViewCell.xib */,
 				3ADCF3E92AB2507C0004C546 /* PostTableViewCell.xib */,
@@ -827,7 +827,6 @@
 				B80B85712941CDEA00199686 /* PaymentDetailsViewController.swift in Sources */,
 				B89969462936088100E89EF6 /* SlideMenuViewController.swift in Sources */,
 				B899694829360D3700E89EF6 /* HomeViewController.swift in Sources */,
-				5D99D0452AD57CD5008BBD69 /* ImageGalleryViewController.swift in Sources */,
 				B849A162299EC01A004B580F /* GroupTableViewCell.swift in Sources */,
 				B87BFD632979437900248688 /* StepTableViewCell.swift in Sources */,
 				B8170EEC2A31BF4500B539D1 /* ChatOwnerTableViewCell.swift in Sources */,
@@ -862,6 +861,7 @@
 				B82BC9BB29D5C8FA00C3F258 /* ChatViewController.swift in Sources */,
 				EBBD689D2AC48CBB0086D90F /* (null) in Sources */,
 				EB7E2E312ABBC562006ABEC1 /* PostDateExtension.swift in Sources */,
+				B8D981622AD5D16A004E5CAA /* ImageGalleryViewController.swift in Sources */,
 				EBBD68942AC48CA10086D90F /* (null) in Sources */,
 				B87BFD6C297998D600248688 /* MyJurniStepChaptersViewController.swift in Sources */,
 				B80B7E982A236BD700E6C8FA /* SelectedCollectionViewCell.swift in Sources */,

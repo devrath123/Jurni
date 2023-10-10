@@ -48,7 +48,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet weak var commentProfileLabel: UILabel!
     @IBOutlet weak var sendCommentButton: UIButton!
     @IBOutlet weak var playVideoImageView: UIImageView!
-   // @IBOutlet weak var heartImageView: UIImageView!
+    @IBOutlet weak var heartImageView: UIImageView!
     @IBOutlet weak var showSmileysView: UIView!
     @IBOutlet weak var thumbsUp: UIButton!
     @IBOutlet weak var laugh: UIButton!
@@ -89,7 +89,6 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     
     func configurePostCell(with post: Post, index: Int) {
         hideImageVideoViews()
-        hideAllSmileyLabels()
         self.postID = post.id
         setPosterAvatar(with: post)
         setPostText(with: post)
@@ -138,9 +137,9 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         postBorderView.addGestureRecognizer(tapGesture)
         
         let showSmileysGesture = UITapGestureRecognizer(target: self, action: #selector(showSmileysTapped))
-        reactToggleButton.isUserInteractionEnabled = true
-        reactToggleButton.tag = index
-        reactToggleButton.addGestureRecognizer(showSmileysGesture)
+        heartImageView.isUserInteractionEnabled = true
+        heartImageView.tag = index
+        heartImageView.addGestureRecognizer(showSmileysGesture)
         
         let showLaughTapped = UITapGestureRecognizer(target: self, action: #selector(showLaughTapped))
         laugh.tag = index
@@ -165,26 +164,6 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         let loveTapped = UITapGestureRecognizer(target: self, action: #selector(showLoveTapped))
         love.tag = index
         love.addGestureRecognizer(loveTapped)
-        
-        if (post.postReaction.angry > 0){
-            showSmiley(smiley: "ANGRY")
-        }
-        if (post.postReaction.sad > 0){
-            showSmiley(smiley: "SAD")
-        }
-        if (post.postReaction.laugh > 0){
-            showSmiley(smiley: "LAUGH")
-        }
-        if (post.postReaction.surprise > 0){
-            showSmiley(smiley: "SURPRISE")
-        }
-        if (post.postReaction.love > 0){
-            showSmiley(smiley: "LOVE")
-        }
-        if (post.postReaction.thumbsUp > 0){
-            showSmiley(smiley: "THUMBSUP")
-        }
-        
         
     }
     
@@ -359,26 +338,5 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         let view = tapGestureRecognizer.view as! UIButton
         showSmileysView.isHidden = true
         reactionHandler?(view.tag, "ANGRY")
-    }
-    
-    func hideAllSmileyLabels(){
-        laughLabel.isHidden = true
-        sadLabel.isHidden = true
-        surpriseLabel.isHidden = true
-        loveLabel.isHidden = true
-        thumbsUpLabel.isHidden = true
-        angryLabel.isHidden = true
-    }
-    
-    func showSmiley(smiley: String){
-        switch smiley{
-        case "LAUGH": laughLabel.isHidden = false
-        case "SAD": sadLabel.isHidden = false
-        case "SURPRISE": surpriseLabel.isHidden = false
-        case "LOVE": loveLabel.isHidden = false
-        case "THUMBSUP": thumbsUpLabel.isHidden = false
-        case "ANGRY": angryLabel.isHidden = false
-        default: print("Default")
-        }
     }
 }

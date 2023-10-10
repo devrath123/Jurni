@@ -554,32 +554,6 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         
     }
     
-    
-    
-//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        if indexPath.section != 0{
-//            let cell = tableView.dequeueReusableCell(withIdentifier: "PostTableViewCell", for: indexPath) as? PostTableViewCell
-//            
-//            let post = posts[indexPath.row]
-//            if !post.postContent.postVideoUrl.isEmpty{
-//                self.play()
-//            }
-//        }
-//    }
-//
-//    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        if indexPath.section != 0{
-//            let cell = tableView.dequeueReusableCell(withIdentifier: "PostTableViewCell", for: indexPath) as? PostTableViewCell
-//            
-//            let post = posts[indexPath.row]
-//            if !post.postContent.postVideoUrl.isEmpty{
-//                self.pause()
-//            }
-//        }
-//    }
-    
-    
-    
     @objc func commentClick(_ sender: UIButton){
         
         let position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
@@ -600,9 +574,6 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         }
        
     }
-    
-    
-    
     
     @objc func openActionsheet(_ sender: UIButton?) {
         
@@ -800,16 +771,9 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         
         var position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
         let indexPath = self.groupPostTableView.indexPathForRow(at: position)
-//        let cell: PostTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! PostTableViewCell
-       
-        
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "ImageGalleryViewController") as! ImageGalleryViewController
-//        let imageGalleryVC = ImageGalleryViewController()
-//        imageGalleryVC.modalPresentationStyle = .overCurrentContext
-//        guard let postImageUrls = cell.post?.postContent.postImageUrls else { return }
         vc.postImageUrls = self.posts[indexPath!.row].postContent.postImageUrls
         self.present(vc, animated: true, completion: nil)
-        
     }
   
     
@@ -853,16 +817,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
                     }
                 }
             }
-            
-            // You can also observe the upload progress if needed
-            //            uploadTask.observe(.progress) { snapshot in
-            //                let percentComplete = 100.0 * Double(snapshot.progress!.completedUnitCount) / Double(snapshot.progress!.totalUnitCount)
-            //                print("Upload progress: \(percentComplete)%")
-            //            }
         }
-        
-        
-        
         
         dispatchGroup.notify(queue: .main) {
             if !uploadErrors.isEmpty {
@@ -909,10 +864,6 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         }
         
     }
-    
-    
-    
-    
     
     func showActivityIndicator() {
         activityView = UIActivityIndicatorView(style: .large)
