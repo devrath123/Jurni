@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "A2A922F1-8411-41F3-90EA-BDDE777AF942"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "707B832A-E1A5-4520-81AC-EFA6B8AB0D4A"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Jurni/GroupDetails/GroupDetailsViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "746"
+            endingLineNumber = "746"
+            landmarkName = "publishPost(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "707B832A-E1A5-4520-81AC-EFA6B8AB0D4A - 8c3f0ff5afb0a38d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Result&lt;Foundation.URL, Swift.Error&gt;) -&gt; () in Jurni.GroupDetailsViewController.publishPost(__C.UIButton) -&gt; ()"
+                  moduleName = "Jurni"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/yatharthsingh/work/jurni_iOS/Jurni/GroupDetails/GroupDetailsViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "746"
+                  endingLineNumber = "746"
+                  offsetFromSymbolStart = "932">
+               </Location>
+               <Location
+                  uuid = "707B832A-E1A5-4520-81AC-EFA6B8AB0D4A - 8c3f0ff5afb0a38d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Result&lt;Foundation.URL, Swift.Error&gt;) -&gt; () in Jurni.GroupDetailsViewController.publishPost(__C.UIButton) -&gt; ()"
+                  moduleName = "Jurni"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/yatharthsingh/work/jurni_iOS/Jurni/GroupDetails/GroupDetailsViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "746"
+                  endingLineNumber = "746"
+                  offsetFromSymbolStart = "1672">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "47F18608-5F0F-4CED-9824-E447B3D82C9D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Jurni/GroupDetails/GroupDetailsViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "747"
+            endingLineNumber = "747"
+            landmarkName = "publishPost(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "47F18608-5F0F-4CED-9824-E447B3D82C9D - 8c3f0ff5afb0a3ec"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Result&lt;Foundation.URL, Swift.Error&gt;) -&gt; () in Jurni.GroupDetailsViewController.publishPost(__C.UIButton) -&gt; ()"
+                  moduleName = "Jurni"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/yatharthsingh/work/jurni_iOS/Jurni/GroupDetails/GroupDetailsViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "747"
+                  endingLineNumber = "747"
+                  offsetFromSymbolStart = "1152">
+               </Location>
+               <Location
+                  uuid = "47F18608-5F0F-4CED-9824-E447B3D82C9D - 8c3f0ff5afb0a3ec"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Result&lt;Foundation.URL, Swift.Error&gt;) -&gt; () in Jurni.GroupDetailsViewController.publishPost(__C.UIButton) -&gt; ()"
+                  moduleName = "Jurni"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/yatharthsingh/work/jurni_iOS/Jurni/GroupDetails/GroupDetailsViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "747"
+                  endingLineNumber = "747"
+                  offsetFromSymbolStart = "1752">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FE51ACFD-FF3B-4D08-A9A2-7D269A79141A"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Jurni/GroupDetails/GroupDetailsViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "743"
+            endingLineNumber = "743"
+            landmarkName = "publishPost(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "FE51ACFD-FF3B-4D08-A9A2-7D269A79141A - 8c3f0ff5afb0a368"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Result&lt;Foundation.URL, Swift.Error&gt;) -&gt; () in Jurni.GroupDetailsViewController.publishPost(__C.UIButton) -&gt; ()"
+                  moduleName = "Jurni"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/yatharthsingh/work/jurni_iOS/Jurni/GroupDetails/GroupDetailsViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "743"
+                  endingLineNumber = "743"
+                  offsetFromSymbolStart = "336">
+               </Location>
+               <Location
+                  uuid = "FE51ACFD-FF3B-4D08-A9A2-7D269A79141A - 8c3f0ff5afb0a368"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Result&lt;Foundation.URL, Swift.Error&gt;) -&gt; () in Jurni.GroupDetailsViewController.publishPost(__C.UIButton) -&gt; ()"
+                  moduleName = "Jurni"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/yatharthsingh/work/jurni_iOS/Jurni/GroupDetails/GroupDetailsViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "743"
+                  endingLineNumber = "743"
+                  offsetFromSymbolStart = "488">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "83F2EBEC-8EFB-48A2-A9D5-52C4B8EDABB7"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Jurni/GroupDetails/GroupDetailsViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "697"
+            endingLineNumber = "697"
+            landmarkName = "imgTap(tapGesture:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "83F2EBEC-8EFB-48A2-A9D5-52C4B8EDABB7 - b0d3c6b0326ac089"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Jurni.GroupDetailsViewController.deleteVideo(Swift.Optional&lt;__C.UIButton&gt;) -&gt; ()"
+                  moduleName = "Jurni"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/yatharthsingh/work/jurni_iOS/Jurni/GroupDetails/GroupDetailsViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "697"
+                  endingLineNumber = "697"
+                  offsetFromSymbolStart = "3004">
+               </Location>
+               <Location
+                  uuid = "83F2EBEC-8EFB-48A2-A9D5-52C4B8EDABB7 - eaed57e00c16f54a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Jurni.GroupDetailsViewController.imgTap(tapGesture: __C.UITapGestureRecognizer) -&gt; ()"
+                  moduleName = "Jurni"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/yatharthsingh/work/jurni_iOS/Jurni/GroupDetails/GroupDetailsViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "698"
+                  endingLineNumber = "698"
+                  offsetFromSymbolStart = "164">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

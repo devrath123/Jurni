@@ -38,7 +38,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         let headerNib = UINib(nibName: "CommentCell", bundle: nil)
         commentTableView.register(headerNib, forCellReuseIdentifier: "CommentCell")
-        
+        self.setBottomView()
         self.fetchComments()
         
         var height = self.view.frame.height - (commentTableView.frame.origin.y + commentView.frame.height)
@@ -49,84 +49,92 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     // MARK: - Methods
-    func fetchComments(){
+
+
+    func fetchComments() {
         self.comments.removeAll()
-        print("documents", self.groupDetails?.groupId, self.postDetails?.id)
-            let defaultStore = Firestore.firestore()
-            defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").document(self.postDetails?.id ?? "").collection("comments").getDocuments(){ (querySnapshot, err) in
-                if let err = err {
-                    print("Error getting comments documents: \(err) :(")
-                } else {
-                    print("documents", self.groupDetails?.groupId, self.postDetails?.id)
-                    if let documents = querySnapshot?.documents {
-                        for document in documents {
-                            print("Error getting comments documents: \(document.data()) :(")
-                            let id = document.documentID
-                            let timestamp = document.get("timestamp") as? Timestamp
-                            let commentTime = timestamp?.dateValue() ?? Date()
-                            let content = document.get("content") as? String
-                            
-                            if let commenterIDPath = document.get("from") as? DocumentReference {
-                                let pathString = commenterIDPath.path
-                                let components = pathString.components(separatedBy: "/")
-                                if let uid = components.last{
-                                    print("commenter UID = \(uid)")
-                                    let userRef = defaultStore.collection("users").document(uid)
-                                    userRef.getDocument { (document, error) in
-                                        if let document = document, document.exists {
-                                            
-                                            var userName: String = ""
-                                            var userImage: String = ""
-                                            
-                                            if(document.get("firstName") as? String != nil){
-                                                userName = document.get("firstName") as? String ?? ""
-                                            }
-                                            
-                                            if(document.get("lastName") as? String != nil){
-                                                userName += " " + (document.get("lastName") as? String ?? "")
-                                            }
-                                            
-                                            if(document.get("avatar") != nil){
-                                                if let image =  document.get("avatar") as? String {
-                                                    userImage = image
-                                                } else {
-                                                    userImage.append("")
-                                                }
-                                            }
-                                            let commentUser = User(userName: userName, userAvatar: userImage)
-                                            let comment = Comment(id: id, content: content ?? "", from: commentUser, timestamp: commentTime)
-                                           
-                                            self.comments.append(comment)
-                                            self.comments = self.comments.sorted(by: { $0.timestamp.compare($1.timestamp as Date) == .orderedDescending })
-                                            self.commentTableView.reloadData()
-                                            self.setBottomView()
-//                                            self.scrollToBottom()
-                                        }
-                                    }
-                                }
-                            }
+        let defaultStore = Firestore.firestore()
+        defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").document(self.postDetails?.id ?? "").collection("comments").getDocuments() { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting comments documents: \(err)")
+            } else {
+                if let documents = querySnapshot?.documents {
+                    for document in documents {
+                        let id = document.documentID
+                        let timestamp = document.get("timestamp") as? Timestamp
+                        let commentTime = timestamp?.dateValue() ?? Date()
+                        let content = document.get("content") as? String
+                        
+                        var userId: String?
+                        if let fromReference = document.get("from") as? DocumentReference {
+                            // If "from" field is a DocumentReference, extract the user ID from its path
+                            let pathComponents = fromReference.path.components(separatedBy: "/")
+                            userId = pathComponents.last
+                        } else if let fromString = document.get("from") as? String {
+                            // If "from" field is a string, use it directly as the user ID
+                            userId = fromString
                         }
                         
-                        self.hideActivityIndicator()
+                        if let userId = userId {
+                            let userRef = defaultStore.collection("users").document(userId)
+                            userRef.getDocument { (document, error) in
+                                var userName: String = "Unknown"
+                                var userImage: String = ""
+                                
+                                if let document = document, document.exists {
+                                    if let firstName = document.get("firstName") as? String {
+                                        userName = firstName
+                                    }
+                                    if let lastName = document.get("lastName") as? String {
+                                        userName += " " + lastName
+                                    }
+                                    
+                                    if let image = document.get("avatar") as? String {
+                                        userImage = image
+                                    }
+                                }
+                                
+                                let commentUser = User(userName: userName, userAvatar: userImage)
+                                let comment = Comment(id: id, content: content ?? "", from: commentUser, timestamp: commentTime)
+                                
+                                self.comments.append(comment)
+                                self.comments = self.comments.sorted(by: { $0.timestamp.compare($1.timestamp as Date) == .orderedDescending })
+                                self.commentTableView.reloadData()
+                                
+                            }
+                        } else {
+                            // Handle the case where "from" field is neither DocumentReference nor String
+                            let commentUser = User(userName: "Unknown", userAvatar: "")
+                            let comment = Comment(id: id, content: content ?? "", from: commentUser, timestamp: commentTime)
+                            self.comments.append(comment)
+                            self.comments = self.comments.sorted(by: { $0.timestamp.compare($1.timestamp as Date) == .orderedDescending })
+                            self.commentTableView.reloadData()
+                           
+                        }
                     }
+                    
+                    self.hideActivityIndicator()
                 }
             }
         }
+    }
     
     
    func setBottomView(){
+       avtarLblView.layer.cornerRadius = avtarLblView.frame.size.width / 2
        let profilePic = UserDefaults.standard.string(forKey: Constants.PROFILE_PIC) ?? ""
+       let firstName =  UserDefaults.standard.string(forKey: Constants.FIRST_NAME) ?? ""
+       
         setImage(url: profilePic, imageView: avtarImgView)
         avtarLblView.isHidden = true
+       avtarImgView.contentMode = .scaleAspectFill
+       avtarImgView.layer.cornerRadius = avtarImgView.frame.size.width / 2
+       avtarImgView.layer.masksToBounds = true
        
-//       commentTextField.layer.borderColor = UIColor.darkGray.cgColor
-//       commentTextField.layer.cornerRadius = 5
-//
-       
-        if (!comments[0].from.userName.isEmpty && comments[0].from.userAvatar == ""){
+        if (!firstName.isEmpty && profilePic == ""){
             avtarLblView.isHidden = false
-            avtarLblView.layer.cornerRadius = avtarLblView.frame.size.width / 2
-            let nameFirstLetter:String = comments[0].from.userName.first!.description
+           
+            let nameFirstLetter:String = firstName.first!.description
             
             profileLbl.text = nameFirstLetter
         }

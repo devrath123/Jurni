@@ -8,6 +8,10 @@
 import UIKit
 import Kingfisher
 
+protocol PostTableViewCellDelegate: AnyObject {
+    func moreImagesButtonTapped(cell: PostTableViewCell)
+}
+
 protocol ReactionTableViewCellDelegate: AnyObject {
     func reactionButtonTapped(postID: String, isLiked: Bool)
 }
@@ -31,7 +35,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet weak var photoThreeImageView: UIImageView!
     @IBOutlet weak var photoTwoOfTwoImageView: UIImageView!
     @IBOutlet weak var photoTwoThreeStackView: UIStackView!
-    
+    @IBOutlet weak var theeDotsBtnTap: UIButton!
     @IBOutlet weak var commentBtnTap: UIButton!
     @IBOutlet weak var moreImagesButton: UIButton!
     @IBOutlet weak var numberOfReactionsLabel: UILabel!
@@ -41,6 +45,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     
     @IBOutlet weak var userInitiaTextLabel: UILabel!
     @IBOutlet weak var newCommentTextField: UITextField!
+    @IBOutlet weak var commentProfileLabel: UILabel!
     @IBOutlet weak var sendCommentButton: UIButton!
     @IBOutlet weak var playVideoImageView: UIImageView!
     @IBOutlet weak var heartImageView: UIImageView!
@@ -54,6 +59,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     
     // MARK: - Properties
     var postID: String?
+    var post: Post?
     var createCommentHandler: ((_ postID: String,_ text:String) -> Void)?
     var reactionHandler: ((_ index: Int,_ reaction:String) -> Void)?
     private var commentViews: [CommentView] = []
@@ -62,6 +68,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
     var isLiked: Bool = false
     weak var delegate: ReactionTableViewCellDelegate?
+    weak var imageDelegate: PostTableViewCellDelegate?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -84,6 +91,22 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         if (!post.postContent.postVideoUrl.isEmpty){
             setPostVideo(with: post)
         }
+        
+        currentUserProfilePicView.layer.cornerRadius = currentUserProfilePicView.frame.size.width / 2
+        let profilePic = UserDefaults.standard.string(forKey: Constants.PROFILE_PIC) ?? ""
+        let firstName =  UserDefaults.standard.string(forKey: Constants.FIRST_NAME) ?? ""
+        
+         setImage(url: profilePic, imageView: currentUserProfilePicView)
+        commentProfileLabel.isHidden = true
+         if (!firstName.isEmpty && profilePic == ""){
+             commentProfileLabel.isHidden = false
+             commentProfileLabel.layer.cornerRadius = commentProfileLabel.frame.size.width / 2
+             commentProfileLabel.layer.masksToBounds = true
+             
+             let nameFirstLetter:String = firstName.first!.description
+             commentProfileLabel.text = nameFirstLetter
+         }
+        
         postBorderView.layer.cornerRadius = 20
         postBorderView.layer.borderWidth = 1.0
         postBorderView.layer.borderColor = UIColor.lightGray.cgColor
@@ -248,7 +271,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
     
     @IBAction func moreImagesButtonTapped(_ sender: Any) {
-        
+        imageDelegate?.moreImagesButtonTapped(cell: self)
     }
     @IBAction func reactButtonTapped(_ sender: Any) {
         

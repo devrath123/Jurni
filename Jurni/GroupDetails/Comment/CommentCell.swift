@@ -31,15 +31,22 @@ class CommentCell: UITableViewCell {
     
     func setCommentsData(with comment: Comment){
         print(comment, "comment")
+        avtarView.layer.cornerRadius = avtarView.frame.size.width / 2
         nameLbl.text = comment.from.userName
         commentTextLbl.text = comment.content.htmlAttributedString() ?? ""
         timeLbl.text = comment.timestamp.getMessagePostedDay()
         setImage(url: comment.from.userAvatar, imageView: commentImgView)
-
+        commentImgView.contentMode = .scaleAspectFill
+        commentImgView.layer.cornerRadius = commentImgView.frame.size.width / 2
+        commentImgView.layer.masksToBounds = true
+        commentImgView.isHidden = false
+        imageLbl.isHidden = true
+        
         if (!comment.from.userName.isEmpty && comment.from.userAvatar == ""){
-            avtarView.layer.cornerRadius = avtarView.frame.size.width / 2
             let nameFirstLetter:String = comment.from.userName.first!.description
             imageLbl.text = nameFirstLetter
+            commentImgView.isHidden = true
+            imageLbl.isHidden = false
         }
     }
     

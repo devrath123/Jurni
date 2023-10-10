@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 53;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,6 +12,9 @@
 		5D7667F62ACC966D00C9FA8B /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7667F32ACC966D00C9FA8B /* CommentCell.swift */; };
 		5D7667F72ACC966D00C9FA8B /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7667F42ACC966D00C9FA8B /* CommentViewController.swift */; };
 		5D7667F82ACC966D00C9FA8B /* CommentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D7667F52ACC966D00C9FA8B /* CommentCell.xib */; };
+		5D99D0452AD57CD5008BBD69 /* ImageGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D99D0442AD57CD5008BBD69 /* ImageGalleryViewController.swift */; };
+		5D99D04C2AD59E7E008BBD69 /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D99D04A2AD59E7E008BBD69 /* ImageCell.swift */; };
+		5D99D04D2AD59E7E008BBD69 /* ImageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D99D04B2AD59E7E008BBD69 /* ImageCell.xib */; };
 		5DA93D5F2AC492A100BCDBC6 /* ComposeMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA93D5D2AC492A100BCDBC6 /* ComposeMessageTableViewCell.swift */; };
 		5DA93D6E2AC4985900BCDBC6 /* PhotoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA93D6C2AC4985900BCDBC6 /* PhotoCollectionViewCell.swift */; };
 		5DA93D6F2AC4985900BCDBC6 /* PhotoCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DA93D6D2AC4985900BCDBC6 /* PhotoCollectionViewCell.xib */; };
@@ -156,6 +159,9 @@
 		5D7667F32ACC966D00C9FA8B /* CommentCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentCell.swift; sourceTree = "<group>"; };
 		5D7667F42ACC966D00C9FA8B /* CommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
 		5D7667F52ACC966D00C9FA8B /* CommentCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CommentCell.xib; sourceTree = "<group>"; };
+		5D99D0442AD57CD5008BBD69 /* ImageGalleryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImageGalleryViewController.swift; path = ../../../../../Downloads/ImageGalleryViewController.swift; sourceTree = "<group>"; };
+		5D99D04A2AD59E7E008BBD69 /* ImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCell.swift; sourceTree = "<group>"; };
+		5D99D04B2AD59E7E008BBD69 /* ImageCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImageCell.xib; sourceTree = "<group>"; };
 		5DA93D5D2AC492A100BCDBC6 /* ComposeMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeMessageTableViewCell.swift; sourceTree = "<group>"; };
 		5DA93D5E2AC492A100BCDBC6 /* ComposeMessageTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ComposeMessageTableViewCell.xib; sourceTree = "<group>"; };
 		5DA93D6C2AC4985900BCDBC6 /* PhotoCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -362,6 +368,7 @@
 		B81AED0129F05CE20075F57E /* Post */ = {
 			isa = PBXGroup;
 			children = (
+				5D99D0442AD57CD5008BBD69 /* ImageGalleryViewController.swift */,
 				5DA93D6C2AC4985900BCDBC6 /* PhotoCollectionViewCell.swift */,
 				5DA93D6D2AC4985900BCDBC6 /* PhotoCollectionViewCell.xib */,
 				3ADCF3E92AB2507C0004C546 /* PostTableViewCell.xib */,
@@ -370,6 +377,8 @@
 				EBA7BD152ABCD4C80092684D /* CommentView.swift */,
 				5DA93D5D2AC492A100BCDBC6 /* ComposeMessageTableViewCell.swift */,
 				5DA93D5E2AC492A100BCDBC6 /* ComposeMessageTableViewCell.xib */,
+				5D99D04A2AD59E7E008BBD69 /* ImageCell.swift */,
+				5D99D04B2AD59E7E008BBD69 /* ImageCell.xib */,
 			);
 			path = Post;
 			sourceTree = "<group>";
@@ -620,8 +629,8 @@
 				A3E832552924B0E300A3806E /* Sources */,
 				A3E832562924B0E300A3806E /* Frameworks */,
 				A3E832572924B0E300A3806E /* Resources */,
-				B8B0354C29E9A9570038EE67 /* ShellScript */,
 				B80E098D2A77AADA00F7FF31 /* Embed Foundation Extensions */,
+				B8B0354C29E9A9570038EE67 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -739,6 +748,7 @@
 				B80CF378296DB4850080FC1B /* MyJurniTableViewCell.xib in Resources */,
 				B88AE1D12A1D40A900CAD0EC /* MemberDetailTableViewCell.xib in Resources */,
 				B8C869502A5C5C6A008B3709 /* GroupMembersTableViewCell.xib in Resources */,
+				5D99D04D2AD59E7E008BBD69 /* ImageCell.xib in Resources */,
 				5DA93D6F2AC4985900BCDBC6 /* PhotoCollectionViewCell.xib in Resources */,
 				EBF76DF52AB3E1F800417F1C /* CommentView.xib in Resources */,
 				B809EEB32934DF73006EB46D /* GoogleService-Info.plist in Resources */,
@@ -796,6 +806,7 @@
 				EBBD689C2AC48CBB0086D90F /* (null) in Sources */,
 				B86800842A3B6A61005D4738 /* VideoCallViewController.swift in Sources */,
 				B894C7A1295385AC007728FE /* UpcomingPaymentTableViewCell.swift in Sources */,
+				5D99D04C2AD59E7E008BBD69 /* ImageCell.swift in Sources */,
 				B8D2D744298D51E400D577DB /* JurniChapter.swift in Sources */,
 				B83F6B7D294CB09700CAC63F /* PaymentMethodBean.swift in Sources */,
 				A3E832612924B0E300A3806E /* ViewController.swift in Sources */,
@@ -816,6 +827,7 @@
 				B80B85712941CDEA00199686 /* PaymentDetailsViewController.swift in Sources */,
 				B89969462936088100E89EF6 /* SlideMenuViewController.swift in Sources */,
 				B899694829360D3700E89EF6 /* HomeViewController.swift in Sources */,
+				5D99D0452AD57CD5008BBD69 /* ImageGalleryViewController.swift in Sources */,
 				B849A162299EC01A004B580F /* GroupTableViewCell.swift in Sources */,
 				B87BFD632979437900248688 /* StepTableViewCell.swift in Sources */,
 				B8170EEC2A31BF4500B539D1 /* ChatOwnerTableViewCell.swift in Sources */,
@@ -1015,7 +1027,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = AWRFVJ9H35;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Jurni/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -1045,7 +1057,7 @@
 				CODE_SIGN_ENTITLEMENTS = Jurni/Jurni.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = AWRFVJ9H35;
+				DEVELOPMENT_TEAM = XZ526QD9ZG;
 				INFOPLIST_FILE = Jurni/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
