@@ -45,6 +45,11 @@ class DashboardViewController: UIViewController{
                     UserDefaults.standard.set(firstName, forKey: Constants.FIRST_NAME)
                 }
                 
+                let lastName = document.get("lastName") as? String
+                if(lastName != nil){
+                    UserDefaults.standard.set(lastName, forKey: Constants.LAST_NAME)
+                }
+                
                 let profilePic = document.get("avatar") as? String
                 if(profilePic != nil){
                     UserDefaults.standard.set(profilePic, forKey: Constants.PROFILE_PIC)
