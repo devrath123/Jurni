@@ -128,6 +128,23 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
         print("X: \(chatDetailsTableView.frame.origin.y)")
         print("View bottom x : \(self.view.frame.height)")
         print("Height: \(height)")
+        
+        var messageRef: DatabaseReference!
+        messageRef = Database.database().reference().child("chats").child(chatDetail!.threadId).child("messages")
+        messageRef.observe(.childAdded, with: { (snapshot) -> Void in
+            let userId : String = Auth.auth().currentUser?.uid ?? ""
+            if let value = snapshot.value as? [String: Any] {
+                let from = value["from"] as? String ?? ""
+                let timeStamp = value["timestamp"] as! NSDictionary
+                
+                let messageDate = NSDate(timeIntervalSince1970: timeStamp["seconds"] as! TimeInterval)
+                let calender:Calendar = Calendar.current
+                let components: DateComponents = calender.dateComponents([.year, .month, .day, .hour, .minute, .second], from: messageDate as Date, to: Date())
+                if((components.hour! == 0 && components.minute! == 0 && components.second! < 3) && userId != from){
+                    self.fetchChats()
+                }
+            }
+        })
     }
     
     func checkForUnreadMessage(){
@@ -1327,15 +1344,10 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
     }
     
     @objc func keyboardWillHide() {
-      //  self.view.frame.origin.y = 0
         tableViewHeightConstraint.constant = CGFloat(tableViewHeight)
     }
 
     @objc func keyboardWillChange(notification: NSNotification) {
-//            if messageTextField.isFirstResponder {
-//                self.view.frame.origin.y = -350
-//            }
-        
         guard let value = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
               let keyboardHeight = value.cgRectValue.height
             tableViewHeightConstraint.constant = CGFloat(tableViewHeight) - keyboardHeight
@@ -1362,7 +1374,6 @@ class ChatDetailsViewController: UIViewController, UITableViewDelegate, UITableV
         popUpVC.chatDetail = chatDetail
         present(popUpVC, animated: true, completion: nil)
     }
-    
 }
 
 extension TimeInterval {

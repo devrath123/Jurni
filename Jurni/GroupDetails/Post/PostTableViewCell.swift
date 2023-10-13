@@ -57,12 +57,8 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet weak var angry: UIButton!
     @IBOutlet weak var love: UIButton!
     
-    @IBOutlet weak var thumbsUpLabel: UILabel!
-    @IBOutlet weak var laughLabel: UILabel!
-    @IBOutlet weak var surpriseLabel: UILabel!
-    @IBOutlet weak var sadLabel: UILabel!
-    @IBOutlet weak var angryLabel: UILabel!
-    @IBOutlet weak var loveLabel: UILabel!
+    @IBOutlet weak var showCommentsLabel: UILabel!
+    
     
     // MARK: - Properties
     var postID: String?
@@ -164,6 +160,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         let loveTapped = UITapGestureRecognizer(target: self, action: #selector(showLoveTapped))
         love.tag = index
         love.addGestureRecognizer(loveTapped)
+        
         
     }
     
@@ -339,4 +336,11 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         showSmileysView.isHidden = true
         reactionHandler?(view.tag, "ANGRY")
     }
+    
+    @objc func showCommentsTapped(tapGestureRecognizer: UITapGestureRecognizer){
+        let view = tapGestureRecognizer.view as! UIButton
+        showSmileysView.isHidden = true
+        reactionHandler?(view.tag, "ANGRY")
+    }
+    
 }

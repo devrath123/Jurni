@@ -462,7 +462,6 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "PostTableViewCell", for: indexPath) as? PostTableViewCell else { return UITableViewCell() }
             let post = posts[indexPath.row]
-//            cell.imageDelegate = self
             cell.configurePostCell(with: post, index: indexPath.row)
             
             if !post.postContent.postVideoUrl.isEmpty{
@@ -496,21 +495,23 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             cell.photoTwoOfTwoImageView.tag = indexPath.row
             cell.photoTwoOfTwoImageView.addGestureRecognizer(picThreeOfThree)
             
-            
+            let comments = UITapGestureRecognizer(target: self, action: #selector(commentClick))
+            cell.showCommentsLabel.isUserInteractionEnabled = true
+            cell.showCommentsLabel.tag = indexPath.row
+            cell.showCommentsLabel.addGestureRecognizer(comments)
             
             cell.newCommentTextField.layer.borderColor = UIColor.lightGray.cgColor
             cell.newCommentTextField.layer.borderWidth = 1
-            cell.commentBtnTap.addTarget(self, action: #selector(commentClick(_:)), for: .touchUpInside)
             cell.theeDotsBtnTap.addTarget(self, action: #selector(openActionsheet(_:)), for: .touchUpInside)
             cell.sendCommentButton.addTarget(self, action: #selector(createCommentClick(_:)), for: .touchUpInside)
             cell.moreImagesButton.addTarget(self, action: #selector(moreImages(_:)), for: .touchUpInside)
+            
             cell.reactionHandler = {index, reaction in
                 self.updateReactionToFirebase(index: index, reaction: reaction)
             }
             
             return cell
         }
-        
         
     }
     
@@ -554,12 +555,11 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         
     }
     
-    @objc func commentClick(_ sender: UIButton){
-        
-        let position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
-        let indexPath = self.groupPostTableView.indexPathForRow(at: position)
-        selectedPost = posts[indexPath!.row]
+    @objc func commentClick(tapGestureRecognizer: UITapGestureRecognizer){
+        let view = tapGestureRecognizer.view as! UILabel
+        selectedPost = posts[view.tag]
         self.performSegue(withIdentifier: "commentListSegue", sender: nil)
+        
     }
     
     @objc func createCommentClick(_ sender: UIButton){
