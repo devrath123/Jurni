@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="22154" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22130"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="EditImageCell" rowHeight="210" id="KGk-i7-Jjw" customClass="EditImageCell" customModule="Jurni" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="455" height="210"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="455" height="210"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iQd-6k-au7">
+                        <rect key="frame" x="0.0" y="0.0" width="455" height="210"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="S5b-Mf-npW">
+                                <rect key="frame" x="10" y="5" width="435" height="200"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lRJ-rT-S27">
+                                <rect key="frame" x="415" y="0.0" width="40" height="40"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="close" translatesAutoresizingMaskIntoConstraints="NO" id="qxu-DG-MCq">
+                                        <rect key="frame" x="10" y="10" width="15" height="15"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="15" id="1vj-NL-NzD"/>
+                                            <constraint firstAttribute="height" constant="15" id="zdP-el-mK3"/>
+                                        </constraints>
+                                    </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="npz-zg-vas">
+                                        <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain"/>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="3Uh-6R-5gV"/>
+                                    <constraint firstAttribute="trailing" secondItem="npz-zg-vas" secondAttribute="trailing" id="3yj-fT-zg7"/>
+                                    <constraint firstItem="npz-zg-vas" firstAttribute="top" secondItem="lRJ-rT-S27" secondAttribute="top" id="4An-wD-o4W"/>
+                                    <constraint firstItem="qxu-DG-MCq" firstAttribute="leading" secondItem="lRJ-rT-S27" secondAttribute="leading" constant="10" id="5qP-qr-iV4"/>
+                                    <constraint firstItem="npz-zg-vas" firstAttribute="leading" secondItem="lRJ-rT-S27" secondAttribute="leading" id="OgO-tL-Cnl"/>
+                                    <constraint firstAttribute="height" constant="40" id="tUg-0M-NdK"/>
+                                    <constraint firstAttribute="bottom" secondItem="npz-zg-vas" secondAttribute="bottom" id="uMQ-UH-63Z"/>
+                                    <constraint firstItem="qxu-DG-MCq" firstAttribute="top" secondItem="lRJ-rT-S27" secondAttribute="top" constant="10" id="yx5-Hf-YKF"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="S5b-Mf-npW" firstAttribute="top" secondItem="iQd-6k-au7" secondAttribute="top" constant="5" id="51k-Tb-Jx6"/>
+                            <constraint firstAttribute="trailing" secondItem="lRJ-rT-S27" secondAttribute="trailing" id="8Ph-pt-Yf9"/>
+                            <constraint firstAttribute="bottom" secondItem="S5b-Mf-npW" secondAttribute="bottom" constant="5" id="CKj-iD-464"/>
+                            <constraint firstAttribute="trailing" secondItem="S5b-Mf-npW" secondAttribute="trailing" constant="10" id="cmx-8v-n4U"/>
+                            <constraint firstItem="lRJ-rT-S27" firstAttribute="top" secondItem="iQd-6k-au7" secondAttribute="top" id="p8y-qE-9hM"/>
+                            <constraint firstItem="S5b-Mf-npW" firstAttribute="leading" secondItem="iQd-6k-au7" secondAttribute="leading" constant="10" id="usT-kb-BPF"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="iQd-6k-au7" secondAttribute="trailing" id="MYf-6u-pck"/>
+                    <constraint firstItem="iQd-6k-au7" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="ZLn-ba-Jed"/>
+                    <constraint firstAttribute="bottom" secondItem="iQd-6k-au7" secondAttribute="bottom" id="k9q-wK-Owl"/>
+                    <constraint firstItem="iQd-6k-au7" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="uMF-Dz-TIW"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="avtarImageView" destination="S5b-Mf-npW" id="U1K-pF-oNp"/>
+                <outlet property="deleteImageBtn" destination="npz-zg-vas" id="aGE-Pm-JRa"/>
+            </connections>
+            <point key="canvasLocation" x="242" y="28"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="close" width="30" height="30"/>
+    </resources>
+</document>

@@ -25,16 +25,13 @@
                             </imageView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="Y9d-BQ-WrD" firstAttribute="trailing" secondItem="ua6-pr-RGV" secondAttribute="trailing" id="E6S-mo-1wO"/>
-                            <constraint firstItem="Y9d-BQ-WrD" firstAttribute="bottom" secondItem="ua6-pr-RGV" secondAttribute="bottom" id="SZs-KJ-VoE"/>
-                            <constraint firstItem="Y9d-BQ-WrD" firstAttribute="leading" secondItem="ua6-pr-RGV" secondAttribute="leading" id="esZ-fY-JWJ"/>
-                            <constraint firstItem="Y9d-BQ-WrD" firstAttribute="top" secondItem="ua6-pr-RGV" secondAttribute="top" id="f24-jx-06W"/>
+                            <constraint firstItem="Y9d-BQ-WrD" firstAttribute="bottom" secondItem="ua6-pr-RGV" secondAttribute="bottom" id="DZP-iy-cFm"/>
+                            <constraint firstItem="Y9d-BQ-WrD" firstAttribute="top" secondItem="ua6-pr-RGV" secondAttribute="top" id="IQW-mi-Eq4"/>
+                            <constraint firstItem="Y9d-BQ-WrD" firstAttribute="trailing" secondItem="ua6-pr-RGV" secondAttribute="trailing" id="PAC-CI-Vql"/>
+                            <constraint firstItem="Y9d-BQ-WrD" firstAttribute="leading" secondItem="ua6-pr-RGV" secondAttribute="leading" id="wKg-Cq-SCn"/>
                         </constraints>
                         <viewLayoutGuide key="contentLayoutGuide" id="i8D-Qs-4LS"/>
                         <viewLayoutGuide key="frameLayoutGuide" id="ua6-pr-RGV"/>
-                        <connections>
-                            <outlet property="delegate" destination="KGk-i7-Jjw" id="sNz-4s-BBR"/>
-                        </connections>
                     </scrollView>
                 </subviews>
                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -48,7 +45,7 @@
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="photoImgView" destination="Y9d-BQ-WrD" id="Zxv-3o-tIF"/>
-                <outlet property="scrollView" destination="Y1b-Up-UeH" id="1f1-c0-m3Q"/>
+                <outlet property="scrollView" destination="Y1b-Up-UeH" id="wL7-Mq-4SN"/>
             </connections>
             <point key="canvasLocation" x="243.51145038167937" y="90.845070422535215"/>
         </tableViewCell>

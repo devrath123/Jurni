@@ -3,12 +3,18 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 53;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		3ADCF3EB2AB2507C0004C546 /* PostTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3ADCF3E92AB2507C0004C546 /* PostTableViewCell.xib */; };
 		5D2704E22AC6FB6800062D36 /* ComposeMessageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DA93D5E2AC492A100BCDBC6 /* ComposeMessageTableViewCell.xib */; };
+		5D32DC472AD6A68500B7DDE9 /* EditPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D32DC462AD6A68500B7DDE9 /* EditPostViewController.swift */; };
+		5D32DC4A2AD6DA9000B7DDE9 /* EditImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D32DC482AD6DA9000B7DDE9 /* EditImageCell.swift */; };
+		5D32DC4B2AD6DA9000B7DDE9 /* EditImageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D32DC492AD6DA9000B7DDE9 /* EditImageCell.xib */; };
+		5D32DC4E2AD7BE6800B7DDE9 /* EditPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D32DC4C2AD7BE6800B7DDE9 /* EditPostCell.swift */; };
+		5D32DC4F2AD7BE6800B7DDE9 /* EditPostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D32DC4D2AD7BE6800B7DDE9 /* EditPostCell.xib */; };
+		5D4F291D2AD9346A00047062 /* AllReactionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4F291C2AD9346900047062 /* AllReactionViewController.swift */; };
 		5D7667F62ACC966D00C9FA8B /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7667F32ACC966D00C9FA8B /* CommentCell.swift */; };
 		5D7667F72ACC966D00C9FA8B /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7667F42ACC966D00C9FA8B /* CommentViewController.swift */; };
 		5D7667F82ACC966D00C9FA8B /* CommentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D7667F52ACC966D00C9FA8B /* CommentCell.xib */; };
@@ -156,6 +162,12 @@
 
 /* Begin PBXFileReference section */
 		3ADCF3E92AB2507C0004C546 /* PostTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PostTableViewCell.xib; sourceTree = "<group>"; };
+		5D32DC462AD6A68500B7DDE9 /* EditPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPostViewController.swift; sourceTree = "<group>"; };
+		5D32DC482AD6DA9000B7DDE9 /* EditImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditImageCell.swift; sourceTree = "<group>"; };
+		5D32DC492AD6DA9000B7DDE9 /* EditImageCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditImageCell.xib; sourceTree = "<group>"; };
+		5D32DC4C2AD7BE6800B7DDE9 /* EditPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPostCell.swift; sourceTree = "<group>"; };
+		5D32DC4D2AD7BE6800B7DDE9 /* EditPostCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditPostCell.xib; sourceTree = "<group>"; };
+		5D4F291C2AD9346900047062 /* AllReactionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllReactionViewController.swift; sourceTree = "<group>"; };
 		5D7667F32ACC966D00C9FA8B /* CommentCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentCell.swift; sourceTree = "<group>"; };
 		5D7667F42ACC966D00C9FA8B /* CommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
 		5D7667F52ACC966D00C9FA8B /* CommentCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CommentCell.xib; sourceTree = "<group>"; };
@@ -295,6 +307,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5D4F29132AD877CF00047062 /* Reactions */ = {
+			isa = PBXGroup;
+			children = (
+				5D4F291C2AD9346900047062 /* AllReactionViewController.swift */,
+			);
+			path = Reactions;
+			sourceTree = "<group>";
+		};
 		5D7667F22ACC964A00C9FA8B /* Comment */ = {
 			isa = PBXGroup;
 			children = (
@@ -379,6 +399,11 @@
 				5DA93D5E2AC492A100BCDBC6 /* ComposeMessageTableViewCell.xib */,
 				5D99D04A2AD59E7E008BBD69 /* ImageCell.swift */,
 				5D99D04B2AD59E7E008BBD69 /* ImageCell.xib */,
+				5D32DC462AD6A68500B7DDE9 /* EditPostViewController.swift */,
+				5D32DC482AD6DA9000B7DDE9 /* EditImageCell.swift */,
+				5D32DC492AD6DA9000B7DDE9 /* EditImageCell.xib */,
+				5D32DC4C2AD7BE6800B7DDE9 /* EditPostCell.swift */,
+				5D32DC4D2AD7BE6800B7DDE9 /* EditPostCell.xib */,
 			);
 			path = Post;
 			sourceTree = "<group>";
@@ -569,6 +594,7 @@
 		B8A75EF029AD24A90014CEA8 /* GroupDetails */ = {
 			isa = PBXGroup;
 			children = (
+				5D4F29132AD877CF00047062 /* Reactions */,
 				5D7667F22ACC964A00C9FA8B /* Comment */,
 				B81AED0129F05CE20075F57E /* Post */,
 				B8A75EF129AD25540014CEA8 /* GroupDetailsViewController.swift */,
@@ -740,6 +766,7 @@
 				B8D2D748298D54AB00D577DB /* JurniChapterTableViewCell.xib in Resources */,
 				B894C7A2295385AC007728FE /* UpcomingPaymentTableViewCell.xib in Resources */,
 				B866D7202AC0B6230007E1B3 /* meeting-notification.caf in Resources */,
+				5D32DC4B2AD6DA9000B7DDE9 /* EditImageCell.xib in Resources */,
 				B87BFD642979437900248688 /* StepTableViewCell.xib in Resources */,
 				B87BFD602979436A00248688 /* PhaseTableViewCell.xib in Resources */,
 				B87BFD6929796B7F00248688 /* CongratsTableViewCell.xib in Resources */,
@@ -755,6 +782,7 @@
 				B8B477172A38B2C10049F751 /* ChatUserCollectionViewCell.xib in Resources */,
 				B881FD062A1FECEA00B23C8B /* ChatOwnerTableViewCell.xib in Resources */,
 				B81D1C122951E92C0072F602 /* UpdatePaymentTableViewCell.xib in Resources */,
+				5D32DC4F2AD7BE6800B7DDE9 /* EditPostCell.xib in Resources */,
 				B80241592A321FDF0043FA9E /* ChatUserTableViewCell.xib in Resources */,
 				B894C79D295362F8007728FE /* PaymentPlanTableViewCell.xib in Resources */,
 				3ADCF3EB2AB2507C0004C546 /* PostTableViewCell.xib in Resources */,
@@ -822,6 +850,7 @@
 				B825746C294F02E400F82957 /* UpdatePaymentPopUpViewController.swift in Sources */,
 				B80241582A321FDF0043FA9E /* ChatUserTableViewCell.swift in Sources */,
 				B8240AE929893E59005EAACC /* CircularProgressView.swift in Sources */,
+				5D4F291D2AD9346A00047062 /* AllReactionViewController.swift in Sources */,
 				B8AEB60829A69185005DA908 /* TempJurniStep.swift in Sources */,
 				B81C4CBD2A1FA10A00A38EEF /* ChatDetailsViewController.swift in Sources */,
 				B80B85712941CDEA00199686 /* PaymentDetailsViewController.swift in Sources */,
@@ -838,6 +867,7 @@
 				B849A15F299EB6F9004B580F /* Group.swift in Sources */,
 				B8AFBCA029E6A7DE00C145F1 /* CalendarViewController.swift in Sources */,
 				B82650D129434B6B004784CE /* OnboardingResponseViewController.swift in Sources */,
+				5D32DC4A2AD6DA9000B7DDE9 /* EditImageCell.swift in Sources */,
 				B81D1C0C2951C8D00072F602 /* PaymentPlan.swift in Sources */,
 				B80CF377296DB4850080FC1B /* MyJurniTableViewCell.swift in Sources */,
 				B8D2D747298D54AB00D577DB /* JurniChapterTableViewCell.swift in Sources */,
@@ -850,6 +880,7 @@
 				B8984E392A1D13060004E920 /* Member.swift in Sources */,
 				B80B856F2941CDBB00199686 /* ContactDetailsViewController.swift in Sources */,
 				B809EEB62934DF73006EB46D /* ResetViewController.swift in Sources */,
+				5D32DC472AD6A68500B7DDE9 /* EditPostViewController.swift in Sources */,
 				B8B6A498299D447600C97ACC /* GroupsViewController.swift in Sources */,
 				B809EEAD2934DC0C006EB46D /* SplashViewController.swift in Sources */,
 				B8EEF37C2A1CF72500DF6A8B /* NewConversationViewController.swift in Sources */,
@@ -859,6 +890,7 @@
 				B88AE1D02A1D40A900CAD0EC /* MemberDetailTableViewCell.swift in Sources */,
 				B8769E792A0D035C0009D082 /* ChatTableViewCell.swift in Sources */,
 				B82BC9BB29D5C8FA00C3F258 /* ChatViewController.swift in Sources */,
+				5D32DC4E2AD7BE6800B7DDE9 /* EditPostCell.swift in Sources */,
 				EBBD689D2AC48CBB0086D90F /* (null) in Sources */,
 				EB7E2E312ABBC562006ABEC1 /* PostDateExtension.swift in Sources */,
 				B8D981622AD5D16A004E5CAA /* ImageGalleryViewController.swift in Sources */,
@@ -1027,7 +1059,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = AWRFVJ9H35;
+				DEVELOPMENT_TEAM = Y6Y642L5AY;
 				INFOPLIST_FILE = Jurni/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -1057,7 +1089,7 @@
 				CODE_SIGN_ENTITLEMENTS = Jurni/Jurni.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = AWRFVJ9H35;
+				DEVELOPMENT_TEAM = Y6Y642L5AY;
 				INFOPLIST_FILE = Jurni/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;

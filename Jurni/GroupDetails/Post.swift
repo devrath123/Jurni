@@ -38,6 +38,7 @@ struct PostContent{
 struct User{
     var userName: String = ""
     var userAvatar: String = ""
+    var isOwner: Bool
 }
 
 struct PostReaction{

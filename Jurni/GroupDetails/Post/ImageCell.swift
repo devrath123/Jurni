@@ -11,13 +11,13 @@ class ImageCell: UITableViewCell, UIScrollViewDelegate {
 
     @IBOutlet weak var scrollView:UIScrollView!
     @IBOutlet weak var photoImgView: UIImageView!
+    var pinchGesture: UIPinchGestureRecognizer!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-                scrollView.delegate = self
-                scrollView.minimumZoomScale = 1.0
-                scrollView.maximumZoomScale = 10.0//maximum zoom scale you want
-                scrollView.zoomScale = 1.0
+               self.scrollView.minimumZoomScale = 0.5
+               self.scrollView.maximumZoomScale = 3.5
+               self.scrollView.delegate = self
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -27,7 +27,7 @@ class ImageCell: UITableViewCell, UIScrollViewDelegate {
     }
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-            return photoImgView
-    }
+             return self.photoImgView
+         }
     
 }

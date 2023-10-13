@@ -94,7 +94,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
                                     }
                                 }
                                 
-                                let commentUser = User(userName: userName, userAvatar: userImage)
+                                let commentUser = User(userName: userName, userAvatar: userImage, isOwner: true)
                                 let comment = Comment(id: id, content: content ?? "", from: commentUser, timestamp: commentTime)
                                 
                                 self.comments.append(comment)
@@ -104,7 +104,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
                             }
                         } else {
                             // Handle the case where "from" field is neither DocumentReference nor String
-                            let commentUser = User(userName: "Unknown", userAvatar: "")
+                            let commentUser = User(userName: "Unknown", userAvatar: "", isOwner: true)
                             let comment = Comment(id: id, content: content ?? "", from: commentUser, timestamp: commentTime)
                             self.comments.append(comment)
                             self.comments = self.comments.sorted(by: { $0.timestamp.compare($1.timestamp as Date) == .orderedDescending })

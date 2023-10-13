@@ -35,14 +35,17 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet weak var photoThreeImageView: UIImageView!
     @IBOutlet weak var photoTwoOfTwoImageView: UIImageView!
     @IBOutlet weak var photoTwoThreeStackView: UIStackView!
+    @IBOutlet weak var threeDotImgView: UIImageView!
     @IBOutlet weak var theeDotsBtnTap: UIButton!
     @IBOutlet weak var commentBtnTap: UIButton!
+    @IBOutlet weak var allReactionBtnTap: UIButton!
     @IBOutlet weak var moreImagesButton: UIButton!
     @IBOutlet weak var numberOfReactionsLabel: UILabel!
     @IBOutlet weak var numberOfCommentsLabel: UILabel!
     @IBOutlet weak var reactToggleButton: UIButton!
     @IBOutlet weak var publishedCommentsContainer: UIView!
-    
+    @IBOutlet weak var commentView: UIView!
+    @IBOutlet weak var commentViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var userInitiaTextLabel: UILabel!
     @IBOutlet weak var newCommentTextField: UITextField!
     @IBOutlet weak var commentProfileLabel: UILabel!
@@ -93,6 +96,12 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         }
         if (!post.postContent.postVideoUrl.isEmpty){
             setPostVideo(with: post)
+        }
+        if (post.user.isOwner)
+        {
+            theeDotsBtnTap.isHidden = false
+            threeDotImgView.isHidden = false
+//            commentView.isHidden = false
         }
         
         currentUserProfilePicView.layer.cornerRadius = currentUserProfilePicView.frame.size.width / 2
@@ -243,6 +252,9 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         videoContainerView.isHidden = true
         moreImagesButton.isHidden = true
         playVideoImageView.isHidden = true
+        theeDotsBtnTap.isHidden = true
+        threeDotImgView.isHidden = true
+//        commentView.isHidden = true
     }
     
     
