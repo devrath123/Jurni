@@ -67,6 +67,8 @@
                         </constraints>
                     </view>
                 </subviews>
+                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="iQd-6k-au7" secondAttribute="trailing" id="MYf-6u-pck"/>
                     <constraint firstItem="iQd-6k-au7" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="ZLn-ba-Jed"/>
@@ -75,6 +77,8 @@
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
                 <outlet property="avtarImageView" destination="S5b-Mf-npW" id="U1K-pF-oNp"/>
                 <outlet property="deleteImageBtn" destination="npz-zg-vas" id="aGE-Pm-JRa"/>
