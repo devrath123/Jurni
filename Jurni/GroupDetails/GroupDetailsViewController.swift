@@ -14,11 +14,16 @@ import FirebaseStorage
 import PhotosUI
 import MobileCoreServices
 
-class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate, PHPickerViewControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UITextViewDelegate, UIActionSheetDelegate {
+protocol BackDelegate: AnyObject {
+    func didComeBack()
+}
+
+class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate, PHPickerViewControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UITextViewDelegate, UIActionSheetDelegate, UIGestureRecognizerDelegate {
     
     @IBOutlet weak var groupNameLabel: UILabel!
     @IBOutlet weak var membersCountLabel: UILabel!
     @IBOutlet weak var groupPostTableView: UITableView!
+    
     
     // MARK: - Properties
     var groupDetails: Group?
@@ -32,33 +37,28 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     var selectedImages: [UIImage] = []
     var postImages: [String] = []
     var videoURL: URL?
+    var row: Int?
+//    weak var backDelegate: BackDelegate?
     
     let MESSAGE_TYPE_TEXT = "text"
     let MESSAGE_TYPE_IMAGE = "image"
     let MESSAGE_TYPE_VIDEO = "video"
-    let loadingAlert = UIAlertController.loadingAlertController(message: "Loading...")
+//    let loadingAlert = UIAlertController.loadingAlertController(message: "Loading...")
     var contentOffset: CGPoint = .zero
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        self.view.frame.origin.y += self.view.frame.size.height
-            UIView.animate(withDuration: 0.3) {
-                self.view.frame.origin.y -= self.view.frame.size.height
-            }
-
-        
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
         groupPostTableView.dataSource = self
         groupPostTableView.delegate = self
         imagePicker.delegate = self
 
-        self.present(loadingAlert, animated: true, completion: nil)
+//        self.present(loadingAlert, animated: true, completion: nil)
         
         contentOffset = groupPostTableView.contentOffset
         groupPostTableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
-        //        showActivityIndicator()
+        showActivityIndicator()
         groupPostTableView.rowHeight = UITableView.automaticDimension
         self.groupPostTableView.estimatedRowHeight = 100
         let headerNib = UINib(nibName: "ComposeMessageTableViewCell", bundle: nil)
@@ -67,6 +67,11 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
         let nib = UINib(nibName: "PostTableViewCell", bundle: nil)
         groupPostTableView.register(nib, forCellReuseIdentifier: "PostTableViewCell")
         fetchPosts()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        tapGesture.delegate = self
+        self.view.addGestureRecognizer(tapGesture)
+        groupPostTableView.addGestureRecognizer(tapGesture)
         
         groupPostTableView.backgroundColor = UIColor.white
         groupNameLabel.text = groupDetails?.groupName
@@ -78,13 +83,17 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     
     @objc private func refreshData() {
            // Perform your data loading tasks here
-           fetchPosts()
+//           fetchPosts()
            refreshControl.endRefreshing()
        }
     
+    @objc func handleTap(_ gesture: UITapGestureRecognizer) {
+        view.endEditing(true) // This will close the keyboard and resign first responder status from any text view
+    }
+    
     func fetchPosts(){
         
-        self.posts.removeAll()
+//        self.posts.removeAll()
         let defaultStore = Firestore.firestore()
         print("Group id: \(self.groupDetails?.groupId)")
         defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").getDocuments(){ (querySnapshot, err) in
@@ -195,11 +204,157 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                                                 
                                                 self.posts.append(post)
                                                 
+                                                self.posts = self.posts.removingDuplicates()
                                                 self.posts = self.posts.sorted(by: { $0.postTime.compare($1.postTime as Date) == .orderedDescending })
-//                                                self.hideActivityIndicator()
-                                                self.loadingAlert.dismiss(animated: true, completion: nil)
-                                                self.groupPostTableView.reloadData()
+                                                self.hideActivityIndicator()
+                                                DispatchQueue.main.async {
+//                                                    self.loadingAlert.dismiss(animated: true, completion: nil)
+                                                    self.groupPostTableView.reloadData()
+                                                    UIView.setAnimationsEnabled(false)
+                                                    self.groupPostTableView.beginUpdates()
+                                                    //                                                self.groupPostTableView.reloadData()
+                                                    self.groupPostTableView.endUpdates()
+                                                }
                                                 
+                                            }}
+                                    } else {
+                                        print("User document not found for UID: \(uid)")
+                                        self.hideActivityIndicator()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    
+    func  fetchPostsAndRefreshRow(section: Int, row: Int){
+        
+//        self.posts.removeAll()
+        let defaultStore = Firestore.firestore()
+        print("Group id: \(self.groupDetails?.groupId)")
+        defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").getDocuments(){ (querySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err) :(")
+            } else {
+                if let documents = querySnapshot?.documents {
+                    let jurniGroup =  DispatchGroup()
+                    for document in documents {
+                        print("Doc : \(document.data())")
+                        let id = document.documentID
+                        let postType = document.get("type") as? String
+                        let timestamp = document.get("timestamp") as! Timestamp
+                        let postTime = timestamp.dateValue()
+                        
+                        let mediaURL = document.get("meta.url")
+                        var videoArray: [String] = []
+                        var imageArray: [String] = []
+                        
+                        switch postType {
+                        case "image":
+                            if let singleImageURL = mediaURL as? String {
+                                imageArray = [singleImageURL]
+                            } else if let multipleURLs = mediaURL as? [String] {
+                                imageArray = multipleURLs
+                            }
+                        case "video":
+                            if let videoURL = mediaURL as? String {
+                                videoArray = [videoURL]
+                            }else if let multipleVideoURLs = mediaURL as? [String] {
+                                videoArray = multipleVideoURLs
+                            }
+                            
+                        case "text":
+                            if let emptyStringURL = mediaURL as? String {
+                                imageArray = [emptyStringURL]
+                            }
+                            
+                        default:
+                            break
+                        }
+                        
+                        let postContent = document.get("meta.content") as? String
+                        let postText = postContent?.htmlAttributedString() ?? ""
+                        let comments = document.get("comments")
+                        
+                        
+                        /// User id format example - from: /users/lzlXd3G5vhUFj1HIEjcmuLVLG4g1
+                        /// needs UID to be retrieved as corresponding user's username
+                        if let reactionsData = document.get("reactions") as? [String:Any] {
+                            let reactions = PostReaction(
+                                angry: reactionsData["ANGRY"] as? Int ?? 0,
+                                laugh: reactionsData["LAUGH"] as? Int ?? 0,
+                                love: reactionsData["LOVE"] as? Int ?? 0,
+                                sad: reactionsData["SAD"] as? Int ?? 0,
+                                surprise: reactionsData["SURPRISE"] as? Int ?? 0,
+                                thumbsUp: reactionsData["THUMB_UP"] as? Int ?? 0
+                            )
+                            var commentsCount = 0
+                            let posterIDPath = document.get("from") as! DocumentReference
+                            let pathString = posterIDPath.path
+                            let components = pathString.components(separatedBy: "/")
+                            if let uid = components.last{
+                                print("poster UID = \(uid)")
+                                let userRef = defaultStore.collection("users").document(uid)
+                                userRef.getDocument { (document, error) in
+                                    if let document = document, document.exists {
+                                        
+                                        var userName: String = ""
+                                        var userImage: String = ""
+                                        
+                                        if(document.get("firstName") as? String != nil){
+                                            userName = document.get("firstName") as? String ?? ""
+                                        }
+                                        
+                                        if(document.get("lastName") as? String != nil){
+                                            userName += " " + (document.get("lastName") as? String ?? "")
+                                        }
+                                        
+                                        if(document.get("avatar") != nil){
+                                            if let image =  document.get("avatar") as? String {
+                                                userImage = image
+                                            }else{
+                                                userImage.append("")
+                                            }
+                                        }
+                                        
+                                        
+                                    let commentsRef = defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").document(id).collection("comments")
+                                        commentsRef.getDocuments { (querySnapshot, err) in
+                                            if let err = err {
+                                                print("Error getting comments documents: \(err)")
+                                            } else {
+                                                commentsCount = querySnapshot?.documents.count ?? 0
+                                                
+                                                let currentUserUid = Auth.auth().currentUser!.uid
+                                                var isOwner = false
+                                                if currentUserUid == uid
+                                                {
+                                                    isOwner = true
+                                                }
+                                               
+                                                let postUser = User(userName: userName, userAvatar: userImage, isOwner: isOwner)
+                                                
+                                                let post = Post(postType: postType ?? "", postTime: postTime, postContent: PostContent(postText: postText, postImageUrls: imageArray, postVideoUrl: videoArray), user: postUser, postReaction: reactions, commentsCount: commentsCount)
+                                                
+                                                post.id = id
+                                                
+                                                self.posts.append(post)
+                                                
+                                                self.posts = self.posts.removingDuplicates()
+                                                self.posts = self.posts.sorted(by: { $0.postTime.compare($1.postTime as Date) == .orderedDescending })
+                                                let indexPath = IndexPath(row: row, section: section)
+                                                    DispatchQueue.main.async {
+                                                        self.groupPostTableView.beginUpdates()
+                                                        self.groupPostTableView.reloadRows(at: [indexPath], with: .none)
+                                                        self.groupPostTableView.endUpdates()
+                                                        self.hideActivityIndicator()
+//                                                        self.loadingAlert.dismiss(animated: true, completion: nil)
+                                                    }
                                                 
                                             }}
                                     } else {
@@ -224,7 +379,8 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     
     func createComment(postID: String,content: String) {
         
-        self.present(loadingAlert, animated: true, completion: nil)
+//        self.present(loadingAlert, animated: true, completion: nil)
+        self.showActivityIndicator()
         let defaultStore = Firestore.firestore()
         let document = defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").document(postID).collection("comments").document()
         
@@ -287,6 +443,7 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
             // User canceled out of picker
             print("User canceled")
             selectedImages = []
+            self.groupPostTableView.reloadData()
             //  delegate?.resetCells()
         }
         else{
@@ -330,6 +487,7 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
         dismiss(animated: true, completion: nil)
     }
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        self.groupPostTableView.reloadData()
         dismiss(animated: true, completion: nil)
     }
     
@@ -411,6 +569,35 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
 
 extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource {
     
+    func textViewDidChange(_ textView: UITextView) {
+       
+        groupPostTableView?.beginUpdates()
+        groupPostTableView?.endUpdates()
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+
+        if textView.textColor == UIColor.lightGray {
+            textView.text = ""
+            textView.textColor = UIColor.black
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+
+        if textView.text == "" {
+
+            textView.text = "Write something here..."
+            textView.textColor = UIColor.lightGray
+        }
+    }
+    func textViewDidChange(descriptionField: UITextView) {
+        if descriptionField.text.isEmpty == false {
+            descriptionField.text = ""
+        } else {
+            descriptionField.text = "Write something here..."
+        }
+    }
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
@@ -469,7 +656,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             let photoNib = UINib(nibName: "PhotoCollectionViewCell", bundle: nil)
             cell.photoCollectionView.register(photoNib, forCellWithReuseIdentifier: "PhotoCollectionViewCell")
             
-            
+            cell.photoCollectionView.backgroundColor = UIColor.white
             let tapGesture = UITapGestureRecognizer (target: self, action: #selector(imgTap(tapGesture:)))
             cell.playVideoImg.addGestureRecognizer(tapGesture)
             cell.playVideoImg.isUserInteractionEnabled = true
@@ -478,12 +665,22 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             cell.deleteVideoBtn.addTarget(self, action: #selector(deleteVideo(_:)), for: .touchUpInside)
             cell.publishBtn.addTarget(self, action: #selector(publishPost(_:)), for: .touchUpInside)
             
-            cell.writeSomthingTextView.attributedPlaceholder = NSAttributedString(
-                string: "Write something here...",
-                attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray]
-            )
+//            cell.writeSomthingTextView.attributedPlaceholder = NSAttributedString(
+//                string: "Write something here...",
+//                attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray]
+//            )
+            cell.writeSomthingTextView.delegate = self
+            if cell.writeSomthingTextView.text == "Write something here..."
+            {
+                cell.writeSomthingTextView.textColor = UIColor.lightGray
+            }
+            else
+            {
+                cell.writeSomthingTextView.textColor = UIColor.black
+            }
+            cell.writeSomthingTextView.backgroundColor = UIColor.white
+            cell.writeSomthingTextView.tintColor = .black
             cell.containerView.layer.borderColor = UIColor.lightGray.cgColor
-            
             
             let height = cell.photoCollectionView.collectionViewLayout.collectionViewContentSize.height
             cell.collectionHeightConstraint.constant = height
@@ -496,7 +693,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             return cell
         }
         
-        else{
+        else if indexPath.section == 1 {
             
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "PostTableViewCell", for: indexPath) as? PostTableViewCell else { return UITableViewCell() }
             let post = posts[indexPath.row]
@@ -535,21 +732,30 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             
             cell.newCommentTextField.layer.borderColor = UIColor.lightGray.cgColor
             cell.newCommentTextField.layer.borderWidth = 1
+            cell.newCommentTextField.tintColor = .black
             
             cell.commentBtnTap.addTarget(self, action: #selector(commentClick(_:)), for: .touchUpInside)
             cell.theeDotsBtnTap.addTarget(self, action: #selector(openActionsheet(_:)), for: .touchUpInside)
             cell.sendCommentButton.addTarget(self, action: #selector(createCommentClick(_:)), for: .touchUpInside)
-            cell.allReactionBtnTap.addTarget(self, action: #selector(seeAllReactionsBtnTap(_:)), for: .touchUpInside)
+            cell.reactToggleButton.addTarget(self, action: #selector(seeAllReactionsBtnTap(_:)), for: .touchUpInside)
             cell.moreImagesButton.addTarget(self, action: #selector(moreImages(_:)), for: .touchUpInside)
             
-            cell.reactionHandler = {index, reaction in
-                self.updateReactionToFirebase(index: index, reaction: reaction)
-            }
+//            cell.reactionHandler = {index, reaction in
+//                self.updateReactionToFirebase(index: index, reaction: reaction)
+//            }
             
             return cell
         }
-        
+        else{
+            return UITableViewCell()
+        }
+       
     }
+    
+    func textViewShouldReturn(textView: UITextView!) -> Bool {
+            self.view.endEditing(true);
+            return true;
+        }
     
     @objc func picOneTapped(tapGestureRecognizer: UITapGestureRecognizer){
         
@@ -595,6 +801,9 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         popUpVC.modalPresentationStyle = .overCurrentContext
         popUpVC.modalTransitionStyle = .crossDissolve
         popUpVC.postDetails = posts[indexPath!.row]
+        self.row = indexPath?.row
+        popUpVC.groupDetails = self.groupDetails
+        popUpVC.backDelegate = self
         present(popUpVC, animated: true, completion: nil)
         
     }
@@ -604,6 +813,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         let position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
         let indexPath = self.groupPostTableView.indexPathForRow(at: position)
         selectedPost = posts[indexPath!.row]
+        self.row = indexPath?.row
         self.performSegue(withIdentifier: "commentListSegue", sender: nil)
         
     }
@@ -637,6 +847,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
 
         let firstAction: UIAlertAction = UIAlertAction(title: "Edit", style: .default) { action -> Void in
 
+            self.row = indexPath?.row
             self.editPost(post: self.posts[indexPath!.row])
 
         }
@@ -738,7 +949,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             
         {
             
-            self.present(loadingAlert, animated: true, completion: nil)
+            self.showActivityIndicator()
             var urls = [String]()
             self.uploadImagesToFirebaseStorage(images: self.selectedImages) { result in
                 switch result {
@@ -755,7 +966,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         else if (self.videoURL != nil)
         {
             
-            self.present(loadingAlert, animated: true, completion: nil)
+            self.showActivityIndicator()
             var urls = [String]()
             
             self.uploadVideoToFirebaseStorage(videoURL: self.videoURL!) { result in
@@ -773,17 +984,17 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             
         }
         else{
-            self.present(loadingAlert, animated: true, completion: nil)
+            self.showActivityIndicator()
             self.postDataToFirebase(dataType: self.MESSAGE_TYPE_TEXT, content: ["content" : unwrappedValue])
         }
         cell.writeSomthingTextView.text = ""
-        cell.writeSomthingTextView.placeholder = "Write something here..."
+        cell.writeSomthingTextView.text = "Write something here..."
         
     }
     
     func deletePost(postID: String, index: IndexPath) {
         
-        self.present(loadingAlert, animated: true, completion: nil)
+        self.showActivityIndicator()
         let defaultStore = Firestore.firestore()
         let document = defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").document(postID)
         
@@ -910,16 +1121,26 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
     }
     
     func showActivityIndicator() {
-        activityView = UIActivityIndicatorView(style: .large)
-        activityView?.center = self.view.center
-        activityView?.color = .black
-        self.view.addSubview(activityView!)
-        activityView?.startAnimating()
+        
+        let backgroundView = UIView(frame: view.bounds)
+           backgroundView.backgroundColor = UIColor(white: 0, alpha: 0.5) // Semi-transparent black color
+           backgroundView.tag = 999 // Assign a unique tag to identify and remove the background view later
+           view.addSubview(backgroundView)
+           
+           // Create the activity indicator
+           activityView = UIActivityIndicatorView(style: .large)
+           activityView?.center = backgroundView.center
+           activityView?.color = .white // You can change the color of the activity indicator if needed
+           backgroundView.addSubview(activityView!)
+           activityView?.startAnimating()
     }
     
     func hideActivityIndicator(){
+        if let backgroundView = view.viewWithTag(999) {
         if (activityView != nil){
             activityView?.stopAnimating()
+        }
+        backgroundView.removeFromSuperview()
         }
     }
     
@@ -990,6 +1211,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         }
         else if let destinationVC = segue.destination as? EditPostViewController
         {
+            destinationVC.backDelegate = self
             destinationVC.postDetails = self.selectedPost
             destinationVC.groupDetails = self.groupDetails
         }
@@ -1003,6 +1225,17 @@ extension String {
             options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html],
             documentAttributes: nil) else { return nil }
         return html.string
+    }
+}
+
+extension GroupDetailsViewController: BackDelegate {
+    func didComeBack() {
+        // Handle actions you want to perform when coming back
+        self.showActivityIndicator()
+        print("Came back to YourViewController!", row!)
+        
+        self.fetchPostsAndRefreshRow(section: 1, row: row!)
+        // Your custom logic here
     }
 }
 
@@ -1020,41 +1253,18 @@ class ColoredAction: UIAlertAction {
     }
 }
 
-extension UIAlertController {
-    static func loadingAlertController(message: String? = nil) -> UIAlertController {
-        let alertController = UIAlertController(title: nil, message: "\n\n\n", preferredStyle: .alert)
+extension Array where Element: Post {
+    func removingDuplicates() -> [Element] {
+        var uniquePosts = [String: Element]()
         
-        let activityIndicator = UIActivityIndicatorView(style: .large)
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicator.startAnimating()
+        for post in self {
+            // Keep only the latest occurrence of each post based on its ID
+            if let postID = post.id {
+                uniquePosts[postID] = post
+            }
+        }
         
-        alertController.view.addSubview(activityIndicator)
-        
-        let messageLabel = UILabel()
-        messageLabel.text = message
-        messageLabel.numberOfLines = 0
-        messageLabel.textAlignment = .center
-        messageLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        alertController.view.addSubview(messageLabel)
-        
-        // Constraints for the activity indicator
-        NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: alertController.view.centerXAnchor),
-            activityIndicator.topAnchor.constraint(equalTo: alertController.view.topAnchor, constant: 20)
-        ])
-        
-        // Constraints for the message label
-        NSLayoutConstraint.activate([
-            messageLabel.leadingAnchor.constraint(equalTo: alertController.view.leadingAnchor, constant: 20),
-            messageLabel.trailingAnchor.constraint(equalTo: alertController.view.trailingAnchor, constant: -20),
-            messageLabel.topAnchor.constraint(equalTo: activityIndicator.bottomAnchor, constant: 20),
-            messageLabel.bottomAnchor.constraint(equalTo: alertController.view.bottomAnchor, constant: -20)
-        ])
-        
-        return alertController
+        // Convert the dictionary back to an array
+        return Array(uniquePosts.values)
     }
 }
-
-
-
