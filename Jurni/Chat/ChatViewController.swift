@@ -360,7 +360,6 @@ class ChatViewController: UIViewController,UITableViewDelegate, UITableViewDataS
                 if err != nil {
                     print("Error updating Chat. Try again.")
                 } else {
-                    print("Chat updated successfully")
                     DispatchQueue.main.async {
                         self.fetchChats()
                     }
