@@ -309,6 +309,11 @@ class ChatViewController: UIViewController,UITableViewDelegate, UITableViewDataS
             cell.chatImageView.image = UIImage(named: "userblue")
         }
         
+        let moreOptions = UITapGestureRecognizer(target: self, action: #selector(moreOptionsTapped))
+        cell.chatOptionsImageView.isUserInteractionEnabled = true
+        cell.chatOptionsImageView.tag = indexPath.row
+        cell.chatOptionsImageView.addGestureRecognizer(moreOptions)
+        
         if (reloadFromNewConversation){
             if (searchChat.threadId == newConversationThreadId){
                 tableView.selectRow(at: indexPath, animated: true, scrollPosition: .top)
@@ -328,6 +333,47 @@ class ChatViewController: UIViewController,UITableViewDelegate, UITableViewDataS
         selectedChat = searchChatArray[indexPath.row]
         self.performSegue(withIdentifier: "chatDetailsSegue", sender: nil)
         
+    }
+    
+    @objc func moreOptionsTapped(tapGestureRecognizer: UITapGestureRecognizer){
+        
+        let view = tapGestureRecognizer.view as! UIImageView
+        let selectedChat = searchChatArray[view.tag]
+
+        let actionSheetController: UIAlertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let firstAction: UIAlertAction = UIAlertAction(title: "Leave Chat", style: .default) { action -> Void in
+
+            var members = [DocumentReference]()
+            for chat in selectedChat.memberList{
+                let loggedUserId : String = Auth.auth().currentUser!.uid
+                if(chat.path != "users/\(loggedUserId)"){
+                    members.append(chat)
+                }
+            }
+
+            let docRef = Firestore.firestore().collection("threads").document(selectedChat.threadId)
+            let chatData: [String:Any] = [
+                "members": members
+            ]
+
+            docRef.updateData(chatData){ err in
+                if err != nil {
+                    print("Error updating Chat. Try again.")
+                } else {
+                    print("Chat updated successfully")
+                    DispatchQueue.main.async {
+                        self.fetchChats()
+                    }
+                }
+            }
+            
+        }
+
+        let cancelAction: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in }
+        actionSheetController.addAction(firstAction)
+        actionSheetController.addAction(cancelAction)
+        actionSheetController.popoverPresentationController?.sourceView = self.view
+        present(actionSheetController, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
