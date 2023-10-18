@@ -13,7 +13,7 @@ protocol PostTableViewCellDelegate: AnyObject {
 }
 
 protocol ReactionTableViewCellDelegate: AnyObject {
-    func reactionButtonTapped(postID: String, isLiked: Bool)
+//    func reactionButtonTapped(postID: String, isLiked: Bool)
 }
 
 class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
@@ -131,44 +131,62 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         
         posterNameLabel.text = post.user.userName
         timeSincePostLabel.text = post.postTime.getMessagePostedDay()
-        numberOfCommentsLabel.text = "\(post.commentsCount)"
+        
+//        if (post.commentsCount > 0)
+//        {
+            numberOfCommentsLabel.text = "Show Comments"
+//        }
+//        else{
+//            numberOfCommentsLabel.text = "No Comments"
+//        }
+       
         
         var totalReactions: Int{
             return post.postReaction.angry + post.postReaction.laugh + post.postReaction.love + post.postReaction.sad + post.postReaction.surprise + post.postReaction.thumbsUp
         }
-        numberOfReactionsLabel.text = "\(totalReactions)"
+        if totalReactions > 0{
+            numberOfReactionsLabel.text = "❤️ \(totalReactions)  React"
+            numberOfCommentsLabel.textColor = .black
+        }
+        else{
+            numberOfReactionsLabel.text = "🩶  React"
+            numberOfCommentsLabel.textColor = .lightGray
+        }
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewClickSelector))
-        postBorderView.addGestureRecognizer(tapGesture)
         
-        let showSmileysGesture = UITapGestureRecognizer(target: self, action: #selector(showSmileysTapped))
-        heartImageView.isUserInteractionEnabled = true
-        heartImageView.tag = index
-        heartImageView.addGestureRecognizer(showSmileysGesture)
         
-        let showLaughTapped = UITapGestureRecognizer(target: self, action: #selector(showLaughTapped))
-        laugh.tag = index
-        laugh.addGestureRecognizer(showLaughTapped)
         
-        let showSurpriseTapped = UITapGestureRecognizer(target: self, action: #selector(showSurpriseTapped))
-        surprise.tag = index
-        surprise.addGestureRecognizer(showSurpriseTapped)
-        
-        let showSadTapped = UITapGestureRecognizer(target: self, action: #selector(showSadTapped))
-        sad.tag = index
-        sad.addGestureRecognizer(showSadTapped)
-        
-        let showAngryTapped = UITapGestureRecognizer(target: self, action: #selector(showAngryTapped))
-        angry.tag = index
-        angry.addGestureRecognizer(showAngryTapped)
-        
-        let showThumbsTapped = UITapGestureRecognizer(target: self, action: #selector(showThumbsTapped))
-        thumbsUp.tag = index
-        thumbsUp.addGestureRecognizer(showThumbsTapped)
-        
-        let loveTapped = UITapGestureRecognizer(target: self, action: #selector(showLoveTapped))
-        love.tag = index
-        love.addGestureRecognizer(loveTapped)
+//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewClickSelector))
+//        postBorderView.addGestureRecognizer(tapGesture)
+//
+//        let showSmileysGesture = UITapGestureRecognizer(target: self, action: #selector(showSmileysTapped))
+//        heartImageView.isUserInteractionEnabled = true
+//        heartImageView.tag = index
+//        heartImageView.addGestureRecognizer(showSmileysGesture)
+//
+//        let showLaughTapped = UITapGestureRecognizer(target: self, action: #selector(showLaughTapped))
+//        laugh.tag = index
+//        laugh.addGestureRecognizer(showLaughTapped)
+//
+//        let showSurpriseTapped = UITapGestureRecognizer(target: self, action: #selector(showSurpriseTapped))
+//        surprise.tag = index
+//        surprise.addGestureRecognizer(showSurpriseTapped)
+//
+//        let showSadTapped = UITapGestureRecognizer(target: self, action: #selector(showSadTapped))
+//        sad.tag = index
+//        sad.addGestureRecognizer(showSadTapped)
+//
+//        let showAngryTapped = UITapGestureRecognizer(target: self, action: #selector(showAngryTapped))
+//        angry.tag = index
+//        angry.addGestureRecognizer(showAngryTapped)
+//
+//        let showThumbsTapped = UITapGestureRecognizer(target: self, action: #selector(showThumbsTapped))
+//        thumbsUp.tag = index
+//        thumbsUp.addGestureRecognizer(showThumbsTapped)
+//
+//        let loveTapped = UITapGestureRecognizer(target: self, action: #selector(showLoveTapped))
+//        love.tag = index
+//        love.addGestureRecognizer(loveTapped)
         
         
     }

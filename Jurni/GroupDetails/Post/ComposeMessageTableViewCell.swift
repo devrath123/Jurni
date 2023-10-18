@@ -18,7 +18,7 @@ class ComposeMessageTableViewCell: UITableViewCell {
     @IBOutlet weak var playVideoImg: UIImageView!
     @IBOutlet weak var deleteVideoBtnView: UIView!
     @IBOutlet weak var deleteVideoBtn: UIButton!
-    @IBOutlet var writeSomthingTextView: UITextField!
+    @IBOutlet var writeSomthingTextView: UITextView!
     @IBOutlet weak var imgView: UIView!
     @IBOutlet weak var videoView: UIView!
     @IBOutlet weak var uploadPhotoBtn: UIButton!

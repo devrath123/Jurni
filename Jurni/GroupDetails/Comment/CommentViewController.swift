@@ -32,16 +32,15 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        
         commentTextField.delegate = self
-        
-       
-        
+        self.showActivityIndicator()
         let headerNib = UINib(nibName: "CommentCell", bundle: nil)
         commentTableView.register(headerNib, forCellReuseIdentifier: "CommentCell")
         self.setBottomView()
         self.fetchComments()
         
-        var height = self.view.frame.height - (commentTableView.frame.origin.y + commentView.frame.height)
+        let height = self.view.frame.height - (commentTableView.frame.origin.y + commentView.frame.height)
         tableViewHeight = Int(height)
         tableHeightConstraint.constant = CGFloat(tableViewHeight)
         
@@ -159,15 +158,6 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        if comments.count == 0 {
-//            self.commentTableView.setEmptyMessage("No Comments yet")
-//
-//        }
-//        else{
-//
-//            self.commentTableView.restore()
-//
-//        }
         return comments.count
     }
     
@@ -189,7 +179,6 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if (editingStyle == .delete) {
-            // handle delete (by removing the data from your array and updating the tableview)
             self.showActivityIndicator()
             self.deleteComment(postID: (self.postDetails?.id)!, commentId: self.comments[indexPath.row].id!)
             
@@ -220,12 +209,12 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         let dataToSend : [String: Any] = ["content": content,"from": ownerReference, "timestamp":FieldValue.serverTimestamp()]
         document.setData(dataToSend) { error in
             if let error = error {
+                self.hideActivityIndicator()
                 print("error creating comment")
             } else {
                 print("sucessful getting a comment")
                 self.commentTextField.text = ""
                 self.fetchComments()
-//                self.scrollToBottom()
                 
             }
         }
@@ -243,6 +232,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
        
         document.delete() { error in
             if let error = error {
+                self.hideActivityIndicator()
                 print("error creating comment", error)
             } else {
                 print("sucessful getting a comment")
@@ -254,25 +244,19 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! CommentViewController
-//        destinationVC.groupDetails = selectedGroup
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         tableHeightConstraint.constant = CGFloat(tableViewHeight)
-//        self.scrollToBottom()
         textField.resignFirstResponder()
         return true
     }
     
     @objc func keyboardWillHide() {
-      //  self.view.frame.origin.y = 0
         tableHeightConstraint.constant = CGFloat(tableViewHeight)
     }
 
     @objc func keyboardWillChange(notification: NSNotification) {
-//            if messageTextField.isFirstResponder {
-//                self.view.frame.origin.y = -350
-//            }
         
         guard let value = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
               let keyboardHeight = value.cgRectValue.height
@@ -294,18 +278,24 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func showActivityIndicator() {
-      //  self.view.isUserInteractionEnabled = false
-        activityView = UIActivityIndicatorView(style: .large)
-        activityView?.center = self.view.center
-        activityView?.color = .black
-        self.view.addSubview(activityView!)
-        activityView?.startAnimating()
+        
+        let backgroundView = UIView(frame: view.bounds)
+           backgroundView.backgroundColor = UIColor(white: 0, alpha: 0.5)
+           backgroundView.tag = 999
+           view.addSubview(backgroundView)
+           activityView = UIActivityIndicatorView(style: .large)
+           activityView?.center = backgroundView.center
+           activityView?.color = .white
+           backgroundView.addSubview(activityView!)
+           activityView?.startAnimating()
     }
     
     func hideActivityIndicator(){
-      //  self.view.isUserInteractionEnabled = true
+        if let backgroundView = view.viewWithTag(999) {
         if (activityView != nil){
             activityView?.stopAnimating()
+        }
+        backgroundView.removeFromSuperview()
         }
     }
     

@@ -5,6 +5,7 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22130"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -30,25 +31,30 @@
                                             <constraint firstAttribute="height" constant="30" id="rLp-Kq-860"/>
                                         </constraints>
                                     </imageView>
-                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Write something here..." textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Fbu-XA-c8k">
-                                        <rect key="frame" x="55" y="0.0" width="335" height="60"/>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" text="Write something here..." textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Uul-92-1KB">
+                                        <rect key="frame" x="55" y="15" width="335" height="45"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="60" id="NGd-wl-ypr"/>
+                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="20" id="a4E-Jd-f9N"/>
                                         </constraints>
-                                        <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                    </textField>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                        <connections>
+                                            <outlet property="delegate" destination="KGk-i7-Jjw" id="Z9o-ZU-97S"/>
+                                        </connections>
+                                    </textView>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstItem="hEg-qp-9Z6" firstAttribute="centerY" secondItem="flk-6j-lBG" secondAttribute="centerY" id="BZ7-1p-skn"/>
-                                    <constraint firstAttribute="trailing" secondItem="Fbu-XA-c8k" secondAttribute="trailing" constant="15" id="EQv-dQ-kjd"/>
-                                    <constraint firstItem="Fbu-XA-c8k" firstAttribute="top" secondItem="flk-6j-lBG" secondAttribute="top" id="SS8-Eb-Elh"/>
-                                    <constraint firstAttribute="bottom" secondItem="Fbu-XA-c8k" secondAttribute="bottom" id="TwS-Y9-48Z"/>
-                                    <constraint firstItem="Fbu-XA-c8k" firstAttribute="leading" secondItem="hEg-qp-9Z6" secondAttribute="trailing" constant="15" id="WVN-hw-kVn"/>
+                                    <constraint firstItem="Uul-92-1KB" firstAttribute="leading" secondItem="hEg-qp-9Z6" secondAttribute="trailing" constant="15" id="L91-R2-E0S"/>
+                                    <constraint firstAttribute="trailing" secondItem="Uul-92-1KB" secondAttribute="trailing" constant="15" id="ffn-sL-Lgu"/>
                                     <constraint firstItem="hEg-qp-9Z6" firstAttribute="leading" secondItem="flk-6j-lBG" secondAttribute="leading" constant="10" id="g5R-Yz-mMG"/>
-                                    <constraint firstAttribute="height" constant="60" id="hcV-R9-6Iy"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="60" id="hcV-R9-6Iy"/>
+                                    <constraint firstItem="Uul-92-1KB" firstAttribute="top" secondItem="flk-6j-lBG" secondAttribute="top" constant="15" id="r5C-2a-5zP"/>
+                                    <constraint firstAttribute="bottom" secondItem="Uul-92-1KB" secondAttribute="bottom" id="ybv-ch-Ibs"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NdN-kX-gJI">
@@ -281,7 +287,7 @@
                 <outlet property="videoBtnView" destination="qMx-oY-V8A" id="vjm-Za-2sc"/>
                 <outlet property="videoView" destination="NdN-kX-gJI" id="qSy-os-EG8"/>
                 <outlet property="videoViewHeightConstraint" destination="X0H-gw-Qi0" id="3Tr-JG-BC7"/>
-                <outlet property="writeSomthingTextView" destination="Fbu-XA-c8k" id="yQ1-b6-uzn"/>
+                <outlet property="writeSomthingTextView" destination="Uul-92-1KB" id="8lz-Ls-63n"/>
             </connections>
             <point key="canvasLocation" x="125.95419847328243" y="20.422535211267608"/>
         </tableViewCell>
@@ -292,5 +298,8 @@
         <image name="close" width="30" height="30"/>
         <image name="playvideo" width="20" height="20"/>
         <image name="userblue" width="30" height="30"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>

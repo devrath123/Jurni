@@ -13,7 +13,7 @@ import FirebaseAuth
 import FirebaseStorage
 import PhotosUI
 
-class EditPostViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate,UIImagePickerControllerDelegate, PHPickerViewControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class EditPostViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate,UIImagePickerControllerDelegate, PHPickerViewControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate {
    
     var groupDetails: Group?
     var postDetails: Post?
@@ -23,6 +23,7 @@ class EditPostViewController: UIViewController, UITableViewDelegate, UITableView
     let MESSAGE_TYPE_TEXT = "text"
     let MESSAGE_TYPE_IMAGE = "image"
     let MESSAGE_TYPE_VIDEO = "video"
+    weak var backDelegate: BackDelegate?
 
     @IBOutlet weak var photoTableView: UITableView!
     @IBOutlet weak var tableViewHeightConatraint: NSLayoutConstraint!
@@ -35,7 +36,12 @@ class EditPostViewController: UIViewController, UITableViewDelegate, UITableView
         
         photoTableView.rowHeight = UITableView.automaticDimension
         self.photoTableView.estimatedRowHeight = 100
+        self.photoTableView.backgroundColor = UIColor.white
         
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        tapGesture.delegate = self
+        self.view.addGestureRecognizer(tapGesture)
+        photoTableView.addGestureRecognizer(tapGesture)
         
         let headerNib = UINib(nibName: "EditPostCell", bundle: nil)
         photoTableView.register(headerNib, forCellReuseIdentifier: "EditPostCell")
@@ -45,6 +51,10 @@ class EditPostViewController: UIViewController, UITableViewDelegate, UITableView
         
         self.postImages = self.postDetails!.postContent.postImageUrls
         self.setDataInViewController()
+    }
+    
+    @objc func handleTap(_ gesture: UITapGestureRecognizer) {
+        view.endEditing(true) // This will close the keyboard and resign first responder status from any text view
     }
     
     override func viewWillLayoutSubviews() {
@@ -101,6 +111,7 @@ class EditPostViewController: UIViewController, UITableViewDelegate, UITableView
                 print("successfully uploded ")
                 DispatchQueue.main.async {
                     self.hideActivityIndicator()
+                    self.backDelegate?.didComeBack()
                     self.dismiss(animated: true, completion: nil)
 
                 }
@@ -186,7 +197,7 @@ class EditPostViewController: UIViewController, UITableViewDelegate, UITableView
         
         cell.deleteImageBtn.addTarget(self, action: #selector(deleteSeletedImage(sender:)), for: .touchUpInside)
         cell.deleteImageBtn.tag = indexPath.item
-        cell.backgroundColor = UIColor.white
+        cell.layer.backgroundColor = UIColor.white.cgColor
         
         let imageURL = self.postImages[indexPath.item]
         
@@ -244,12 +255,13 @@ class EditPostViewController: UIViewController, UITableViewDelegate, UITableView
             
             cell.containerView.backgroundColor = UIColor.white
             cell.backgroundColor = UIColor.white
+            cell.layer.backgroundColor = UIColor.white.cgColor
             
             print("Compose: \(indexPath.row)")
             
             cell.photoCollectionView.delegate = self
             cell.photoCollectionView.dataSource = self
-            
+            cell.photoCollectionView.backgroundColor = UIColor.white
             
             if let url = self.videoURL {
                 cell.videoViewHeightConstraint.constant = CGFloat(140)
@@ -290,6 +302,8 @@ class EditPostViewController: UIViewController, UITableViewDelegate, UITableView
 //            cell.deleteVideoBtn.addTarget(self, action: #selector(deleteVideo(_:)), for: .touchUpInside)
             cell.publishBtn.addTarget(self, action: #selector(publishPost(_:)), for: .touchUpInside)
             cell.writeSomthingTextView.delegate = self
+            cell.writeSomthingTextView.backgroundColor = UIColor.white
+            cell.writeSomthingTextView.tintColor = .black
             cell.writeSomthingTextView.text = self.postDetails!.postContent.postText
             cell.containerView.layer.borderColor = UIColor.lightGray.cgColor
             
@@ -344,10 +358,7 @@ class EditPostViewController: UIViewController, UITableViewDelegate, UITableView
         let indexPath = self.photoTableView.indexPathForRow(at: position)
         let cell: EditPostCell = photoTableView.cellForRow(at: indexPath!)! as! EditPostCell
         
-        guard let unwrappedValue = cell.writeSomthingTextView.text else {
-            print("Optional Value is nil")
-            return
-        }
+        let unwrappedValue = cell.writeSomthingTextView.text
         
         if (self.postImages.count > 0)
             
@@ -365,14 +376,14 @@ class EditPostViewController: UIViewController, UITableViewDelegate, UITableView
                             return !(element is UIImage)
                         }
                         self.postImages += downloadURLs
-                        self.postDataToFirebase(dataType: self.MESSAGE_TYPE_IMAGE, content: ["content" : unwrappedValue, "url": self.postImages])
+                        self.postDataToFirebase(dataType: self.MESSAGE_TYPE_IMAGE, content: ["content" : unwrappedValue ?? "", "url": self.postImages])
                     case .failure(let error):
                         print("Error uploading images: \(error.localizedDescription)")
                     }
                 }}
             else{
                 
-                self.postDataToFirebase(dataType: self.MESSAGE_TYPE_IMAGE, content: ["content" : unwrappedValue, "url": self.postImages])
+                self.postDataToFirebase(dataType: self.MESSAGE_TYPE_IMAGE, content: ["content" : unwrappedValue ?? "", "url": self.postImages])
             }
             
         }
