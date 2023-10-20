@@ -38,12 +38,11 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     var postImages: [String] = []
     var videoURL: URL?
     var row: Int?
-//    weak var backDelegate: BackDelegate?
     
     let MESSAGE_TYPE_TEXT = "text"
     let MESSAGE_TYPE_IMAGE = "image"
     let MESSAGE_TYPE_VIDEO = "video"
-//    let loadingAlert = UIAlertController.loadingAlertController(message: "Loading...")
+
     var contentOffset: CGPoint = .zero
     
     override func viewDidLoad() {
@@ -53,8 +52,6 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
         groupPostTableView.delegate = self
         imagePicker.delegate = self
 
-//        self.present(loadingAlert, animated: true, completion: nil)
-        
         contentOffset = groupPostTableView.contentOffset
         groupPostTableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
@@ -82,18 +79,16 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     // MARK: - Methods
     
     @objc private func refreshData() {
-           // Perform your data loading tasks here
-//           fetchPosts()
+
            refreshControl.endRefreshing()
        }
     
     @objc func handleTap(_ gesture: UITapGestureRecognizer) {
-        view.endEditing(true) // This will close the keyboard and resign first responder status from any text view
+        view.endEditing(true)
     }
     
     func fetchPosts(){
         
-//        self.posts.removeAll()
         let defaultStore = Firestore.firestore()
         print("Group id: \(self.groupDetails?.groupId)")
         defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").getDocuments(){ (querySnapshot, err) in
@@ -139,10 +134,6 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                         let postContent = document.get("meta.content") as? String
                         let postText = postContent?.htmlAttributedString() ?? ""
                         let comments = document.get("comments")
-                        
-                        
-                        /// User id format example - from: /users/lzlXd3G5vhUFj1HIEjcmuLVLG4g1
-                        /// needs UID to be retrieved as corresponding user's username
                         if let reactionsData = document.get("reactions") as? [String:Any] {
                             let reactions = PostReaction(
                                 angry: reactionsData["ANGRY"] as? Int ?? 0,
@@ -208,11 +199,9 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                                                 self.posts = self.posts.sorted(by: { $0.postTime.compare($1.postTime as Date) == .orderedDescending })
                                                 self.hideActivityIndicator()
                                                 DispatchQueue.main.async {
-//                                                    self.loadingAlert.dismiss(animated: true, completion: nil)
                                                     self.groupPostTableView.reloadData()
                                                     UIView.setAnimationsEnabled(false)
                                                     self.groupPostTableView.beginUpdates()
-                                                    //                                                self.groupPostTableView.reloadData()
                                                     self.groupPostTableView.endUpdates()
                                                 }
                                                 
@@ -234,7 +223,6 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     
     func  fetchPostsAndRefreshRow(section: Int, row: Int){
         
-//        self.posts.removeAll()
         let defaultStore = Firestore.firestore()
         print("Group id: \(self.groupDetails?.groupId)")
         defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").getDocuments(){ (querySnapshot, err) in
@@ -281,9 +269,6 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                         let postText = postContent?.htmlAttributedString() ?? ""
                         let comments = document.get("comments")
                         
-                        
-                        /// User id format example - from: /users/lzlXd3G5vhUFj1HIEjcmuLVLG4g1
-                        /// needs UID to be retrieved as corresponding user's username
                         if let reactionsData = document.get("reactions") as? [String:Any] {
                             let reactions = PostReaction(
                                 angry: reactionsData["ANGRY"] as? Int ?? 0,
@@ -353,7 +338,6 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                                                         self.groupPostTableView.reloadRows(at: [indexPath], with: .none)
                                                         self.groupPostTableView.endUpdates()
                                                         self.hideActivityIndicator()
-//                                                        self.loadingAlert.dismiss(animated: true, completion: nil)
                                                     }
                                                 
                                             }}
@@ -374,12 +358,11 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     func reloadTableView() {
         self.groupPostTableView.reloadData()
         self.groupPostTableView.layoutIfNeeded()
-        self.groupPostTableView.setContentOffset(contentOffset, animated: false) // Set back the content offset
+        self.groupPostTableView.setContentOffset(contentOffset, animated: false)
        }
     
     func createComment(postID: String,content: String) {
         
-//        self.present(loadingAlert, animated: true, completion: nil)
         self.showActivityIndicator()
         let defaultStore = Firestore.firestore()
         let document = defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").document(postID).collection("comments").document()
@@ -423,8 +406,6 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
         self.avpPlayerController = AVPlayerViewController()
         avpPlayerController.player = self.player
         avpPlayerController.view.frame = videoView.bounds
-//        avpPlayerController.player?.play()
-//        avpPlayerController.player?.pause()
         self.avpPlayerController.showsPlaybackControls = true
         videoView.addSubview(avpPlayerController.view)
     }
@@ -440,11 +421,9 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
     
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         if results.count == 0 {
-            // User canceled out of picker
             print("User canceled")
             selectedImages = []
             self.groupPostTableView.reloadData()
-            //  delegate?.resetCells()
         }
         else{
             for result in results {
@@ -478,7 +457,6 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
             DispatchQueue.main.async {
                 let cell: ComposeMessageTableViewCell = self.groupPostTableView.cellForRow(at: IndexPath(row: 0, section: 0))! as! ComposeMessageTableViewCell
                 cell.imgView.isHidden = true
-                //            self.groupPostTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
                 self.groupPostTableView.reloadData()
             }
             
@@ -501,8 +479,8 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMMM d, yyyy 'at' h:mm:ss a 'UTC'ZZZZZ"
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.timeZone = TimeZone(secondsFromGMT: 5 * 3600 + 30 * 60) // UTC+5:30
-        let date = Date() // Replace this with your specific Date object
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 5 * 3600 + 30 * 60)
+        let date = Date()
         let da = dateFormatter.string(from: date)
         let timestamp = dateFormatter.date(from: da)
         
@@ -665,10 +643,6 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             cell.deleteVideoBtn.addTarget(self, action: #selector(deleteVideo(_:)), for: .touchUpInside)
             cell.publishBtn.addTarget(self, action: #selector(publishPost(_:)), for: .touchUpInside)
             
-//            cell.writeSomthingTextView.attributedPlaceholder = NSAttributedString(
-//                string: "Write something here...",
-//                attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray]
-//            )
             cell.writeSomthingTextView.delegate = self
             if cell.writeSomthingTextView.text == "Write something here..."
             {
@@ -702,11 +676,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             if !post.postContent.postVideoUrl.isEmpty{
                 playVideo(videoUrl: URL(string: post.postContent.postVideoUrl[0])!, videoView: cell.videoContainerView)
             }
-//            cell.createCommentHandler = { postId, text in
-//                self.createComment(postID: postId, content: text)
-//            }
 
-            
             let picOne = UITapGestureRecognizer(target: self, action: #selector(picOneTapped))
             cell.photoOneImageView.isUserInteractionEnabled = true
             cell.photoOneImageView.tag = indexPath.row
@@ -740,9 +710,6 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             cell.reactToggleButton.addTarget(self, action: #selector(seeAllReactionsBtnTap(_:)), for: .touchUpInside)
             cell.moreImagesButton.addTarget(self, action: #selector(moreImages(_:)), for: .touchUpInside)
             
-//            cell.reactionHandler = {index, reaction in
-//                self.updateReactionToFirebase(index: index, reaction: reaction)
-//            }
             
             return cell
         }
@@ -812,9 +779,14 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         
         let position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
         let indexPath = self.groupPostTableView.indexPathForRow(at: position)
+        let cell: PostTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! PostTableViewCell
         selectedPost = posts[indexPath!.row]
         self.row = indexPath?.row
-        self.performSegue(withIdentifier: "commentListSegue", sender: nil)
+        if (cell.numberOfCommentsLabel.text != "No Comments")
+        {
+            self.performSegue(withIdentifier: "commentListSegue", sender: nil)
+        }
+        
         
     }
     
@@ -865,7 +837,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         actionSheetController.addAction(cancelAction)
 
 
-        actionSheetController.popoverPresentationController?.sourceView = self.view // works for both iPhone & iPad
+        actionSheetController.popoverPresentationController?.sourceView = self.view
 
         present(actionSheetController, animated: true) {
             print("option menu presented")
@@ -879,13 +851,13 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
     
     @objc func uploadImages(_ sender: UIButton?){
         
-        var position: CGPoint = sender!.convert(.zero, to: self.groupPostTableView)
+        let position: CGPoint = sender!.convert(.zero, to: self.groupPostTableView)
         let indexPath = self.groupPostTableView.indexPathForRow(at: position)
         let cell: ComposeMessageTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! ComposeMessageTableViewCell
         
         cell.videoBtnView.isHidden = true
         var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 0  // 0 means no limit
+        configuration.selectionLimit = 0
         configuration.filter = .images
         
         let picker = PHPickerViewController(configuration: configuration)
@@ -896,7 +868,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
     
     @objc func uploadVideo(_ sender: UIButton?){
         
-        var position: CGPoint = sender!.convert(.zero, to: self.groupPostTableView)
+        let position: CGPoint = sender!.convert(.zero, to: self.groupPostTableView)
         let indexPath = self.groupPostTableView.indexPathForRow(at: position)
         let cell: ComposeMessageTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! ComposeMessageTableViewCell
         
@@ -911,7 +883,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
     
     @objc func deleteVideo(_ sender: UIButton?){
         
-        var position: CGPoint = sender!.convert(.zero, to: self.groupPostTableView)
+        let position: CGPoint = sender!.convert(.zero, to: self.groupPostTableView)
         let indexPath = self.groupPostTableView.indexPathForRow(at: position)
         let cell: ComposeMessageTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! ComposeMessageTableViewCell
         self.videoURL = nil
@@ -920,8 +892,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         cell.imgView.isHidden = false
         cell.deleteVideoBtnView.isHidden = true
         
-        let sectionIndex = 0 // Change this to your specific section index
-        //                groupPostTableView.reloadData()
+        let sectionIndex = 0
         groupPostTableView.reloadSections(IndexSet(integer: sectionIndex), with: .automatic)
         
     }
@@ -1011,7 +982,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
     
     @objc func deleteSeletedImage( sender: UIButton){
         
-        var position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
+        let position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
         let indexPath = self.groupPostTableView.indexPathForRow(at: position)
         let cell: ComposeMessageTableViewCell = groupPostTableView.cellForRow(at: indexPath!)! as! ComposeMessageTableViewCell
         cell.photoCollectionView.reloadData()
@@ -1020,7 +991,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         print(buttonTag, selectedImages.count, "delete click")
         
         selectedImages.remove(at: buttonTag)
-        let sectionIndex = 0 // Change this to your specific section index
+        let sectionIndex = 0
         groupPostTableView.reloadData()
         groupPostTableView.reloadSections(IndexSet(integer: sectionIndex), with: .automatic)
         
@@ -1028,7 +999,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
     
     @objc func moreImages(_ sender: UIButton){
         
-        var position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
+        let position: CGPoint = sender.convert(.zero, to: self.groupPostTableView)
         let indexPath = self.groupPostTableView.indexPathForRow(at: position)
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "ImageGalleryViewController") as! ImageGalleryViewController
         vc.postImageUrls = self.posts[indexPath!.row].postContent.postImageUrls
@@ -1050,20 +1021,14 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
                 dispatchGroup.leave()
                 continue
             }
-            
-            // Create a unique name for the image (e.g., using a timestamp)
             let imageName = String("\(randomString(length: 5)).png")
-            
-            // Reference to the Firebase Storage bucket
             let storageRef = Storage.storage().reference().child("grouppost/\(imageName)")
             
-            // Upload the image data to Firebase Storage
             let uploadTask = storageRef.putData(imageData, metadata: nil) { (metadata, error) in
                 if let error = error {
                     uploadErrors.append(error)
                     dispatchGroup.leave()
                 } else {
-                    // Once the upload is complete, get the download URL
                     storageRef.downloadURL { (url, error) in
                         if let error = error {
                             uploadErrors.append(error)
@@ -1098,16 +1063,12 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
                 metaData.contentType = "video/mp4"
                 storageRef.putData(data, metadata: metaData) { metadata, error in
                     if let error = error {
-                        // Handle error
                         completion(.failure(error))
                     } else {
-                        // Once the upload is complete, get the download URL
                         storageRef.downloadURL { (url, error) in
                             if let error = error {
-                                // Handle error
                                 completion(.failure(error))
                             } else if let downloadURL = url {
-                                // Video uploaded successfully, return the download URL
                                 completion(.success(downloadURL))
                             }
                         }
@@ -1123,14 +1084,13 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
     func showActivityIndicator() {
         
         let backgroundView = UIView(frame: view.bounds)
-           backgroundView.backgroundColor = UIColor(white: 0, alpha: 0.5) // Semi-transparent black color
-           backgroundView.tag = 999 // Assign a unique tag to identify and remove the background view later
+           backgroundView.backgroundColor = UIColor(white: 0, alpha: 0.5)
+           backgroundView.tag = 999
            view.addSubview(backgroundView)
            
-           // Create the activity indicator
            activityView = UIActivityIndicatorView(style: .large)
            activityView?.center = backgroundView.center
-           activityView?.color = .white // You can change the color of the activity indicator if needed
+           activityView?.color = .white
            backgroundView.addSubview(activityView!)
            activityView?.startAnimating()
     }
@@ -1155,7 +1115,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         var sad = post.postReaction.sad
         var angry = post.postReaction.angry
         switch reaction{
-        case "THUMBS_UP": thumbsUp += 1
+        case "THUMB_UP": thumbsUp += 1
         case "LOVE": love += 1
         case "LAUGH": laugh += 1
         case "SURPRISE": surprise += 1
@@ -1183,7 +1143,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
             } else {
                 print("Profile updated successfully")
                 switch reaction{
-                case "THUMBS_UP": post.postReaction.thumbsUp += 1
+                case "THUMB_UP": post.postReaction.thumbsUp += 1
                 case "LOVE": post.postReaction.love += 1
                 case "LAUGH": post.postReaction.laugh += 1
                 case "SURPRISE": post.postReaction.surprise += 1
@@ -1202,6 +1162,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destinationVC = segue.destination as? CommentViewController
         {
+           destinationVC.backDelegate = self
            destinationVC.postDetails = selectedPost
            destinationVC.groupDetails = self.groupDetails
        }
@@ -1230,12 +1191,10 @@ extension String {
 
 extension GroupDetailsViewController: BackDelegate {
     func didComeBack() {
-        // Handle actions you want to perform when coming back
         self.showActivityIndicator()
         print("Came back to YourViewController!", row!)
         
         self.fetchPostsAndRefreshRow(section: 1, row: row!)
-        // Your custom logic here
     }
 }
 
@@ -1247,8 +1206,6 @@ extension GroupDetailsViewController: ReactionTableViewCellDelegate {
 class ColoredAction: UIAlertAction {
     convenience init(title: String?, style: UIAlertAction.Style, textColor: UIColor, handler: ((UIAlertAction) -> Void)?) {
         self.init(title: title, style: style, handler: handler)
-        
-        // Set the text color
         self.setValue(textColor, forKey: "titleTextColor")
     }
 }
@@ -1258,13 +1215,10 @@ extension Array where Element: Post {
         var uniquePosts = [String: Element]()
         
         for post in self {
-            // Keep only the latest occurrence of each post based on its ID
             if let postID = post.id {
                 uniquePosts[postID] = post
             }
         }
-        
-        // Convert the dictionary back to an array
         return Array(uniquePosts.values)
     }
 }

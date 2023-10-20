@@ -162,12 +162,13 @@ class DashboardViewController: UIViewController{
 
 extension DashboardViewController: SideMenuViewControllerDelegate {
     func selectedCell(_ row: Int) {
+
         switch row {
         case 0:
             self.showViewController(viewController: UINavigationController.self, storyboardId: "HomeNavID")
-        
+            DispatchQueue.main.async { self.sideMenuState(expanded: false) }
         case 1: self.performSegue(withIdentifier: "groupSegue", sender: nil)
-            
+           
         case 2: self.performSegue(withIdentifier: "chatSegue", sender: nil)
             
         case 3: self.performSegue(withIdentifier: "calendarSegue", sender: nil)
@@ -178,8 +179,6 @@ extension DashboardViewController: SideMenuViewControllerDelegate {
             break
         }
         
-        // Collapse side menu with animation
-        DispatchQueue.main.async { self.sideMenuState(expanded: false) }
     }
     
     func showViewController<T: UIViewController>(viewController: T.Type, storyboardId: String) -> () {

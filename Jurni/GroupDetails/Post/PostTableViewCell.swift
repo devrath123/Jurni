@@ -132,24 +132,24 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         posterNameLabel.text = post.user.userName
         timeSincePostLabel.text = post.postTime.getMessagePostedDay()
         
-//        if (post.commentsCount > 0)
-//        {
-            numberOfCommentsLabel.text = "Show Comments"
-//        }
-//        else{
-//            numberOfCommentsLabel.text = "No Comments"
-//        }
+        if (post.commentsCount > 0)
+        {
+            numberOfCommentsLabel.text = "\(post.commentsCount) Show Comments"
+        }
+        else{
+            numberOfCommentsLabel.text = "No Comments"
+        }
        
         
         var totalReactions: Int{
             return post.postReaction.angry + post.postReaction.laugh + post.postReaction.love + post.postReaction.sad + post.postReaction.surprise + post.postReaction.thumbsUp
         }
         if totalReactions > 0{
-            numberOfReactionsLabel.text = "❤️ \(totalReactions)  React"
+            numberOfReactionsLabel.text = "❤️ \(totalReactions)"
             numberOfCommentsLabel.textColor = .black
         }
         else{
-            numberOfReactionsLabel.text = "🩶  React"
+            numberOfReactionsLabel.text = "🩶"
             numberOfCommentsLabel.textColor = .lightGray
         }
         
@@ -334,7 +334,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
     @objc func showThumbsTapped(tapGestureRecognizer: UITapGestureRecognizer){
         let view = tapGestureRecognizer.view as! UIButton
         showSmileysView.isHidden = true
-        reactionHandler?(view.tag, "THUMBS_UP")
+        reactionHandler?(view.tag, "THUMB_UP")
     }
     
     @objc func showLoveTapped(tapGestureRecognizer: UITapGestureRecognizer){

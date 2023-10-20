@@ -19,7 +19,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     var comments: [Comment] = []
     var tableViewHeight = 0
     var activityView: UIActivityIndicatorView?
-    
+    weak var backDelegate: BackDelegate?
     @IBOutlet weak var avtarLblView: UIView!
     @IBOutlet weak var profileLbl: UILabel!
     @IBOutlet weak var commentView: UIView!
@@ -30,8 +30,6 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
         
         commentTextField.delegate = self
         self.showActivityIndicator()
@@ -66,11 +64,9 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
                         
                         var userId: String?
                         if let fromReference = document.get("from") as? DocumentReference {
-                            // If "from" field is a DocumentReference, extract the user ID from its path
                             let pathComponents = fromReference.path.components(separatedBy: "/")
                             userId = pathComponents.last
                         } else if let fromString = document.get("from") as? String {
-                            // If "from" field is a string, use it directly as the user ID
                             userId = fromString
                         }
                         
@@ -99,19 +95,20 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
                                 self.comments.append(comment)
                                 self.comments = self.comments.sorted(by: { $0.timestamp.compare($1.timestamp as Date) == .orderedDescending })
                                 self.commentTableView.reloadData()
-                                
+                                self.hideActivityIndicator()
                             }
                         } else {
-                            // Handle the case where "from" field is neither DocumentReference nor String
                             let commentUser = User(userName: "Unknown", userAvatar: "", isOwner: true)
                             let comment = Comment(id: id, content: content ?? "", from: commentUser, timestamp: commentTime)
                             self.comments.append(comment)
                             self.comments = self.comments.sorted(by: { $0.timestamp.compare($1.timestamp as Date) == .orderedDescending })
                             self.commentTableView.reloadData()
-                           
+                            self.hideActivityIndicator()
                         }
+                       
                     }
-                    
+                   
+                    self.commentTableView.reloadData()
                     self.hideActivityIndicator()
                 }
             }
@@ -148,6 +145,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     @IBAction func bckBtn(_ sender: Any) {
+        backDelegate?.didComeBack()
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -208,9 +206,9 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         let dataToSend : [String: Any] = ["content": content,"from": ownerReference, "timestamp":FieldValue.serverTimestamp()]
         document.setData(dataToSend) { error in
-            if let error = error {
+            if error != nil {
                 self.hideActivityIndicator()
-                print("error creating comment")
+                print("error creating comment", error)
             } else {
                 print("sucessful getting a comment")
                 self.commentTextField.text = ""
@@ -224,12 +222,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         let defaultStore = Firestore.firestore()
         let document = defaultStore.collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").document(postID).collection("comments").document(commentId)
-        
-        let from = Auth.auth().currentUser!.uid
-        let ownerString = Firestore.firestore().collection("users").document(from)
-        let ownerReference = Firestore.firestore().document(ownerString.path)
-        
-       
+
         document.delete() { error in
             if let error = error {
                 self.hideActivityIndicator()
