@@ -134,7 +134,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         
         if (post.commentsCount > 0)
         {
-            numberOfCommentsLabel.text = "\(post.commentsCount) Show Comments"
+            numberOfCommentsLabel.text = "Show \(post.commentsCount) Comments"
         }
         else{
             numberOfCommentsLabel.text = "No Comments"

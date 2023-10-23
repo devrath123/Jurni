@@ -214,6 +214,9 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                             }
                         }
                     }
+                    DispatchQueue.main.async {
+                                           self.hideActivityIndicator()
+                                       }
                 }
             }
         }
@@ -349,6 +352,9 @@ class GroupDetailsViewController: UIViewController,UIImagePickerControllerDelega
                             }
                         }
                     }
+                    DispatchQueue.main.async {
+                                           self.hideActivityIndicator()
+                                       }
                 }
             }
         }
