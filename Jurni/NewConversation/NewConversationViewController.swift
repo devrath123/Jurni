@@ -318,13 +318,39 @@ class NewConversationViewController: UIViewController, UITableViewDelegate, UITa
             if let err = err {
                 print("Error updating document: \(err)")
                 self.newConversationProtocol?.newConversationFailure(message: "Please try again later.")
+                self.dismiss(animated: true, completion: nil)
             } else {
                 print("Thread Id New Conv: \(docRef.documentID)")
-                self.newConversationProtocol?.newConversationSuccess(threadId: docRef.documentID)
+                self.updateThreadOrder(threadId: docRef.documentID) 
             }
-            self.dismiss(animated: true, completion: nil)
+           
         }
     }
+    
+    func updateThreadOrder(threadId: String){
+            let communityId : String = (UserDefaults.standard.string(forKey: Constants.COMMUNITY_ID) ?? "") as String
+            let loggedUserId : String = Auth.auth().currentUser!.uid
+            let defaultStore: Firestore?
+            defaultStore = Firestore.firestore()
+            let threadOrderDoc =  defaultStore?.collection("users").document(loggedUserId).collection("communitySettings").document(communityId)
+            threadOrderDoc!.getDocument { (document, error) in
+                if let document = document, document.exists {
+                    if(document.get("threadOrder") != nil){
+                        var threadOrderArray = document.get("threadOrder") as! [String]
+                        threadOrderArray.insert(threadId, at: 0)
+                        threadOrderDoc?.updateData(["threadOrder": threadOrderArray]){ err in
+                            if let err = err {
+                                print("Error updating thread order document: \(err)")
+                            } else {
+                                print("Thread Order updated")
+                                self.newConversationProtocol?.newConversationSuccess(threadId: threadId)
+                            }
+                            self.dismiss(animated: true, completion: nil)
+                        }
+                    }
+                }
+            }
+        }
     
     func selectedTableViewVisibility(isHidden: Bool){
         selectedMemberView.isHidden = isHidden
