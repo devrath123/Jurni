@@ -108,7 +108,8 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         let profilePic = UserDefaults.standard.string(forKey: Constants.PROFILE_PIC) ?? ""
         let firstName =  UserDefaults.standard.string(forKey: Constants.FIRST_NAME) ?? ""
         
-         setImage(url: profilePic, imageView: currentUserProfilePicView)
+        setImage(url: profilePic, imageView: currentUserProfilePicView)
+        self.currentUserProfilePicView.contentMode = .scaleAspectFill
         commentProfileLabel.isHidden = true
          if (!firstName.isEmpty && profilePic == ""){
              commentProfileLabel.isHidden = false
@@ -290,6 +291,7 @@ class PostTableViewCell: UITableViewCell, UITextFieldDelegate {
         let posterImageURL = URL(string: post.user.userAvatar)
         if(posterImageURL != nil){
             posterProfilePicImageView.kf.setImage(with: posterImageURL)
+            posterProfilePicImageView.contentMode = .scaleAspectFill
         } else {
             self.userInitiaTextLabel.isHidden = false
             self.userInitiaTextLabel.text = String(post.user.userName.prefix(1))

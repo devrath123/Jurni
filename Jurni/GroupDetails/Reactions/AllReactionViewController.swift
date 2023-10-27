@@ -171,12 +171,15 @@ class AllReactionViewController: UIViewController {
                         let data = document.data()
 
                         if let reaction = data as? [String: Bool] {
-                           
-                            self.myReactions = reaction
-                            
-                            for (reaction, isSelected) in self.myReactions {
-                                if isSelected{
-                                    self.myOldReaction = reaction
+                            let from = "\(self.postDetails?.id! ?? "")_"+Auth.auth().currentUser!.uid
+                            if id == from
+                            {
+                                self.myReactions = reaction
+                                
+                                for (reaction, isSelected) in self.myReactions {
+                                    if isSelected{
+                                        self.myOldReaction = reaction
+                                    }
                                 }
                             }
                         }
@@ -205,71 +208,47 @@ class AllReactionViewController: UIViewController {
         
         switch reaction {
             case "THUMB_UP":
-                if thumbsUp == true {
-                    thumbsUp = false
-                } else {
-                    thumbsUp = true
-                    love = false
-                    laugh = false
-                    surprise = false
-                    sad = false
-                    angry = false
-                }
-            case "LOVE":
-                if love == true {
-                    love = false
-                } else {
-                    love = true
-                    thumbsUp = false
-                    laugh = false
-                    surprise = false
-                    sad = false
-                    angry = false
-                }
-            case "LAUGH":
-            if laugh == true {
+                thumbsUp = true
+                love = false
                 laugh = false
-            } else {
+                surprise = false
+                sad = false
+                angry = false
+            case "LOVE":
+                love = true
+                thumbsUp = false
+                laugh = false
+                surprise = false
+                sad = false
+                angry = false
+            case "LAUGH":
                 love = false
                 thumbsUp = false
                 laugh = true
                 surprise = false
                 sad = false
                 angry = false
-            }
             case "SURPRISE":
-            if surprise == true {
-                surprise = false
-            } else {
                 love = false
                 thumbsUp = false
                 laugh = false
                 surprise = true
                 sad = false
                 angry = false
-            }
             case "SAD":
-            if sad == true {
-                sad = false
-            } else {
                 love = false
                 thumbsUp = false
                 laugh = false
                 surprise = false
                 sad = true
                 angry = false
-            }
             case "ANGRY":
-            if angry == true {
-                angry = false
-            } else {
                 love = false
                 thumbsUp = false
                 laugh = false
                 surprise = false
                 sad = false
                 angry = true
-            }
             default:
                 print("Default")
         }
@@ -498,7 +477,7 @@ class AllReactionViewController: UIViewController {
                     print("error creating comment")
                 } else {
                     print("sucessful getting a comment")
-                    self.updateMyReactionCollection(reaction: newReaction)
+                    self.postMyReactionToCollection(reaction: newReaction)
                     DispatchQueue.main.async {
                         self.viewDidLoad()
 
@@ -513,9 +492,7 @@ class AllReactionViewController: UIViewController {
                     print("Error updating Profile. Try again.")
                 } else {
                     print("Profile updated successfully")
-                    
                     self.updateMyReactionCollection(reaction: newReaction)
-                    
                     DispatchQueue.main.async {
                         self.viewDidLoad()
                         
