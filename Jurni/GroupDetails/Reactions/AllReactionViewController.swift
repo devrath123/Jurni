@@ -311,7 +311,6 @@ class AllReactionViewController: UIViewController {
                 
                 DispatchQueue.main.async {
                     self.viewDidLoad()
-//                    self.postMyReactionToCollection()
                 }
             }
         }
