@@ -207,48 +207,85 @@ class AllReactionViewController: UIViewController {
         var angry = self.myReactions["ANGRY"]
         
         switch reaction {
+            
             case "THUMB_UP":
+            if thumbsUp == true
+            {
+                thumbsUp = false
+            }
+            else{
                 thumbsUp = true
                 love = false
                 laugh = false
                 surprise = false
                 sad = false
                 angry = false
+            }
             case "LOVE":
+            if love == true
+            {
+                love = false
+            }
+            else{
                 love = true
                 thumbsUp = false
                 laugh = false
                 surprise = false
                 sad = false
                 angry = false
+            }
             case "LAUGH":
+            if laugh == true
+            {
+                laugh = false
+            }
+            else{
                 love = false
                 thumbsUp = false
                 laugh = true
                 surprise = false
                 sad = false
                 angry = false
+            }
             case "SURPRISE":
+            if surprise == true
+            {
+                surprise = false
+            }
+            else{
                 love = false
                 thumbsUp = false
                 laugh = false
                 surprise = true
                 sad = false
                 angry = false
+            }
             case "SAD":
+            if sad == true
+            {
+                sad = false
+            }
+            else{
                 love = false
                 thumbsUp = false
                 laugh = false
                 surprise = false
                 sad = true
                 angry = false
+            }
             case "ANGRY":
+            if angry == true
+            {
+                angry = false
+            }
+            else{
                 love = false
                 thumbsUp = false
                 laugh = false
                 surprise = false
                 sad = false
                 angry = true
+            }
             default:
                 print("Default")
         }
@@ -299,12 +336,14 @@ class AllReactionViewController: UIViewController {
                     sad = false
                     angry = false
             case "LOVE":
-                    love = true
-                    thumbsUp = false
-                    laugh = false
-                    surprise = false
-                    sad = false
-                    angry = false
+           
+                love = true
+                thumbsUp = false
+                laugh = false
+                surprise = false
+                sad = false
+                angry = false
+            
             case "LAUGH":
                 love = false
                 thumbsUp = false
@@ -373,134 +412,109 @@ class AllReactionViewController: UIViewController {
 
     
     func updateReactionToFirebase(newReaction: String, oldReaction: String){
-        let post = postDetails
-        let groupId = self.groupDetails?.groupId ?? ""
-        
-        var thumbsUp = post!.postReaction.thumbsUp
-        var love = post!.postReaction.love
-        var laugh = post!.postReaction.laugh
-        var surprise = post!.postReaction.surprise
-        var sad = post!.postReaction.sad
-        var angry = post!.postReaction.angry
-        
-        print(thumbsUp, love, laugh, surprise, sad, angry, "old counts", myOldReaction)
-        
-        if newReaction == oldReaction
-        {
-           
-            switch oldReaction{
-            case "THUMB_UP":
-                thumbsUp -= 1
-            case "LOVE":
-                love -= 1
-            case "LAUGH":
-                laugh -= 1
-            case "SURPRISE":
-                surprise -= 1
-            case "SAD":
-                sad -= 1
-            case "ANGRY":
-                angry -= 1
-            default:
-                print("Default")
-            }
-
-        }
-        else{
-            
-            switch oldReaction{
-            case "THUMB_UP":
-                thumbsUp -= 1
-            case "LOVE":
-                love -= 1
-            case "LAUGH":
-                laugh -= 1
-            case "SURPRISE":
-                surprise -= 1
-            case "SAD":
-                sad -= 1
-            case "ANGRY":
-                angry -= 1
-            default:
-                print("Default")
-            }
-            
-            switch newReaction{
-            case "THUMB_UP":
-                thumbsUp += 1
-            case "LOVE":
-                love += 1
-            case "LAUGH":
-                laugh += 1
-            case "SURPRISE":
-                surprise += 1
-            case "SAD":
-                sad += 1
-            case "ANGRY":
-                angry += 1
-            default:
-                print("Default")
-            }
-        }
        
-        
-        myOldReaction = newReaction
-        if oldReaction == newReaction
-        {
-            myOldReaction = ""
-        }
-        
-         post!.postReaction.thumbsUp = thumbsUp
-         post!.postReaction.love = love
-         post!.postReaction.laugh = laugh
-         post!.postReaction.surprise = surprise
-         post!.postReaction.sad = sad
-         post!.postReaction.angry = angry
-        
-        let from = "\(post!.id!)_"+Auth.auth().currentUser!.uid
-        
-        
-        let docRef = Firestore.firestore().collection("groups").document(self.groupDetails?.groupId ?? "").collection("posts").document(post!.id!).collection("reactions").document(from)
-        let reactions = [
-            "THUMB_UP": thumbsUp,
-            "LOVE": love,
-            "SAD": sad,
-            "ANGRY": angry,
-            "SURPRISE": surprise,
-            "LAUGH": laugh ]
-       
-        
-        if self.myReactions.isEmpty{
-            
-            docRef.setData(reactions) { error in
-                if let error = error {
-                    print("error creating comment")
-                } else {
-                    print("sucessful getting a comment")
-                    self.postMyReactionToCollection(reaction: newReaction)
-                    DispatchQueue.main.async {
-                        self.viewDidLoad()
-
+                    if self.myReactions.isEmpty{
+                        self.postMyReactionToCollection(reaction: newReaction)
                     }
-                }
-            }
-            
-        }
-        else{
-            docRef.updateData(reactions){ err in
-                if err != nil {
-                    print("Error updating Profile. Try again.")
-                } else {
-                    print("Profile updated successfully")
-                    self.updateMyReactionCollection(reaction: newReaction)
+                    else{
+                        self.updateMyReactionCollection(reaction: newReaction)
+                    }
+                   
                     DispatchQueue.main.async {
-                        self.viewDidLoad()
+                        self.updateReactionCount(newReaction: newReaction, oldReaction:oldReaction)
                         
                     }
-                }
-            }
-        }
+
     }
+    
+    
+    
+    func updateReactionCount(newReaction: String, oldReaction: String){
+        
+        let post = postDetails
+        let groupId = self.groupDetails?.groupId ?? ""
+        var thumbsUp = post!.postReaction.thumbsUp
+               var love = post!.postReaction.love
+               var laugh = post!.postReaction.laugh
+               var surprise = post!.postReaction.surprise
+               var sad = post!.postReaction.sad
+               var angry = post!.postReaction.angry
+       
+               print(thumbsUp, love, laugh, surprise, sad, angry, "old counts", myOldReaction)
+       
+               if newReaction == oldReaction
+               {
+       
+                   switch oldReaction{
+                   case "THUMB_UP":
+                       thumbsUp -= 1
+                   case "LOVE":
+                       love -= 1
+                   case "LAUGH":
+                       laugh -= 1
+                   case "SURPRISE":
+                       surprise -= 1
+                   case "SAD":
+                       sad -= 1
+                   case "ANGRY":
+                       angry -= 1
+                   default:
+                       print("Default")
+                   }
+       
+               }
+               else{
+       
+                   switch oldReaction{
+                   case "THUMB_UP":
+                       thumbsUp -= 1
+                   case "LOVE":
+                       love -= 1
+                   case "LAUGH":
+                       laugh -= 1
+                   case "SURPRISE":
+                       surprise -= 1
+                   case "SAD":
+                       sad -= 1
+                   case "ANGRY":
+                       angry -= 1
+                   default:
+                       print("Default")
+                   }
+       
+                   switch newReaction{
+                   case "THUMB_UP":
+                       thumbsUp += 1
+                   case "LOVE":
+                       love += 1
+                   case "LAUGH":
+                       laugh += 1
+                   case "SURPRISE":
+                       surprise += 1
+                   case "SAD":
+                       sad += 1
+                   case "ANGRY":
+                       angry += 1
+                   default:
+                       print("Default")
+                   }
+               }
+        
+        myOldReaction = newReaction
+              if oldReaction == newReaction
+              {
+                  myOldReaction = ""
+              }
+      
+               post!.postReaction.thumbsUp = thumbsUp
+               post!.postReaction.love = love
+               post!.postReaction.laugh = laugh
+               post!.postReaction.surprise = surprise
+               post!.postReaction.sad = sad
+               post!.postReaction.angry = angry
+        
+    }
+    
     
     func showActivityIndicator() {
         
