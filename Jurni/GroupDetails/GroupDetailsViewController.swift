@@ -832,7 +832,7 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         
         let redTextColor = UIColor.red
         let secondAction = ColoredAction(title: "Delete", style: .default, textColor: redTextColor) { (action) in
-            self.deletePost(postID: self.posts[indexPath!.row].id!, index: indexPath!)
+            self.deletePostAlert(postID: self.posts[indexPath!.row].id!, index: indexPath!)
         }
 
         let cancelAction: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in }
@@ -969,6 +969,21 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         
     }
     
+    func deletePostAlert(postID: String, index: IndexPath){
+        
+        let refreshAlert = UIAlertController(title: "Delete Post!", message: "Are you sure you want to delete this post?", preferredStyle: UIAlertController.Style.alert)
+
+        refreshAlert.addAction(UIAlertAction(title: "Sure", style: .default, handler: { (action: UIAlertAction!) in
+            self.deletePost(postID: self.posts[index.row].id!, index: index)
+        }))
+
+        refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+              print("Handle Cancel Logic here")
+        }))
+
+        present(refreshAlert, animated: true, completion: nil)
+    }
+    
     func deletePost(postID: String, index: IndexPath) {
         
         self.showActivityIndicator()
@@ -978,9 +993,12 @@ extension GroupDetailsViewController: UITableViewDelegate, UITableViewDataSource
         document.delete() { error in
             if let error = error {
                 print("error creating comment", error)
+                self.hideActivityIndicator()
             } else {
-                print("sucessful getting a comment")
-                self.fetchPosts()
+                print("sucessful getting a comment", index.row)
+                self.posts.remove(at: index.row)
+                self.groupPostTableView.reloadData()
+                self.hideActivityIndicator()
                 
             }
         }
