@@ -4124,7 +4124,7 @@
                                         </connections>
                                     </tableView>
                                 </subviews>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="jDM-r5-AgB" secondAttribute="bottom" id="S7q-SE-hbl"/>
                                     <constraint firstItem="jDM-r5-AgB" firstAttribute="leading" secondItem="uet-oL-z6O" secondAttribute="leading" id="XLl-QI-A3J"/>
