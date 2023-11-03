@@ -99,13 +99,26 @@ class SettingsViewController: UIViewController {
     
   
     @IBAction func logoutAction(_ sender: Any) {        
-        let defaults = UserDefaults.standard
-            let dictionary = defaults.dictionaryRepresentation()
-            dictionary.keys.forEach { key in
-                defaults.removeObject(forKey: key)
-            }
-        try! Auth.auth().signOut()
-        self.performSegue(withIdentifier: "logoutSegue", sender: nil)
+        
+        let refreshAlert = UIAlertController(title: "", message: "Are you sure you want to log out ?", preferredStyle: UIAlertController.Style.alert)
+
+        refreshAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { [self] (action: UIAlertAction!) in
+            refreshAlert.dismiss(animated: true)
+            let defaults = UserDefaults.standard
+                let dictionary = defaults.dictionaryRepresentation()
+                dictionary.keys.forEach { key in
+                    defaults.removeObject(forKey: key)
+                }
+            try! Auth.auth().signOut()
+            self.performSegue(withIdentifier: "logoutSegue", sender: nil)
+            
+        }))
+
+        refreshAlert.addAction(UIAlertAction(title: "No", style: .cancel, handler: { (action: UIAlertAction!) in
+            refreshAlert.dismiss(animated: true)
+        }))
+
+        present(refreshAlert, animated: true, completion: nil)
     }
         
     func addViewController(type: String){

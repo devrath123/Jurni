@@ -23,6 +23,8 @@ class MyJurniDetailsViewController: UIViewController,UITableViewDataSource, UITa
     @IBOutlet weak var jurniProgressLabel: UILabel!
     @IBOutlet weak var continueButton: UIButton!
     @IBOutlet weak var stepTableHeightContraint: NSLayoutConstraint!
+    @IBOutlet weak var stackViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var viewHeightConstraint: NSLayoutConstraint!
     
     var jurniDocument: QueryDocumentSnapshot? = nil
     var stepsArray = [JurniStep]()
@@ -303,6 +305,13 @@ class MyJurniDetailsViewController: UIViewController,UITableViewDataSource, UITa
                         self.tempStepsArray.append(step.withJurniStep(from: step))
                     }
                     DispatchQueue.main.async{
+                        
+                        let tableHeight = 100 + 150 * self.stepsArray.count
+                        self.viewHeightConstraint.constant = CGFloat(tableHeight + 500)
+                        self.stackViewHeightConstraint.constant = CGFloat(tableHeight + 500)
+                        self.stepTableHeightContraint.constant = CGFloat(tableHeight)
+                        print("Steps count: \(self.stepsArray.count) Table height: \(tableHeight)")
+                        
                         self.stepTableView.reloadData()
                     }
                 }

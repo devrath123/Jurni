@@ -70,6 +70,7 @@ class SlideMenuViewController : UIViewController{
         
         self.userImageView?.layer.cornerRadius = (self.userImageView?.frame.size.width)! / 2
         self.userImageView?.layer.masksToBounds = true
+        self.userImageView.backgroundColor = UIColor.lightGray
         let profilePic = UserDefaults.standard.string(forKey: Constants.PROFILE_PIC)
         if(profilePic != nil && profilePic != ""){
             let profilePicUrl = URL(string:  profilePic!)
