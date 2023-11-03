@@ -310,7 +310,6 @@ class MyJurniDetailsViewController: UIViewController,UITableViewDataSource, UITa
                         self.viewHeightConstraint.constant = CGFloat(tableHeight + 500)
                         self.stackViewHeightConstraint.constant = CGFloat(tableHeight + 500)
                         self.stepTableHeightContraint.constant = CGFloat(tableHeight)
-                        print("Steps count: \(self.stepsArray.count) Table height: \(tableHeight)")
                         
                         self.stepTableView.reloadData()
                     }
